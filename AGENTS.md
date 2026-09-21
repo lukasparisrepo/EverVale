@@ -1,6 +1,6 @@
 # EverVale Agent Rules
 
-Read this file, `docs/00_CANON.md`, and `docs/25_LAYERED_ARCHITECTURE.md` before changing architecture, simulation rules, dependencies, or asset conventions.
+Read this file, `docs/00_CANON.md`, and `docs/35_LAYERED_ARCHITECTURE.md` before changing architecture, simulation rules, dependencies, or asset conventions.
 
 ## Architecture is a product requirement
 
