@@ -1,0 +1,111 @@
+version: "0.1"
+
+age_bands:
+  child:
+    workforce: false
+    scale: 0.78
+    activity_tags: [home, school, schoolyard, park, shelter]
+  teen:
+    workforce: false
+    scale: 0.90
+    activity_tags: [home, school, academy, bicycle, park, cafe, shelter]
+  adult:
+    workforce: true
+    scale: 1.00
+    activity_tags: [home, work, commute, leisure, shelter]
+  senior:
+    workforce: false
+    scale: 0.96
+    activity_tags: [home, park, market, cafe, clinic, shelter]
+
+roles:
+  builder:
+    category: construction
+    outfit_tags: [vest, gloves, tool_belt, work_cap]
+    animation_tags: [walk, carry, dig, repair, inspect]
+  workshop_worker:
+    category: income
+    outfit_tags: [apron, rolled_sleeves, gloves]
+    animation_tags: [walk, work_bench, carry_box, break]
+  utility_technician:
+    category: utility
+    outfit_tags: [overalls, tool_bag, utility_cap]
+    animation_tags: [inspect, repair, console, walk]
+  farmer:
+    category: income
+    outfit_tags: [boots, field_clothes, hat]
+    animation_tags: [walk, field_work, carry, animal_care]
+  shop_worker:
+    category: income
+    outfit_tags: [apron, basket]
+    animation_tags: [stand, carry, talk]
+  cafe_worker:
+    category: income
+    outfit_tags: [apron, cap, tray]
+    animation_tags: [walk, serve, clean, talk]
+  teacher:
+    category: education
+    outfit_tags: [tidy_clothes, book]
+    animation_tags: [walk, point, read, talk]
+  researcher:
+    category: education
+    outfit_tags: [coat, apron, goggles_optional, varum_accent]
+    animation_tags: [inspect, console, notebook]
+  medic:
+    category: service
+    outfit_tags: [light_coat, medical_bag]
+    animation_tags: [walk, inspect, treat]
+  firefighter:
+    category: service
+    outfit_tags: [protective_coat, helmet]
+    animation_tags: [run, hose, inspect, repair]
+  service_crew:
+    category: service
+    outfit_tags: [workwear, toolbox]
+    animation_tags: [sweep, repair, carry, inspect]
+  guard:
+    category: defense
+    outfit_tags: [dark_coat, padded_vest, compact_helmet]
+    animation_tags: [patrol, aim, fire, run, shelter]
+  pilot:
+    category: defense
+    outfit_tags: [flight_suit, scarf, helmet]
+    animation_tags: [walk, run, inspect, enter_vehicle]
+  mechanic:
+    category: advanced_industry
+    outfit_tags: [overalls, gloves, welding_mask_optional]
+    animation_tags: [repair, inspect, work_bench]
+  weather_observer:
+    category: civic
+    outfit_tags: [coat, notebook, instrument_case]
+    animation_tags: [inspect, read, point]
+
+shared_animation_vocabulary:
+  - idle
+  - walk
+  - brisk_walk
+  - run
+  - sit
+  - talk
+  - wave
+  - carry_box
+  - carry_bag
+  - inspect
+  - work_bench
+  - sweep
+  - dig
+  - repair
+  - read
+  - eat_drink
+  - point
+  - shelter
+  - injured_walk
+
+visual_generation:
+  authored_names_required: false
+  stable_visual_seed: true
+  body_variants_min: 6
+  face_variants_min: 12
+  hair_variants_min: 12
+  palette_variants_min: 10
+  seasonal_outfits: [spring, summer, autumn, winter]
