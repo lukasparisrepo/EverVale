@@ -13,7 +13,8 @@
     "test": "pnpm -r --if-present test",
     "validate:content": "python tools/validation/validate_content.py",
     "validate:worldgen": "python tools/validation/validate_worldgen.py --seeds 1000",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:migrate": "pnpm --filter @evervale/persistence db:migrate"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
