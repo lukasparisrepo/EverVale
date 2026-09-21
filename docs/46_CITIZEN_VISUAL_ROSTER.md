@@ -194,3 +194,13 @@ Optional inspector can show:
 - Happiness icon
 
 without inventing lore for every person.
+
+
+## Runtime visual identity authority
+
+This roster defines role/archetype identity. Deterministic runtime variation and anti-repetition are governed by:
+
+- `docs/79_VISUAL_IDENTITY_VARIATION_SYSTEM.md`
+- `data/presentation/v0.1/visual_identities.yaml`
+
+At diorama zoom, role silhouette should read before face detail. The runtime must not collapse all workers/civilians back to one generic mesh with palette swaps only.
