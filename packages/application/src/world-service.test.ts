@@ -338,3 +338,111 @@ test("revision race returns matching receipt instead of applying command twice",
   assert.equal(result.speed, 2);
   assert.equal(repo.receipts.size, 1);
 });
+
+
+test("concurrent distinct commands for one owner serialize and only one stale revision can commit", async () => {
+  const base = new Date("2026-09-21T12:00:00.000Z");
+  const world: WorldState = {
+    worldId:"world-concurrent",
+    ownerId:"owner-concurrent",
+    seed:6,
+    revision:12,
+    lifecycle:"ACTIVE",
+    speed:1,
+    simulationSeconds:0,
+    lastSimulatedAt:base.toISOString(),
+    resources:{money:1200,moneyCap:5000,power:60,powerCap:120,water:60,waterCap:120,varum:0,varumCap:0,techPoints:0,techTier:0},
+    society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5,beauty:0},
+    buildings:[building("tc","town_center")],
+    roads:[], blockers:[], props:[], combat:null, events:[],
+  };
+
+  const repo = new Repo(world);
+  const service = new WorldService({
+    repository: repo,
+    definitions: defs,
+    ids: new Ids(),
+    clock: new FakeClock(base),
+  });
+
+  const results = await Promise.allSettled([
+    service.command("owner-concurrent", {
+      type:"SET_SPEED",
+      commandId:"concurrent-a",
+      expectedRevision:12,
+      payload:{speed:2},
+    }),
+    service.command("owner-concurrent", {
+      type:"SET_SPEED",
+      commandId:"concurrent-b",
+      expectedRevision:12,
+      payload:{speed:4},
+    }),
+  ]);
+
+  const fulfilled = results.filter((result) => result.status === "fulfilled");
+  const rejected = results.filter((result) => result.status === "rejected");
+
+  assert.equal(fulfilled.length, 1);
+  assert.equal(rejected.length, 1);
+  assert.match(String((rejected[0] as PromiseRejectedResult).reason), /REVISION_CONFLICT/);
+  assert.equal(repo.saveCalls, 1);
+  assert.equal(repo.world.revision, 13);
+  assert.ok(repo.world.speed === 2 || repo.world.speed === 4);
+});
+
+test("concurrent first-load requests create only one world for an owner", async () => {
+  class EmptyRepo implements WorldRepository {
+    world: WorldState | null = null;
+    createCalls = 0;
+    readonly receipts = new Map<string, AcceptedCommandReceipt>();
+
+    async findByOwner(ownerId: string): Promise<WorldState | null> {
+      return this.world?.ownerId === ownerId ? this.world : null;
+    }
+    async findById(worldId: string): Promise<WorldState | null> {
+      return this.world?.worldId === worldId ? this.world : null;
+    }
+    async findAcceptedCommand(commandId: string): Promise<AcceptedCommandReceipt | null> {
+      return this.receipts.get(commandId) ?? null;
+    }
+    async create(world: WorldState): Promise<void> {
+      this.createCalls += 1;
+      if (this.world) throw new Error("WORLD_ALREADY_EXISTS");
+      this.world = world;
+    }
+    async save(
+      world: WorldState,
+      previousRevision: number,
+      acceptedCommand?: AcceptedCommandContext,
+    ): Promise<void> {
+      assert.equal(this.world?.revision, previousRevision);
+      this.world = world;
+      if (acceptedCommand) {
+        this.receipts.set(acceptedCommand.commandId, {
+          ...acceptedCommand,
+          worldId: world.worldId,
+          world,
+        });
+      }
+    }
+  }
+
+  const repo = new EmptyRepo();
+  const service = new WorldService({
+    repository: repo,
+    definitions: defs,
+    ids: new Ids(),
+    clock: new FakeClock(new Date("2026-09-21T12:00:00.000Z")),
+  });
+
+  const [a, b] = await Promise.all([
+    service.getOrCreate("owner-first-load"),
+    service.getOrCreate("owner-first-load"),
+  ]);
+
+  assert.equal(repo.createCalls, 1);
+  assert.equal(a.worldId, b.worldId);
+  assert.equal(a.ownerId, "owner-first-load");
+  assert.equal(b.ownerId, "owner-first-load");
+});
