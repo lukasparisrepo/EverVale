@@ -156,6 +156,10 @@ function addBench(group: THREE.Group, metal = false): void {
   const back = mesh(new THREE.BoxGeometry(1.8, 0.12, 0.55), main, 0, 1.02, -0.22);
   back.rotation.x = -0.12;
   group.add(seat, back);
+  for (const x of [-0.78, 0.78]) {
+    const arm = mesh(new THREE.BoxGeometry(0.1, 0.14, 0.62), dark, x, 0.9, 0, false);
+    group.add(arm);
+  }
   for (const x of [-0.7, 0.7]) {
     group.add(mesh(new THREE.BoxGeometry(0.12, 0.7, 0.12), dark, x, 0.34, 0));
   }
@@ -183,6 +187,9 @@ function addLamp(group: THREE.Group): void {
   group.add(mesh(new THREE.CylinderGeometry(0.08, 0.12, 2.7, 8), mat("metal"), 0, 1.35, 0));
   const cap = mesh(new THREE.CylinderGeometry(0.28, 0.18, 0.18, 8), mat("copper"), 0, 2.74, 0);
   group.add(cap);
+  const collar = mesh(new THREE.TorusGeometry(0.22, 0.035, 5, 10), mat("copper"), 0, 2.47, 0, false);
+  collar.rotation.x = Math.PI / 2;
+  group.add(collar);
   const light = mesh(new THREE.SphereGeometry(0.22, 10, 7), emissiveLamp(), 0, 2.52, 0);
   light.userData.propGlow = true;
   group.add(light);
@@ -195,7 +202,12 @@ function addFountain(group: THREE.Group): void {
   water.userData.propWater = true;
   const column = mesh(new THREE.CylinderGeometry(0.22, 0.3, 1.6, 10), mat("stone"), 0, 1.25, 0);
   const bowl = mesh(new THREE.CylinderGeometry(0.7, 0.5, 0.18, 14), mat("stone"), 0, 2.02, 0);
-  group.add(base, basin, water, column, bowl);
+  const jet = mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.92, 7), mat("water", 0.25), 0, 2.46, 0, false);
+  jet.userData.propWater = true;
+  const splash = mesh(new THREE.TorusGeometry(0.36, 0.035, 5, 14), mat("water", 0.25), 0, 2.06, 0, false);
+  splash.rotation.x = Math.PI / 2;
+  splash.userData.propWater = true;
+  group.add(base, basin, water, column, bowl, jet, splash);
 }
 
 function addPicnicTable(group: THREE.Group): void {
