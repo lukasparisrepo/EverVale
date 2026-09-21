@@ -77,7 +77,7 @@ const building = (id: string, definitionId: string): WorldState["buildings"][num
   position:{x:0,y:0,z:0},
   rotationY:0,
   constructionState:"COMPLETE",
-  constructionRemainingSeconds:0,
+  constructionRemainingSeconds:0,constructionTotalSeconds:0,
   workersAssigned:0,
   priority:defs.buildings[definitionId]?.priority ?? 0,
   condition:100,
