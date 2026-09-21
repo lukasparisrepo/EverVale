@@ -3,8 +3,8 @@ version: "0.1"
 cadence:
   first_event_minutes_min: 10
   first_event_minutes_max: 25
-  interval_minutes_min: 20
-  interval_minutes_max: 55
+  interval_minutes_min: 50
+  interval_minutes_max: 90
   max_per_24h_online: 18
   suppress_after_major_minutes: 25
   suppress_during_major_combat: true
