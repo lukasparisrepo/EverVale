@@ -358,8 +358,11 @@ export function WorldView({
 
       if (ghost.visible) {
         const valid = approximatePlacementValid(worldRef.current, x, z);
+        host.dataset.placementValid = String(valid);
         ghost.position.set(x, 1.5, z);
         ghostMaterial.color.setHex(valid ? 0x75b76e : 0xd46d61);
+      } else {
+        delete host.dataset.placementValid;
       }
 
       if (roadPreview.visible && roadStartRef.current) {
@@ -435,9 +438,10 @@ export function WorldView({
         citizen.userData.index = i;
         citizen.userData.child = child;
         const home = homes[i % Math.max(1, homes.length)]?.position ?? { x: 0, y: 0, z: 0 };
-        const work = child && school
-          ? school.position
-          : jobs[i % Math.max(1, jobs.length)]?.position ?? { x: 0, y: 0, z: 0 };
+        const adultJob = jobs[i % Math.max(1, jobs.length)]?.position ?? home;
+        const work = child
+          ? (school?.position ?? home)
+          : adultJob;
         citizen.userData.home = { x: home.x, z: home.z };
         citizen.userData.work = { x: work.x, z: work.z };
         citizen.userData.leisure = { x: fallbackLeisure.x, z: fallbackLeisure.z };
