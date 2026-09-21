@@ -36,3 +36,28 @@ Failure rolls back. Command/job retry must be idempotent. No partial Money/Varum
 - after catch-up
 
 Concrete migration: db/migrations/0001_world_core.sql
+
+## M1.5 runtime status
+
+Implemented runtime hardening:
+
+- accepted-command idempotency
+- deterministic command fingerprinting
+- per-owner single-process serialization
+- Postgres revision CAS race recovery
+- one-owned-world-per-user M1 invariant
+- JSON receipt persistence
+- significant event persistence
+- latest-50 snapshot retention
+- explicit checksum-verified migration runner
+
+Migration command:
+
+`pnpm db:migrate`
+
+Lease note:
+
+`world_leases` remains the canonical requirement before any second process/background worker independently advances world time. Current M1 has only one authoritative advancement process, so a no-op lease implementation is intentionally not added.
+
+See:
+`docs/76_M1_5_PERSISTENCE_CONCURRENCY_HARDENING.md`
