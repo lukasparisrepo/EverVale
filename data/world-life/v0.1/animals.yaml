@@ -1,0 +1,31 @@
+version: "0.1"
+
+pets:
+  cat:
+    activities: [sleep, sit, wander]
+    max_home_radius_m: 35
+  dog:
+    activities: [idle, follow_owner, walk_park]
+    max_home_radius_m: 80
+
+farm:
+  chicken:
+    activities: [wander, peck, idle]
+  duck:
+    activities: [walk, swim, group_idle]
+  cow:
+    activities: [graze, walk, rest]
+  sheep:
+    activities: [graze, walk, rest]
+  goat:
+    activities: [graze, climb_prop, rest]
+
+wildlife:
+  bird:
+    presentation_only: true
+  rabbit:
+    presentation_only: true
+  squirrel:
+    presentation_only: true
+  butterfly:
+    presentation_only: true
