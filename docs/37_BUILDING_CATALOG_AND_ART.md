@@ -240,6 +240,11 @@ Art: heavy industrial but still stylized/cozy-readable.
 
 ## Safety / Service
 
+### Hearth Shelter
+ID: `civic_shelter`
+Role: civilian shelter during severe threat/weather.
+Art: stone cellar-like civic refuge, warm lamps, reinforced door, benches/supply alcoves.
+
 ### Oakwatch Guardhouse
 ID: `guard_post`
 Role: baseline Safety + guards.
@@ -281,6 +286,11 @@ Art: reinforced shed, repair pit, fuel-like decorative equipment without adding 
 ID: `airfield`
 Role: aircraft operations.
 Art: compact runway, hangar, windsock, service carts.
+
+### Stonebolt Battery
+ID: `heavy_turret`
+Role: fixed heavy ground defense.
+Art: low stone base, chunky copper-mechanical turret, slow readable recoil.
 
 ### Skyshield Battery
 ID: `anti_air`
