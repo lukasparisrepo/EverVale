@@ -46,6 +46,7 @@ const defs: SimulationDefinitions = {
   blockers:{
     fallen_tree:{id:"fallen_tree",moneyCost:40,varumCost:0,clearCycles:1,techTier:0,radius:2.5},
   },
+  props:{},
 };
 
 const world: WorldState = {
