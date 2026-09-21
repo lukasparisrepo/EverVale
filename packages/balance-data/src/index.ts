@@ -4,6 +4,7 @@ import path from "node:path";
 import YAML from "yaml";
 import type {
   BuildingDefinition,
+  BlockerDefinition,
   CombatActorDefinition,
   SimulationDefinitions,
 } from "@evervale/domain/world.types";
@@ -27,6 +28,10 @@ type RawContent = {
 type RawCombat = {
   units?: Record<string, Record<string, unknown>>;
   enemies?: Record<string, Record<string, unknown>>;
+};
+
+type RawBlockers = {
+  blockers: Record<string, Record<string, unknown>>;
 };
 
 const numberValue = (value: unknown, fallback = 0): number =>
@@ -74,6 +79,19 @@ function mapBuilding(id: string, raw: Record<string, unknown>): BuildingDefiniti
   };
 }
 
+function mapBlocker(id: string, raw: Record<string, unknown>): BlockerDefinition {
+  const sizeByClass: Record<string, number> = { light: 2.5, medium: 3.5, heavy: 5 };
+  const cls = typeof raw.class === "string" ? raw.class : "light";
+  return {
+    id,
+    moneyCost: numberValue(raw.money_cost),
+    varumCost: numberValue(raw.varum_cost),
+    clearCycles: numberValue(raw.clear_cycles, 1),
+    techTier: numberValue(raw.tech_tier),
+    radius: sizeByClass[cls] ?? 3,
+  };
+}
+
 function mapActor(
   id: string,
   raw: Record<string, unknown>,
@@ -116,6 +134,7 @@ export function loadGameData(): LoadedGameData {
   const content = readYaml<RawContent>("data/content/v0.2/buildings.yaml");
   const defenders = readYaml<RawCombat>("data/combat/v0.2/defense_units.yaml").units ?? {};
   const enemies = readYaml<RawCombat>("data/combat/v0.2/enemies.yaml").enemies ?? {};
+  const blockers = readYaml<RawBlockers>("data/world/v0.1/blockers.yaml").blockers;
 
   const buildings = Object.fromEntries(
     Object.entries(balance.buildings).map(([id, raw]) => [id, mapBuilding(id, raw)]),
@@ -129,6 +148,9 @@ export function loadGameData(): LoadedGameData {
     ),
     enemies: Object.fromEntries(
       Object.entries(enemies).map(([id, raw]) => [id, mapActor(id, raw, "ENEMY")]),
+    ),
+    blockers: Object.fromEntries(
+      Object.entries(blockers).map(([id, raw]) => [id, mapBlocker(id, raw)]),
     ),
   };
 
