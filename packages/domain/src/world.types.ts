@@ -33,6 +33,7 @@ export interface SocietyState {
   educationCoverage: number;
   recreationCoverage: number;
   safety: number;
+  beauty: number;
 }
 
 export interface BuildingDefinition {
@@ -66,6 +67,20 @@ export interface BuildingDefinition {
   footprintCellsZ: number;
 }
 
+export type PropDecorClass = "visual" | "beauty" | "activity_anchor";
+
+export interface PropDefinition {
+  id: string;
+  group: string;
+  sizeXMeters: number;
+  sizeZMeters: number;
+  snapMeters: number;
+  moneyCost: number;
+  decorClass: PropDecorClass;
+  beauty: number;
+  activityAnchor?: string;
+}
+
 export interface BlockerDefinition {
   id: string;
   moneyCost: number;
@@ -90,6 +105,7 @@ export interface SimulationDefinitions {
   defenders: Record<string, CombatActorDefinition>;
   enemies: Record<string, CombatActorDefinition>;
   blockers: Record<string, BlockerDefinition>;
+  props: Record<string, PropDefinition>;
   gridCellMeters: number;
   referenceCycleSeconds: number;
 }
@@ -121,6 +137,13 @@ export interface BlockerInstance {
   position: Vec3;
   state: "BLOCKING" | "CLEARING";
   clearRemainingSeconds: number;
+}
+
+export interface PropInstance {
+  id: string;
+  definitionId: string;
+  position: Vec3;
+  rotationY: number;
 }
 
 export interface CombatActor {
@@ -164,6 +187,7 @@ export interface WorldState {
   buildings: BuildingInstance[];
   roads: RoadSegment[];
   blockers: BlockerInstance[];
+  props: PropInstance[];
   combat: CombatState | null;
   events: WorldEvent[];
 }
