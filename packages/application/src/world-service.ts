@@ -38,9 +38,30 @@ export interface WorldServiceOptions {
 }
 
 export class WorldService {
+  private readonly ownerQueues = new Map<string, Promise<unknown>>();
+
   constructor(private readonly options: WorldServiceOptions) {}
 
+  private async serializeOwner<T>(ownerId: string, operation: () => Promise<T>): Promise<T> {
+    const previous = this.ownerQueues.get(ownerId) ?? Promise.resolve();
+    const run = previous
+      .catch(() => undefined)
+      .then(operation);
+    this.ownerQueues.set(ownerId, run);
+    try {
+      return await run;
+    } finally {
+      if (this.ownerQueues.get(ownerId) === run) {
+        this.ownerQueues.delete(ownerId);
+      }
+    }
+  }
+
   async getOrCreate(ownerId: string): Promise<WorldState> {
+    return this.serializeOwner(ownerId, () => this.getOrCreateUnlocked(ownerId));
+  }
+
+  private async getOrCreateUnlocked(ownerId: string): Promise<WorldState> {
     const loaded = await this.options.repository.findByOwner(ownerId);
     const existing = loaded ? this.normalizeWorld(loaded) : null;
     if (!existing) {
@@ -60,6 +81,10 @@ export class WorldService {
   }
 
   async command(ownerId: string, command: WorldCommand): Promise<WorldState> {
+    return this.serializeOwner(ownerId, () => this.commandUnlocked(ownerId, command));
+  }
+
+  private async commandUnlocked(ownerId: string, command: WorldCommand): Promise<WorldState> {
     const fingerprint = commandFingerprint(ownerId, command);
     const existingReceipt = await this.options.repository.findAcceptedCommand(command.commandId);
     if (existingReceipt) {
@@ -77,7 +102,7 @@ export class WorldService {
     const loaded = await this.options.repository.findByOwner(ownerId);
     let stored = loaded ? this.normalizeWorld(loaded) : null;
     if (!stored) {
-      stored = await this.getOrCreate(ownerId);
+      stored = await this.getOrCreateUnlocked(ownerId);
     }
 
     if (command.expectedRevision !== stored.revision) throw new Error("REVISION_CONFLICT");
