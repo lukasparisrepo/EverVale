@@ -63,3 +63,28 @@ Server:
 
 ## Deterministic benchmark scenes
 starter town; 40-citizen town; rain; night; 12-actor combat; build-mode road editing.
+
+## CI benchmark interpretation
+
+GitHub Actions browser tests use headless Chromium with SwiftShader software rendering.
+
+Therefore CI gates:
+- draw calls
+- visible triangles
+- route connectivity
+- geometry/texture resource stability
+- JavaScript heap growth
+- browser errors
+
+CI does **not** use SwiftShader FPS/p95 as target-hardware acceptance.
+
+Latest 40-citizen CI baseline:
+
+- 106 draw calls
+- 9,324 triangles
+- 67 -> 67 geometries
+- 3 -> 3 textures
+- ~0.72 MiB post-GC heap growth during short soak
+
+See:
+`docs/75_M1_4_STRESS_MEMORY_AUDIT.md`
