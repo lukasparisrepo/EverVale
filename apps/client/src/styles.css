@@ -179,3 +179,12 @@ button:disabled { opacity: .4; cursor: default; }
   font-size: 11px;
   background: rgba(121, 151, 103, .7);
 }
+
+
+.build-title {
+  font-weight: 750;
+}
+.build-panel button small + small {
+  margin-top: 2px;
+  opacity: .52;
+}
