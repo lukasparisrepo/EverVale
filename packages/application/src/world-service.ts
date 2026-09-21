@@ -100,6 +100,11 @@ export class WorldService {
       ...world,
       roads: world.roads ?? [],
       blockers: world.blockers ?? [],
+      props: world.props ?? [],
+      society: {
+        ...world.society,
+        beauty: world.society.beauty ?? 0,
+      },
       events: world.events ?? [],
     };
   }
