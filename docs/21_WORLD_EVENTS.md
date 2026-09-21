@@ -16,12 +16,23 @@ Events must preferably have world-space consequences, not only popups.
 - park concert
 - new family arrival
 
-### Infrastructure
+### Local / building
+- rats
+- kitchen fire
+- generator fire
 - pump failure
+- machinery breakdown
+- cave-in
+- animal escape
+- litter/vandalism
+
+### Infrastructure
 - local blackout
 - damaged bridge
-- burst pipe
-- warehouse bottleneck
+- blocked road
+- Hill Lift fault
+- Water Plant outage
+- Power Plant overload
 
 ### Nature
 - heavy rain
@@ -56,7 +67,7 @@ For threat events, warnings may escalate, but do not expose a precise timer unle
 
 ## Example — Varum anomaly
 
-1. refinery output rises
+1. Varum Mine activity or stored Varum reaches a notable level
 2. radar records unusual interference
 3. citizens mention lights in the sky
 4. military sensor confidence increases
@@ -91,3 +102,23 @@ Use:
 - event families
 
 to avoid repetitive random spam.
+
+
+## Incident vs major event
+
+Not every problem is a major world event.
+
+Local building incidents use `docs/38_MAINTENANCE_AND_LOCAL_INCIDENTS.md`.
+
+Examples:
+- rats in a restaurant
+- workshop fire
+- Water Plant pump fault
+
+Major world events alter broader town behavior:
+- storm
+- festival
+- raid
+- UFO incursion
+
+This separation prevents event spam while still keeping the town alive.
