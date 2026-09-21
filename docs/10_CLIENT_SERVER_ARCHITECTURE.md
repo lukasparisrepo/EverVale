@@ -1,32 +1,51 @@
 # 10 — Client / Server Architecture
 
+Status: **SUMMARY ARCHITECTURE**
+
+Detailed layer rules:
+- `docs/35_LAYERED_ARCHITECTURE.md`
+
 ## Topology
 
 ```
 Browser
-  ├─ Three.js world renderer
+  ├─ Three.js renderer
   ├─ React HUD
-  ├─ local visual animation
+  ├─ local animation / ambient presentation
   └─ network client
           │
           │ HTTPS + WebSocket
           ▼
-Authoritative Node.js Server
-  ├─ auth/session
-  ├─ world commands
-  ├─ economy simulation
-  ├─ mobility graph
-  ├─ threat/combat
-  ├─ persistence
-  └─ realtime replication
+Application / Authoritative Server
+  ├─ commands / queries
+  ├─ world runtime
+  ├─ offline catch-up
+  ├─ workforce/economy orchestration
+  ├─ threat/combat orchestration
+  └─ event production
           │
-          ├─ PostgreSQL
-          └─ pg-boss workers
+          ▼
+Pure Domain
+  ├─ economy
+  ├─ society
+  ├─ utilities
+  ├─ progression
+  ├─ construction
+  ├─ access/mobility
+  ├─ threat
+  └─ combat
+          │
+          ▼
+Infrastructure Adapters
+  ├─ PostgreSQL / Drizzle
+  ├─ pg-boss
+  ├─ Colyseus
+  └─ Better Auth
 ```
 
 ## Runtime baseline
 
-Node.js **22.12+** is the server baseline because approved realtime/background-job dependencies require modern Node 22.
+Node.js **22.12+**.
 
 ## Monorepo target
 
@@ -34,95 +53,116 @@ Node.js **22.12+** is the server baseline because approved realtime/background-j
 apps/
   client/
   server/
+
 packages/
-  simulation/
+  domain/
+  application/
   protocol/
   world-data/
   balance-data/
+  content-data/
   asset-manifest/
-  shared/
+  shared-kernel/
+
+adapters/
+  persistence/
+  realtime/
+  jobs/
+  auth/
+
 tools/
   blender/
   validation/
-docs/
+  simulation/
+  content/
+
 data/
   balance/
+  world/
+  life/
+  content/
 ```
 
-## Server truth
+## Server authority
 
-Server owns:
+Authoritative state includes:
 - Money
 - Power
 - Water
 - Varum
 - Tech
-- Population
-- Happiness
-- Workforce assignment
+- Population/Happiness
+- Workforce allocation
 - buildings
-- road graph
-- construction
-- combat
-- threat pressure
+- blockers
+- Access Graph
+- construction/repair/clearance
+- combat/threat/incident state
+- world seed/version
 - world time
 
-## Client truth
+## Client authority
 
-Client owns only presentation:
-- mesh
+Presentation only:
+- meshes
 - animation
+- local path smoothing
 - particles
 - camera
-- UI
+- HUD
 - placement preview
-- interpolation
+- ambient actor density
+- visual interpolation
 
 ## Command flow
 
-Client submits intent.
+1. client sends intent
+2. server authenticates/authorizes
+3. application checks lease/revision
+4. domain validates and calculates
+5. persistence commits canonical mutation
+6. event/state patch broadcasts
+7. client updates presentation
+
+## Access / mobility
 
 Server:
-1. authenticates
-2. authorizes
-3. checks world revision/lease
-4. validates resources/Tech/placement
-5. mutates canonical state
-6. persists
-7. broadcasts result
+- weighted Access Graph is canonical
 
-## Mobility
+Client:
+- Three.js road geometry
+- Recast/local movement presentation
 
-The server maintains a weighted road/access graph.
+The client cannot change reachability by rendering a path.
 
-Approved graph stack:
-- Graphology
-- graphology-shortest-path
-
-Three.js/Recast can create visual/local walking paths but cannot replace the server graph as the economy source of truth.
-
-## Exclusive world ownership
+## Exclusive world simulation
 
 An ACTIVE room or background worker must hold the simulation lease before advancing time.
 
-All writes use world revision checks / transactions.
+All critical writes use world revision/transaction checks.
 
 ## State replication
 
 Use:
 - initial snapshot
 - compact patches/events
-- logical citizen destination/state
+- timestamped logical actor state
 - client interpolation
 
-Never replicate every citizen transform every render frame.
+Never stream every citizen/vehicle transform at render frequency.
 
-## Simulation package
+## Domain purity
 
-`packages/simulation` imports no Three.js, React, DOM or browser API.
+Domain code imports no:
+- Three.js
+- React
+- DOM
+- Drizzle/PostgreSQL
+- Colyseus
+- pg-boss
 
-The same package must support:
-- online world ticks
+The same domain rules support:
+- online simulation
 - offline catch-up
-- deterministic tests
-- future multiplayer
+- tests
+- future multiplayer.
