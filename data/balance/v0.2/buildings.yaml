@@ -217,6 +217,20 @@ buildings:
     upkeep: 3
     water_cap_add: 180
 
+  weather_station:
+    tech_tier: 1
+    phase: M2
+    money_cost: 420
+    build_cycles: 3
+    workers: 1
+    job_category: service
+    priority: 40
+    power_use: 2
+    water_use: 0
+    upkeep: 3
+    forecast_horizon_minutes: 120
+    forecast_confidence: 0.85
+
   school:
     tech_tier: 0
     phase: M1
