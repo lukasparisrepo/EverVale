@@ -35,6 +35,12 @@ export type WorldCommand =
       payload: { speed: WorldSpeed };
     }
   | {
+      type: "REPAIR_BUILDING";
+      commandId: string;
+      expectedRevision: number;
+      payload: { buildingId: string };
+    }
+  | {
       type: "TRIGGER_TEST_WAVE";
       commandId: string;
       expectedRevision: number;
