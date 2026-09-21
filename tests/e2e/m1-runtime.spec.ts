@@ -63,7 +63,9 @@ test("M1 loop: build, Decor, persistence, offline catch-up, combat, repair", asy
   expect(triangles).toBeLessThanOrEqual(1_500_000);
   expect(citizens).toBeGreaterThan(0);
   expect(citizens).toBeLessThanOrEqual(30);
-  console.log("M1_RENDER_METRICS", { drawCalls, triangles, citizens });
+  await expect.poll(async () => Number(await worldView.getAttribute("data-disconnected-routes"))).toBe(0);
+  await expect(page.getByTestId("routing-status")).toContainText("12/12");
+  console.log("M1_RENDER_METRICS", { drawCalls, triangles, citizens, disconnectedRoutes: 0 });
 
   const cottageButton = page.getByRole("button", { name: /Hearth Cottage/i });
   await expect(cottageButton).toContainText("3×2 grid · 6×4m");
