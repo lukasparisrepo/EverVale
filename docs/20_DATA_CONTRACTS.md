@@ -1,6 +1,6 @@
 # 20 — Core Data Contracts
 
-These are conceptual contracts, not final TypeScript syntax.
+Conceptual contracts; final TypeScript schemas must be versioned and validated.
 
 ## World
 
@@ -10,10 +10,43 @@ World {
   ownerId
   seed
   revision
-  createdAt
-  lastSimulatedAt
   simulationVersion
+  lastSimulatedAt
+  simulationLease?
+  speed: 0 | 1 | 2 | 4
   state: ACTIVE | WARM | COLD
+}
+```
+
+## ResourceState
+
+```
+ResourceState {
+  money
+  moneyCap
+  power
+  powerCap
+  water
+  waterCap
+  varum
+  varumCap
+  techPoints
+  techTier
+}
+```
+
+## SocietyState
+
+```
+SocietyState {
+  population
+  housingCapacity
+  workforce
+  happiness
+  growthProgress
+  educationCoverage
+  recreationCoverage
+  safety
 }
 ```
 
@@ -25,12 +58,12 @@ BuildingInstance {
   definitionId
   position
   rotation
+  connectedRoadNode?
   constructionState
   damageState
   workersAssigned
-  utilityConnections
-  storage
-  operationalState
+  priority
+  operationalFactor
   operationalReasons[]
 }
 ```
@@ -42,57 +75,43 @@ RoadSegment {
   id
   roadType
   controlPoints[]
-  endpoints[]
+  endpointNodes[]
+  traversalCost
   revision
 }
 ```
 
-Server stores canonical topology, not render mesh vertices.
+Server stores canonical topology, not render triangles.
 
-## Citizen
+## CitizenPresentationState
 
 ```
-Citizen {
-  id
-  householdId
-  lifeStage
+CitizenPresentationState {
+  citizenId
   homeBuildingId
   jobBuildingId?
-  schoolBuildingId?
   logicalState
   destinationId?
-  health
-  happiness
-  safety
 }
 ```
 
-## ResourceLedger
-
-```
-ResourceLedger {
-  money
-  rawVarum
-  refinedVarum
-  food
-}
-```
-
-Electricity and water are network state, not simple wallet numbers.
+The economic model can remain aggregate even while individual visible citizens exist.
 
 ## ThreatState
 
 ```
 ThreatState {
-  pressure
+  hiddenPressure
+  hiddenThreshold
+  cooldownUntil?
   seed
   activeSignals[]
   activeIncident?
-  lastResolvedAt
+  lastResolvedAt?
 }
 ```
 
-Exact hidden attack timing must not leak to clients when uncertainty is intentional.
+Hidden threshold is never serialized to ordinary clients.
 
 ## WorldCommand
 
@@ -104,34 +123,18 @@ WorldCommand {
   expectedRevision?
   type
   payload
-  clientSentAt
 }
 ```
 
-## CommandResult
-
-```
-CommandResult {
-  commandId
-  accepted
-  worldRevision
-  rejectionCode?
-  patch?
-}
-```
-
-## Event history
-
-Important events are human-readable and machine-readable.
+## WorldEvent
 
 ```
 WorldEvent {
   id
-  worldId
   eventType
   happenedAt
   severity
-  entities[]
+  entityIds[]
   data
   playerSummary
 }
@@ -142,6 +145,7 @@ WorldEvent {
 Persist:
 - schema version
 - simulation version
-- asset data version
+- balance-data version
+- asset-data version
 
-Migrations must be explicit.
+Never load a save with silent balance/schema reinterpretation.
