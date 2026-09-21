@@ -1,0 +1,72 @@
+version: "0.1"
+
+campaign:
+  id: falling_lights
+  permanent_game_over: false
+  post_victory_mode: ENDLESS
+
+chapters:
+  prologue:
+    title: "A Quiet Vale"
+    tech_min: 0
+    milestones:
+      - establish_growth
+      - clear_first_blocker
+      - survive_first_nuisance_wave
+
+  chapter_1:
+    title: "The Blue Stone"
+    tech_min: 1
+    milestones:
+      - reach_varum_deposit
+      - build_varum_mine
+      - survive_varum_incident
+
+  chapter_2:
+    title: "Signals Above the Ridge"
+    tech_min: 2
+    milestones:
+      - build_radar
+      - detect_first_air_contact
+      - survive_first_mixed_wave
+
+  chapter_3:
+    title: "Falling Lights"
+    tech_min: 3
+    milestones:
+      - field_heavy_ground_counter
+      - survive_multi_lane_assault
+
+  chapter_4:
+    title: "The Varum War"
+    tech_min: 4
+    milestones:
+      - operational_air_defense
+      - repel_carrier_or_command_wave
+      - meet_aurora_prerequisites
+
+  chapter_5:
+    title: "The Sky Breaks"
+    tech_min: 5
+    milestones:
+      - build_aurora_ward
+      - trigger_final_story_assault
+      - repel_mothership_fragment
+
+campaign_victory:
+  required:
+    - tech_tier_5
+    - aurora_ward_operational
+    - final_story_assault_repelled
+
+collapse_recovery:
+  conditions:
+    - hearth_hall_disabled
+    - power_unavailable
+    - water_unavailable
+    - no_combat_ready_defenders
+  effects:
+    population_growth_paused: true
+    nonessential_production_reduced: true
+    threat_intensity_reduced_temporarily: true
+    emergency_repairs_prioritized: true
