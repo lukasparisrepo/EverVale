@@ -5,6 +5,7 @@ import type { SimulationDefinitions, WorldState } from "./world.types.js";
 
 const defs: SimulationDefinitions = {
   referenceCycleSeconds: 600,
+  gridCellMeters: 2,
   buildings: {},
   defenders: {
     town_warden: {
