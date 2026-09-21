@@ -68,6 +68,7 @@ const defs: SimulationDefinitions = {
   defenders: {},
   enemies: {},
   blockers: {},
+  props: {},
 };
 
 const building = (id: string, definitionId: string): WorldState["buildings"][number] => ({
@@ -96,7 +97,7 @@ test("command applies after elapsed time without self-inflicted revision conflic
     simulationSeconds:0,
     lastSimulatedAt:base.toISOString(),
     resources:{money:1200,moneyCap:5000,power:60,powerCap:120,water:60,waterCap:120,varum:0,varumCap:0,techPoints:0,techTier:0},
-    society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5},
+    society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5,beauty:0},
     buildings:[
       building("tc","town_center"),
       building("h1","house_small"),
@@ -107,7 +108,9 @@ test("command applies after elapsed time without self-inflicted revision conflic
       building("shop","workshop"),
     ],
     roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}],
-    blockers:[], combat:null, events:[],
+    blockers:[],
+  props:[],
+  combat:null, events:[],
   };
   const repo = new Repo(world);
   const clock = new FakeClock(new Date(base.getTime() + 1500));
@@ -138,7 +141,7 @@ test("read projection advances visible simulation without mutating persisted rev
     simulationSeconds:0,
     lastSimulatedAt:base.toISOString(),
     resources:{money:1200,moneyCap:5000,power:60,powerCap:120,water:60,waterCap:120,varum:0,varumCap:0,techPoints:0,techTier:0},
-    society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5},
+    society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5,beauty:0},
     buildings:[
       building("tc","town_center"),
       building("h1","house_small"),
@@ -149,7 +152,7 @@ test("read projection advances visible simulation without mutating persisted rev
       building("shop","workshop"),
     ],
     roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}],
-    blockers:[], combat:null, events:[],
+    blockers:[], props:[], combat:null, events:[],
   };
   const repo = new Repo(world);
   const clock = new FakeClock(new Date(base.getTime() + 2000));
