@@ -117,6 +117,7 @@ export interface BuildingInstance {
   rotationY: number;
   constructionState: ConstructionState;
   constructionRemainingSeconds: number;
+  constructionTotalSeconds: number;
   workersAssigned: number;
   priority: number;
   condition: number;
