@@ -1,0 +1,610 @@
+version: "0.2"
+status: "CANONICAL_NUMERIC_BASELINE"
+reference_cycle_seconds: 600
+
+rules:
+  partial_staffing_scales_variable_output: true
+  partial_staffing_scales_variable_utility: true
+  fixed_upkeep_does_not_scale: true
+  unlisted_optional_field_defaults_to_zero: true
+
+buildings:
+  town_center:
+    tech_tier: 0
+    phase: M1
+    buildable: false
+    money_cost: 0
+    build_cycles: 0
+    workers: 0
+    upkeep: 0
+    money_cap_add: 5000
+    construction_slots_add: 1
+    repair_capacity_add: 1
+    combat_spawn: { town_warden: 2 }
+
+  builders_yard:
+    tech_tier: 0
+    phase: M1_OPTIONAL
+    money_cost: 320
+    build_cycles: 3
+    workers: 2
+    job_category: advanced_industry
+    priority: 42
+    money_per_worker: 1
+    power_use: 1
+    water_use: 1
+    upkeep: 3
+    construction_slots_add: 1
+    repair_capacity_add: 1
+
+  storehouse:
+    tech_tier: 1
+    phase: M2
+    money_cost: 280
+    build_cycles: 2
+    workers: 1
+    job_category: advanced_industry
+    priority: 38
+    power_use: 1
+    upkeep: 2
+    varum_cap_add: 30
+
+  house_small:
+    tech_tier: 0
+    phase: M1
+    money_cost: 120
+    build_cycles: 2
+    workers: 0
+    upkeep: 1
+    housing_add: 4
+
+  house_medium:
+    tech_tier: 2
+    phase: M2
+    money_cost: 320
+    build_cycles: 4
+    workers: 0
+    upkeep: 2
+    housing_add: 8
+
+  row_housing:
+    tech_tier: 3
+    phase: M3
+    money_cost: 720
+    build_cycles: 6
+    workers: 0
+    power_use: 2
+    water_use: 2
+    upkeep: 4
+    housing_add: 16
+
+  garden_residence:
+    tech_tier: 2
+    phase: M3
+    money_cost: 520
+    build_cycles: 5
+    workers: 0
+    upkeep: 4
+    housing_add: 6
+    recreation_coverage_add: 0.08
+
+  workshop:
+    tech_tier: 0
+    phase: M1
+    money_cost: 250
+    build_cycles: 3
+    workers: 4
+    job_category: income
+    priority: 80
+    money_per_worker: 8
+    power_use: 4
+    water_use: 1
+    upkeep: 3
+
+  restaurant:
+    tech_tier: 0
+    phase: M1_OPTIONAL
+    money_cost: 280
+    build_cycles: 3
+    workers: 3
+    job_category: income
+    priority: 72
+    money_per_worker: 7
+    power_use: 2
+    water_use: 3
+    upkeep: 3
+    recreation_coverage_add: 0.10
+
+  market:
+    tech_tier: 2
+    phase: M2
+    money_cost: 520
+    build_cycles: 4
+    workers: 4
+    job_category: income
+    priority: 74
+    money_per_worker: 7
+    power_use: 3
+    water_use: 2
+    upkeep: 4
+    recreation_coverage_add: 0.12
+
+  cafe:
+    tech_tier: 1
+    phase: M2
+    money_cost: 320
+    build_cycles: 3
+    workers: 3
+    job_category: income
+    priority: 72
+    money_per_worker: 7
+    power_use: 3
+    water_use: 3
+    upkeep: 3
+    recreation_coverage_add: 0.08
+
+  boutique:
+    tech_tier: 2
+    phase: M3
+    money_cost: 430
+    build_cycles: 3
+    workers: 2
+    job_category: income
+    priority: 68
+    money_per_worker: 9
+    power_use: 2
+    water_use: 1
+    upkeep: 3
+
+  inn:
+    tech_tier: 2
+    phase: M3
+    money_cost: 650
+    build_cycles: 5
+    workers: 4
+    job_category: income
+    priority: 66
+    money_per_worker: 8
+    power_use: 5
+    water_use: 5
+    upkeep: 6
+    recreation_coverage_add: 0.15
+
+  power_plant:
+    tech_tier: 0
+    phase: M1
+    money_cost: 350
+    build_cycles: 4
+    workers: 2
+    job_category: utility_power
+    priority: 100
+    money_per_worker: 2
+    power_production: 40
+    power_cap_add: 120
+    upkeep: 4
+
+  water_plant:
+    tech_tier: 0
+    phase: M1
+    money_cost: 350
+    build_cycles: 4
+    workers: 2
+    job_category: utility_water
+    priority: 95
+    money_per_worker: 2
+    water_production: 35
+    water_cap_add: 120
+    power_use: 4
+    upkeep: 4
+
+  power_storage:
+    tech_tier: 2
+    phase: M2
+    money_cost: 480
+    build_cycles: 4
+    workers: 0
+    power_use: 1
+    upkeep: 3
+    power_cap_add: 180
+
+  water_storage:
+    tech_tier: 2
+    phase: M2
+    money_cost: 450
+    build_cycles: 4
+    workers: 0
+    power_use: 1
+    upkeep: 3
+    water_cap_add: 180
+
+  school:
+    tech_tier: 0
+    phase: M1
+    money_cost: 300
+    build_cycles: 3
+    workers: 2
+    job_category: education
+    priority: 70
+    money_per_worker: 1
+    tech_production: 5
+    power_use: 3
+    water_use: 2
+    upkeep: 3
+    education_coverage_add: 0.35
+
+  academy:
+    tech_tier: 3
+    phase: M3
+    money_cost: 1100
+    varum_cost: 8
+    build_cycles: 7
+    workers: 4
+    job_category: education
+    priority: 68
+    tech_production: 11
+    power_use: 8
+    water_use: 4
+    upkeep: 10
+    education_coverage_add: 0.55
+
+  research_lab:
+    tech_tier: 5
+    phase: M3
+    money_cost: 2400
+    varum_cost: 45
+    build_cycles: 10
+    workers: 5
+    job_category: education
+    priority: 62
+    tech_production: 18
+    power_use: 18
+    water_use: 7
+    upkeep: 18
+    education_coverage_add: 0.25
+
+  park:
+    tech_tier: 0
+    phase: M1
+    money_cost: 120
+    build_cycles: 1
+    workers: 0
+    water_use: 1
+    upkeep: 1
+    recreation_coverage_add: 0.35
+
+  botanical_garden:
+    tech_tier: 2
+    phase: M3
+    money_cost: 620
+    build_cycles: 5
+    workers: 1
+    job_category: civic
+    priority: 30
+    power_use: 2
+    water_use: 6
+    upkeep: 5
+    recreation_coverage_add: 0.55
+
+  theatre:
+    tech_tier: 3
+    phase: M3
+    money_cost: 900
+    build_cycles: 6
+    workers: 4
+    job_category: civic
+    priority: 30
+    power_use: 7
+    water_use: 2
+    upkeep: 9
+    recreation_coverage_add: 0.50
+
+  bath_house:
+    tech_tier: 2
+    phase: M3
+    money_cost: 700
+    build_cycles: 5
+    workers: 3
+    job_category: civic
+    priority: 30
+    power_use: 5
+    water_use: 10
+    upkeep: 8
+    recreation_coverage_add: 0.45
+
+  sports_green:
+    tech_tier: 2
+    phase: M3
+    money_cost: 480
+    build_cycles: 4
+    workers: 1
+    job_category: civic
+    priority: 28
+    power_use: 2
+    water_use: 4
+    upkeep: 4
+    recreation_coverage_add: 0.35
+
+  farm:
+    tech_tier: 0
+    phase: M1_OPTIONAL
+    money_cost: 300
+    build_cycles: 3
+    workers: 3
+    job_category: income
+    priority: 75
+    money_per_worker: 6
+    power_use: 1
+    water_use: 4
+    upkeep: 3
+    recreation_coverage_add: 0.05
+
+  orchard:
+    tech_tier: 1
+    phase: M2
+    money_cost: 360
+    build_cycles: 3
+    workers: 3
+    job_category: income
+    priority: 70
+    money_per_worker: 6
+    water_use: 4
+    upkeep: 3
+
+  windmill_farm:
+    tech_tier: 2
+    phase: M3
+    money_cost: 620
+    build_cycles: 5
+    workers: 3
+    job_category: income
+    priority: 68
+    money_per_worker: 7
+    power_production: 5
+    water_use: 4
+    upkeep: 5
+    recreation_coverage_add: 0.08
+
+  varum_mine:
+    tech_tier: 1
+    phase: M2
+    money_cost: 500
+    build_cycles: 5
+    workers: 2
+    job_category: varum
+    priority: 55
+    money_per_worker: 2
+    varum_production: 3
+    varum_cap_add: 30
+    power_use: 6
+    water_use: 2
+    upkeep: 5
+
+  varum_storage:
+    tech_tier: 2
+    phase: M2
+    money_cost: 460
+    varum_cost: 4
+    build_cycles: 4
+    workers: 1
+    job_category: advanced_industry
+    priority: 38
+    power_use: 2
+    upkeep: 4
+    varum_cap_add: 70
+
+  vehicle_factory:
+    tech_tier: 2
+    phase: M3
+    money_cost: 1200
+    build_cycles: 8
+    workers: 4
+    job_category: advanced_industry
+    priority: 40
+    staffing_mode: production_order
+    power_use: 10
+    water_use: 3
+    upkeep: 8
+
+  advanced_factory:
+    tech_tier: 4
+    phase: M3
+    money_cost: 2400
+    varum_cost: 35
+    build_cycles: 10
+    workers: 5
+    job_category: advanced_industry
+    priority: 38
+    staffing_mode: production_order
+    power_use: 18
+    water_use: 6
+    upkeep: 16
+
+  civic_shelter:
+    tech_tier: 1
+    phase: M2
+    money_cost: 350
+    build_cycles: 3
+    workers: 0
+    power_use: 1
+    upkeep: 2
+    shelter_capacity: 24
+
+  guard_post:
+    tech_tier: 0
+    phase: M1
+    money_cost: 250
+    build_cycles: 2
+    workers: 2
+    job_category: defense_ready
+    priority: 45
+    power_use: 2
+    water_use: 1
+    upkeep: 4
+    safety_add: 0.35
+    combat_spawn: { guard: 2 }
+
+  watchtower:
+    tech_tier: 1
+    phase: M2
+    money_cost: 400
+    build_cycles: 3
+    workers: 0
+    power_use: 2
+    upkeep: 4
+    safety_add: 0.20
+    combat_spawn: { watchtower: 1 }
+
+  fire_station:
+    tech_tier: 1
+    phase: M2
+    money_cost: 520
+    build_cycles: 4
+    workers: 2
+    job_category: service
+    priority: 48
+    power_use: 3
+    water_use: 3
+    upkeep: 5
+    fire_response_capacity: 1
+
+  clinic:
+    tech_tier: 2
+    phase: M2
+    money_cost: 650
+    build_cycles: 5
+    workers: 3
+    job_category: service
+    priority: 46
+    power_use: 4
+    water_use: 4
+    upkeep: 6
+    recovery_capacity: 6
+
+  service_yard:
+    tech_tier: 3
+    phase: M3
+    money_cost: 850
+    build_cycles: 5
+    workers: 3
+    job_category: service
+    priority: 44
+    power_use: 3
+    water_use: 2
+    upkeep: 7
+    repair_capacity_add: 2
+    incident_response_capacity: 2
+
+  radar:
+    tech_tier: 2
+    phase: M2
+    money_cost: 800
+    build_cycles: 6
+    workers: 1
+    job_category: defense_ready
+    priority: 50
+    power_use: 6
+    water_use: 1
+    upkeep: 6
+    safety_add: 0.15
+    warning_lead_bonus: 0.25
+
+  armored_depot:
+    tech_tier: 3
+    phase: M3
+    money_cost: 950
+    varum_cost: 8
+    build_cycles: 6
+    workers: 2
+    job_category: defense_ready
+    priority: 45
+    power_use: 5
+    water_use: 2
+    upkeep: 7
+    vehicle_repair_capacity: 2
+
+  airfield:
+    tech_tier: 4
+    phase: M3
+    money_cost: 2200
+    varum_cost: 20
+    build_cycles: 12
+    workers: 3
+    job_category: defense_ready
+    priority: 50
+    power_use: 12
+    water_use: 4
+    upkeep: 12
+    aircraft_slots: 4
+
+  heavy_turret:
+    tech_tier: 3
+    phase: M3
+    money_cost: 1100
+    varum_cost: 18
+    build_cycles: 5
+    workers: 0
+    power_use: 4
+    upkeep: 7
+    combat_spawn: { heavy_turret: 1 }
+
+  anti_air:
+    tech_tier: 4
+    phase: M3
+    money_cost: 900
+    varum_cost: 15
+    build_cycles: 5
+    workers: 0
+    power_use: 4
+    upkeep: 6
+    combat_spawn: { anti_air: 1 }
+
+  varum_shield:
+    tech_tier: 5
+    phase: M3
+    money_cost: 3000
+    varum_cost: 80
+    build_cycles: 15
+    workers: 0
+    power_use: 20
+    upkeep: 20
+    structure_damage_reduction: 0.40
+    varum_per_activation: 4
+
+  gate:
+    tech_tier: 2
+    phase: M3
+    money_cost: 450
+    build_cycles: 3
+    workers: 0
+    upkeep: 2
+    ground_delay_seconds: 8
+
+  wall:
+    tech_tier: 2
+    phase: M3
+    money_cost: 90
+    build_cycles: 1
+    workers: 0
+    upkeep: 0
+    ground_delay_seconds: 4
+
+  hill_lift:
+    tech_tier: 1
+    phase: M2
+    money_cost: 650
+    build_cycles: 5
+    workers: 0
+    power_use: 4
+    upkeep: 4
+    access_capacity_per_minute: 20
+
+  service_tunnel:
+    tech_tier: 3
+    phase: M3
+    money_cost: 1400
+    varum_cost: 10
+    build_cycles: 9
+    workers: 0
+    power_use: 3
+    upkeep: 6
+    access_capacity_per_minute: 40
