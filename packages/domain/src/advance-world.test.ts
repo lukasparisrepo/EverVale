@@ -26,6 +26,7 @@ const defs: SimulationDefinitions = {
   defenders: {},
   enemies: {},
   blockers: {},
+  props: {},
 };
 
 const building = (id: string, def: string): WorldState["buildings"][number] => ({
@@ -39,12 +40,14 @@ test("starter economy advances without negative resources", () => {
     worldId:"w", ownerId:"u", seed:1, revision:0, lifecycle:"ACTIVE", speed:1,
     simulationSeconds:0, lastSimulatedAt:new Date(0).toISOString(),
     resources:{money:1200,moneyCap:5000,power:60,powerCap:120,water:60,waterCap:120,varum:0,varumCap:0,techPoints:0,techTier:0},
-    society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5},
+    society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5,beauty:0},
     buildings:[
       building("tc","town_center"), building("h1","house_small"), building("h2","house_small"), building("h3","house_small"),
       building("p","power_plant"), building("w","water_plant"), building("shop","workshop"),
     ],
-    roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}], blockers:[], combat:null, events:[],
+    roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}], blockers:[],
+  props:[],
+  combat:null, events:[],
   };
 
   const next = advanceWorld(world, defs, 600);
