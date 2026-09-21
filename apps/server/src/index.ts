@@ -115,7 +115,7 @@ const server = createServer(async (req, res) => {
     const message = error instanceof Error ? error.message : "INTERNAL_ERROR";
     const status =
       message === "UNAUTHORIZED" ? 401 :
-      message === "REVISION_CONFLICT" ? 409 :
+      message === "REVISION_CONFLICT" || message === "COMMAND_ID_CONFLICT" ? 409 :
       message.startsWith("NOT_ENOUGH") || message.startsWith("NO_") || message.startsWith("REPAIR_") || message.startsWith("BLOCKER_") || message.startsWith("PROP_") || message === "UNKNOWN_PROP" || message.includes("LOCKED") || message.includes("COLLISION") ? 400 :
       500;
     console.error("[EverVale]", message);
