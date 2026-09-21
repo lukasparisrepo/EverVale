@@ -9,10 +9,13 @@ const zero = {
   waterProduction: 0, waterCapAdd: 0, waterUse: 0, varumProduction: 0,
   varumCapAdd: 0, techProduction: 0, upkeep: 0, housingAdd: 0,
   educationCoverageAdd: 0, recreationCoverageAdd: 0, safetyAdd: 0, combatSpawn: {}, constructionSlotsAdd: 0,
+  footprintCellsX: 3,
+  footprintCellsZ: 2,
 };
 
 const defs: SimulationDefinitions = {
   referenceCycleSeconds: 600,
+  gridCellMeters: 2,
   buildings: {
     town_center: { id: "town_center", techTier: 0, ...zero },
     house_small: { id: "house_small", techTier: 0, ...zero, housingAdd: 4, upkeep: 1 },
