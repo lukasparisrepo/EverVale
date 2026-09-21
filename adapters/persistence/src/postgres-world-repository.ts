@@ -95,6 +95,13 @@ export class PostgresWorldRepository implements WorldRepository {
       await client.query("COMMIT");
     } catch (error) {
       await client.query("ROLLBACK");
+      const pgError = error as { code?: string; constraint?: string };
+      if (
+        pgError.code === "23505" &&
+        pgError.constraint === "world_owner_user_unique_idx"
+      ) {
+        throw new Error("WORLD_OWNER_EXISTS");
+      }
       throw error;
     } finally {
       client.release();
