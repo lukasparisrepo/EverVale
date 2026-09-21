@@ -6,6 +6,8 @@ import type {
 } from "@evervale/application/ports";
 import type { WorldState } from "@evervale/domain/world.types";
 
+const SNAPSHOT_RETENTION = 50;
+
 export class PostgresWorldRepository implements WorldRepository {
   private readonly pool: Pool;
 
