@@ -64,6 +64,16 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
   expect(citizens).toBeLessThanOrEqual(30);
   console.log("M1_RENDER_METRICS", { drawCalls, triangles, citizens });
 
+  // Build ghost must immediately show invalid placement over the occupied civic core.
+  await page.getByRole("button", { name: /Hearth Cottage/i }).click();
+  const canvasBox = await page.locator("canvas").boundingBox();
+  expect(canvasBox).not.toBeNull();
+  if (canvasBox) {
+    await page.mouse.move(canvasBox.x + canvasBox.width / 2, canvasBox.y + canvasBox.height / 2);
+    await expect(page.locator(".world-view")).toHaveAttribute("data-placement-valid", "false");
+  }
+  await page.getByRole("button", { name: "Select" }).click();
+
   const ownerId = await page.evaluate(() => localStorage.getItem("evervale.owner"));
   expect(ownerId).toBe("dev:e2e-builder");
 
