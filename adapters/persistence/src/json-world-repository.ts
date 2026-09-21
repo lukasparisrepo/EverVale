@@ -69,6 +69,7 @@ export class JsonWorldRepository implements WorldRepository {
   async create(world: WorldState): Promise<void> {
     await this.ensure();
     if (await this.findById(world.worldId)) throw new Error("WORLD_ALREADY_EXISTS");
+    if (await this.findByOwner(world.ownerId)) throw new Error("WORLD_OWNER_EXISTS");
     await this.atomicWrite(this.file(world.worldId), JSON.stringify(world, null, 2));
   }
 
