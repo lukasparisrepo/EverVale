@@ -9,6 +9,8 @@ Detailed values:
 - `data/balance/v0.1/threats.yaml`
 - `docs/34_THREAT_CADENCE.md`
 - `docs/49_ENEMY_UFO_WAVE_PROGRESSION.md`
+- `docs/53_COMBAT_COMMAND_DEPLOYMENT_WIN_LOSS.md`
+- `data/combat/v0.2/control.yaml`
 
 ## Threat philosophy
 
