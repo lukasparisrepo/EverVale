@@ -1,7 +1,9 @@
 import { advanceWorld } from "@evervale/domain/advance-world";
-import { placeBuilding } from "@evervale/domain/construction";
-import { drawRoad } from "@evervale/domain/roads";
+import { applyCombatAftermath } from "@evervale/domain/combat-aftermath";
 import { triggerM1Wave } from "@evervale/domain/combat";
+import { placeBuilding } from "@evervale/domain/construction";
+import { queueRepair } from "@evervale/domain/repair";
+import { drawRoad } from "@evervale/domain/roads";
 import type { SimulationDefinitions, WorldState } from "@evervale/domain/world.types";
 import type { WorldCommand } from "@evervale/protocol/world";
 import { createStarterWorld } from "./create-starter-world.js";
@@ -32,13 +34,20 @@ export class WorldService {
       await this.options.repository.create(created);
       return created;
     }
-    return this.catchUp(existing);
+    return this.catchUpAndSave(existing);
   }
 
   async command(ownerId: string, command: WorldCommand): Promise<WorldState> {
-    let world = await this.getOrCreate(ownerId);
-    if (command.expectedRevision !== world.revision) throw new Error("REVISION_CONFLICT");
-    const previousRevision = world.revision;
+    let stored = await this.options.repository.findByOwner(ownerId);
+    if (!stored) {
+      stored = await this.getOrCreate(ownerId);
+    }
+
+    if (command.expectedRevision !== stored.revision) throw new Error("REVISION_CONFLICT");
+
+    const previousRevision = stored.revision;
+    const now = this.options.clock.now();
+    let world = this.advanceState(stored, now);
 
     switch (command.type) {
       case "PLACE_BUILDING":
@@ -59,6 +68,9 @@ export class WorldService {
       case "SET_SPEED":
         world = { ...world, revision: world.revision + 1, speed: command.payload.speed };
         break;
+      case "REPAIR_BUILDING":
+        world = queueRepair(world, command.payload.buildingId);
+        break;
       case "TRIGGER_TEST_WAVE":
         world = triggerM1Wave(
           world,
@@ -70,25 +82,67 @@ export class WorldService {
 
     world = {
       ...world,
-      lastSimulatedAt: this.options.clock.now().toISOString(),
+      lastSimulatedAt: now.toISOString(),
     };
+
     await this.options.repository.save(world, previousRevision);
     return world;
   }
 
-  private async catchUp(world: WorldState): Promise<WorldState> {
+  private advanceState(world: WorldState, now: Date): WorldState {
+    const then = new Date(world.lastSimulatedAt);
+    const elapsed = Math.max(0, (now.getTime() - then.getTime()) / 1000);
+    if (elapsed < 0.25) return world;
+
+    const capped = Math.min(elapsed, 7 * 24 * 60 * 60);
+    const previousCombatStatus = world.combat?.status;
+    let advanced = advanceWorld(world, this.options.definitions, capped);
+
+    const newlyResolved =
+      previousCombatStatus !== "RESOLVED" &&
+      advanced.combat?.status === "RESOLVED" &&
+      advanced.combat.outcome;
+
+    if (newlyResolved && advanced.combat?.outcome) {
+      const outcome = advanced.combat.outcome;
+      advanced = applyCombatAftermath(advanced, outcome);
+      advanced = {
+        ...advanced,
+        events: [
+          ...advanced.events.slice(-49),
+          {
+            id: this.options.ids.next("event"),
+            type: "COMBAT_RESOLVED",
+            happenedAt: now.toISOString(),
+            severity: outcome === "BREACH" ? 2 : outcome === "COSTLY" ? 1 : 0,
+            summary:
+              outcome === "CLEAN"
+                ? "Threat repelled cleanly."
+                : outcome === "COSTLY"
+                  ? "Threat repelled, but the town suffered damage."
+                  : "The defense line was breached; repairs are required.",
+          },
+        ],
+      };
+    }
+
+    return {
+      ...advanced,
+      lastSimulatedAt: now.toISOString(),
+    };
+  }
+
+  private async catchUpAndSave(world: WorldState): Promise<WorldState> {
     const now = this.options.clock.now();
     const then = new Date(world.lastSimulatedAt);
     const elapsed = Math.max(0, (now.getTime() - then.getTime()) / 1000);
     if (elapsed < 0.25) return world;
 
     const previousRevision = world.revision;
-    const capped = Math.min(elapsed, 7 * 24 * 60 * 60);
-    const advanced = advanceWorld(world, this.options.definitions, capped);
+    const advanced = this.advanceState(world, now);
     const next = {
       ...advanced,
       revision: previousRevision + 1,
-      lastSimulatedAt: now.toISOString(),
     };
     await this.options.repository.save(next, previousRevision);
     return next;
