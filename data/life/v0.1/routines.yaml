@@ -1,0 +1,59 @@
+version: "0.1"
+
+time_windows:
+  early_morning: { start: "05:30", end: "07:00" }
+  morning_commute: { start: "07:00", end: "09:00" }
+  morning_core: { start: "09:00", end: "12:00" }
+  midday: { start: "12:00", end: "14:00" }
+  afternoon_core: { start: "14:00", end: "16:30" }
+  school_exit: { start: "16:30", end: "18:00" }
+  evening_commute: { start: "17:00", end: "19:30" }
+  evening_leisure: { start: "18:30", end: "22:30" }
+  night: { start: "22:30", end: "05:30" }
+
+age_bands:
+  child:
+    routine_weights:
+      weekday:
+        school: 0.75
+        home: 0.10
+        leisure: 0.15
+      no_school:
+        home: 0.45
+        leisure: 0.55
+
+  adult:
+    routine_weights:
+      employed:
+        work: 0.70
+        home: 0.15
+        leisure_errand: 0.15
+      unemployed:
+        home: 0.45
+        leisure_errand: 0.55
+
+  senior:
+    routine_weights:
+      default:
+        home: 0.45
+        park_civic: 0.45
+        errand: 0.10
+
+overrides:
+  active_attack:
+    civilian_state: SHELTERING
+    optional_activity_multiplier: 0.0
+    civilian_traffic_multiplier: 0.05
+
+  threat_warning:
+    optional_activity_multiplier: 0.45
+    civilian_traffic_multiplier: 0.60
+
+  rain:
+    outdoor_leisure_multiplier: 0.35
+    bicycle_multiplier: 0.25
+    indoor_activity_multiplier: 1.25
+
+  night:
+    outdoor_leisure_multiplier: 0.15
+    civilian_traffic_multiplier: 0.20
