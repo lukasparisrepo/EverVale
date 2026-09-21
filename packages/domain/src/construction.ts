@@ -43,6 +43,12 @@ export function placeBuilding(
   if (world.resources.money < definition.moneyCost) throw new Error("NOT_ENOUGH_MONEY");
   if (world.resources.varum < definition.varumCost) throw new Error("NOT_ENOUGH_VARUM");
   if (collides(world.buildings, input.x, input.z)) throw new Error("PLACEMENT_COLLISION");
+  const blocked = world.blockers.some((blocker) => {
+    const blockerDef = definitions.blockers[blocker.definitionId];
+    const radius = blockerDef?.radius ?? 3;
+    return Math.hypot(blocker.position.x - input.x, blocker.position.z - input.z) < radius + 3;
+  });
+  if (blocked) throw new Error("PLACEMENT_BLOCKED");
   if (!hasRoadAccess(world, input.x, input.z)) throw new Error("NO_ROAD_ACCESS");
 
   const constructionSlots = world.buildings.reduce((sum, b) => {
