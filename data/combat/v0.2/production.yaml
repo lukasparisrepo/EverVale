@@ -1,0 +1,138 @@
+version: "0.2"
+
+production:
+  town_warden:
+    source: town_center
+    mode: supported_unit
+    tech_tier: 0
+    slots_per_source: 2
+    money_cost: 0
+    varum_cost: 0
+
+  guard:
+    source: guard_post
+    mode: supported_unit
+    tech_tier: 0
+    slots_per_source: 2
+    requires_staffed_source: true
+
+  ranger:
+    source: guard_post
+    source_upgrade: ranger_training
+    mode: supported_unit
+    tech_tier: 1
+    replaces_or_upgrades: guard
+
+  heavy_guard:
+    source: guard_post
+    source_upgrade: heavy_guard_training
+    mode: supported_unit
+    tech_tier: 2
+    replaces_or_upgrades: guard
+
+  watchtower:
+    source: watchtower
+    mode: building_attached
+    tech_tier: 1
+
+  patrol_buggy:
+    source: guard_post
+    source_upgrade: motor_pool
+    mode: queued_vehicle
+    tech_tier: 1
+    build_cycles: 3
+    money_cost: 350
+    varum_cost: 4
+
+  armored_car:
+    source: vehicle_factory
+    mode: queued_vehicle
+    tech_tier: 2
+    build_cycles: 4
+    money_cost: 600
+    varum_cost: 10
+
+  tank:
+    source: vehicle_factory
+    mode: queued_vehicle
+    tech_tier: 3
+    build_cycles: 6
+    money_cost: 1600
+    varum_cost: 30
+
+  rocket_rover:
+    source: vehicle_factory
+    mode: queued_vehicle
+    tech_tier: 3
+    build_cycles: 5
+    money_cost: 1450
+    varum_cost: 26
+
+  heavy_turret:
+    source: heavy_turret
+    mode: building_attached
+    tech_tier: 3
+
+  anti_air:
+    source: anti_air
+    mode: building_attached
+    tech_tier: 4
+
+  missile_wagon:
+    source: vehicle_factory
+    mode: queued_vehicle
+    tech_tier: 4
+    build_cycles: 7
+    money_cost: 1900
+    varum_cost: 38
+
+  scout_plane:
+    source: airfield
+    mode: queued_aircraft
+    tech_tier: 2
+    build_cycles: 5
+    money_cost: 900
+    varum_cost: 15
+
+  fighter:
+    source: airfield
+    mode: queued_aircraft
+    tech_tier: 4
+    build_cycles: 8
+    money_cost: 1800
+    varum_cost: 40
+
+  interceptor:
+    source: airfield
+    mode: queued_aircraft
+    tech_tier: 4
+    build_cycles: 7
+    money_cost: 1800
+    varum_cost: 40
+
+  beam_tank:
+    source: advanced_factory
+    mode: queued_vehicle
+    tech_tier: 5
+    build_cycles: 10
+    money_cost: 2800
+    varum_cost: 70
+
+  heavy_defender:
+    source: airfield
+    source_upgrade: heavy_hangar
+    mode: queued_aircraft
+    tech_tier: 5
+    build_cycles: 11
+    money_cost: 3200
+    varum_cost: 75
+
+repair:
+  readiness_recovery_per_cycle:
+    infantry: 20
+    light_vehicle: 14
+    vehicle: 12
+    heavy_vehicle: 8
+    aircraft: 10
+  disabled_requires_repair_queue: true
+  full_replacement_on_zero_hp: false
