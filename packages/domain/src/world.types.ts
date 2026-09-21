@@ -60,6 +60,7 @@ export interface BuildingDefinition {
   recreationCoverageAdd: number;
   safetyAdd: number;
   combatSpawn: Record<string, number>;
+  constructionSlotsAdd: number;
 }
 
 export interface CombatActorDefinition {
@@ -90,6 +91,13 @@ export interface BuildingInstance {
   priority: number;
   condition: number;
   damageState: DamageState;
+}
+
+export interface RoadSegment {
+  id: string;
+  type: "DIRT";
+  from: Vec3;
+  to: Vec3;
 }
 
 export interface CombatActor {
@@ -131,6 +139,7 @@ export interface WorldState {
   resources: ResourceState;
   society: SocietyState;
   buildings: BuildingInstance[];
+  roads: RoadSegment[];
   combat: CombatState | null;
   events: WorldEvent[];
 }
