@@ -53,6 +53,7 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
   expect(citizens).toBeGreaterThan(0);
   expect(citizens).toBeLessThanOrEqual(30);
   expect(p95).toBeGreaterThan(0);
+  console.log("M1_RENDER_METRICS", { drawCalls, triangles, citizens, p95 });
 
   const ownerId = await page.evaluate(() => localStorage.getItem("evervale.owner"));
   expect(ownerId).toBe("dev:e2e-builder");
