@@ -5,6 +5,8 @@ import { routeAlongRoads, samplePolyline } from "@evervale/domain/road-routing";
 import type { WorldState } from "@evervale/domain/world.types";
 import type { BuildCatalogEntryDto, PropCatalogEntryDto } from "@evervale/protocol/world";
 import { createPropObject, makeSelectionRing } from "./prop-factory";
+import { createBuildingVisual } from "./building-visual";
+import { createEnvironmentVisuals, updateEnvironmentLighting } from "./environment-visual";
 import {
   constructionVisualState,
   createBuilderObject,
@@ -37,83 +39,6 @@ interface Props {
   onPropSelect(propId: string | null): void;
   onRouting?(routedCitizens: number, disconnectedRoutes: number): void;
   onMetrics: ((metrics: RuntimeMetrics) => void) | undefined;
-}
-
-const buildingColor: Record<string, number> = {
-  town_center: 0xd4a55f,
-  house_small: 0xe7d8b5,
-  workshop: 0x9a6e4f,
-  power_plant: 0xc47f4a,
-  water_plant: 0x73a8b8,
-  school: 0xc9b477,
-  park: 0x73a36a,
-  guard_post: 0x817d67,
-  farm: 0xa3a160,
-  restaurant: 0xc98668,
-  builders_yard: 0x8b735b,
-};
-
-function makeBuilding(
-  definitionId: string,
-  building: WorldState["buildings"][number],
-  meta?: BuildCatalogEntryDto,
-): THREE.Object3D {
-  const group = new THREE.Group();
-  const height = definitionId === "town_center" ? 5 : definitionId.includes("plant") ? 4 : 3;
-  const width = meta
-    ? meta.footprintCellsX * meta.gridCellMeters
-    : definitionId === "town_center" ? 8 : 5;
-  const depth = meta
-    ? meta.footprintCellsZ * meta.gridCellMeters
-    : definitionId === "town_center" ? 8 : 4;
-
-  const body = new THREE.Mesh(
-    new THREE.BoxGeometry(width, Math.max(0.4, height), depth),
-    new THREE.MeshStandardMaterial({
-      color: buildingColor[definitionId] ?? 0xb3aa95,
-      roughness: 0.88,
-      transparent: building.constructionState === "BUILDING",
-      opacity: building.constructionState === "BUILDING" ? 0.45 : 1,
-    }),
-  );
-  body.position.y = height / 2;
-  body.castShadow = true;
-  body.receiveShadow = true;
-  group.add(body);
-
-  if (definitionId === "park") {
-    body.scale.y = 0.08;
-    body.position.y = 0.12;
-    for (let i = 0; i < 4; i += 1) {
-      const tree = new THREE.Mesh(
-        new THREE.ConeGeometry(0.8, 2.5, 7),
-        new THREE.MeshStandardMaterial({ color: 0x66865a, roughness: 1 }),
-      );
-      tree.position.set(
-        -width * 0.25 + (i % 2) * width * 0.5,
-        1.25,
-        -depth * 0.2 + Math.floor(i / 2) * depth * 0.4,
-      );
-      tree.castShadow = true;
-      group.add(tree);
-    }
-  }
-
-  if (building.damageState === "DISABLED" || building.damageState === "DAMAGED") {
-    const marker = new THREE.Mesh(
-      new THREE.SphereGeometry(0.35),
-      new THREE.MeshStandardMaterial({
-        color: building.damageState === "DISABLED" ? 0xe05b48 : 0xe5a14d,
-        emissive: building.damageState === "DISABLED" ? 0x551000 : 0x332000,
-      }),
-    );
-    marker.position.set(0, height + 0.7, 0);
-    group.add(marker);
-  }
-
-  group.position.set(building.position.x, 0, building.position.z);
-  group.rotation.y = building.rotationY;
-  return group;
 }
 
 function makeBlocker(blocker: WorldState["blockers"][number]): THREE.Object3D {
@@ -360,6 +285,7 @@ export function WorldView({
   const animalsRef = useRef<THREE.Group[]>([]);
   const propWaterRef = useRef<THREE.Mesh[]>([]);
   const propGlowRef = useRef<THREE.Mesh[]>([]);
+  const buildingGlowRef = useRef<THREE.Mesh[]>([]);
   const buildersRef = useRef<Array<{
     object: THREE.Group;
     route: { connected: boolean; points: Array<{x:number;z:number}> };
@@ -388,16 +314,12 @@ export function WorldView({
     if (!host) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xbfd1c1);
-    scene.fog = new THREE.Fog(0xbfd1c1, 90, 190);
 
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 400);
     camera.position.set(48, 55, 58);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     host.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -407,50 +329,20 @@ export function WorldView({
     controls.minDistance = 22;
     controls.maxDistance = 130;
 
-    scene.add(new THREE.HemisphereLight(0xf5ecd7, 0x687267, 2.2));
-    const sun = new THREE.DirectionalLight(0xfff0ce, 2.7);
-    sun.position.set(35, 60, 25);
-    sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.left = -55;
-    sun.shadow.camera.right = 55;
-    sun.shadow.camera.top = 55;
-    sun.shadow.camera.bottom = -55;
-    scene.add(sun);
+    const environment = createEnvironmentVisuals(scene, renderer);
+    const ground = environment.ground;
 
-    const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(110, 110, 8, 8),
-      new THREE.MeshStandardMaterial({ color: 0x88a875, roughness: 1 }),
-    );
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
-    ground.name = "ground";
-    scene.add(ground);
-
-    const buildGrid = new THREE.GridHelper(110, 55, 0x6f8068, 0x78906f);
+    const buildGrid = new THREE.GridHelper(110, 55, 0x687c62, 0x748b6c);
     buildGrid.position.y = 0.035;
     buildGrid.material.transparent = true;
-    buildGrid.material.opacity = 0.38;
+    buildGrid.material.opacity = 0.32;
     scene.add(buildGrid);
 
-    const decorGrid = new THREE.GridHelper(110, 110, 0x77896f, 0x81967a);
+    const decorGrid = new THREE.GridHelper(110, 110, 0x718369, 0x7c9273);
     decorGrid.position.y = 0.04;
     decorGrid.material.transparent = true;
-    decorGrid.material.opacity = 0.22;
+    decorGrid.material.opacity = 0.18;
     scene.add(decorGrid);
-
-    const ridgeMaterial = new THREE.MeshStandardMaterial({ color: 0x71856a, roughness: 1 });
-    for (const [x, z, sx, sz, height] of [
-      [-48, 0, 12, 100, 7],
-      [48, 0, 12, 100, 9],
-      [0, 49, 84, 12, 6],
-    ] as const) {
-      const ridge = new THREE.Mesh(new THREE.BoxGeometry(sx, height, sz), ridgeMaterial);
-      ridge.position.set(x, height / 2 - 0.2, z);
-      ridge.receiveShadow = true;
-      ridge.castShadow = true;
-      scene.add(ridge);
-    }
 
     const dynamic = new THREE.Group();
     scene.add(dynamic);
@@ -662,6 +554,7 @@ export function WorldView({
       animalsRef.current = [];
       propWaterRef.current = [];
       propGlowRef.current = [];
+      buildingGlowRef.current = [];
       buildersRef.current = [];
       const current = worldRef.current;
 
@@ -687,11 +580,16 @@ export function WorldView({
 
       current.buildings.forEach((building) => {
         const meta = buildCatalogRef.current.find((item) => item.id === building.definitionId);
-        dynamic.add(
+        const visual =
           building.constructionState === "BUILDING"
             ? createConstructionObject(building, meta)
-            : makeBuilding(building.definitionId, building, meta),
-        );
+            : createBuildingVisual(building, meta);
+        visual.traverse((child) => {
+          const mesh = child as THREE.Mesh;
+          if (mesh.userData.buildingGlow) buildingGlowRef.current.push(mesh);
+          if (mesh.userData.propWater) propWaterRef.current.push(mesh);
+        });
+        dynamic.add(visual);
       });
 
       host.dataset.activeConstruction = String(activeConstruction.length);
@@ -966,11 +864,14 @@ export function WorldView({
       });
 
       const day = (current.simulationSeconds % (24 * 60)) / (24 * 60);
-      sun.intensity = 0.7 + Math.max(0, Math.sin(day * Math.PI)) * 2.1;
-      const nightFactor = 1 - Math.max(0, Math.sin(day * Math.PI));
+      const nightFactor = updateEnvironmentLighting(environment, day);
       propGlowRef.current.forEach((glow) => {
         const material = glow.material as THREE.MeshStandardMaterial;
-        material.emissiveIntensity = 0.6 + nightFactor * 1.8;
+        material.emissiveIntensity = 0.55 + nightFactor * 2.05;
+      });
+      buildingGlowRef.current.forEach((glow) => {
+        const material = glow.material as THREE.MeshStandardMaterial;
+        material.emissiveIntensity = 0.18 + nightFactor * 1.45;
       });
 
       controls.update();
