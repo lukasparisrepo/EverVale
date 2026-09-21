@@ -31,7 +31,7 @@ const defs: SimulationDefinitions = {
 
 const building = (id: string, def: string): WorldState["buildings"][number] => ({
   id, definitionId: def, position: {x:0,y:0,z:0}, rotationY:0,
-  constructionState:"COMPLETE", constructionRemainingSeconds:0, workersAssigned:0,
+  constructionState:"COMPLETE", constructionRemainingSeconds:0,constructionTotalSeconds:0, workersAssigned:0,
   priority: defs.buildings[def]?.priority ?? 0, condition:100, damageState:"HEALTHY", repairRemainingSeconds:0,
 });
 
