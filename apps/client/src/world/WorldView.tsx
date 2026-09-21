@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { routeAlongRoads, samplePolyline } from "@evervale/domain/road-routing";
 import type { WorldState } from "@evervale/domain/world.types";
 import type { BuildCatalogEntryDto, PropCatalogEntryDto } from "@evervale/protocol/world";
 import { createPropObject, makeSelectionRing } from "./prop-factory";
@@ -241,41 +242,18 @@ function approximatePropPlacementValid(
   });
 }
 
-function nearestRoadPoint(
-  world: WorldState,
-  point: { x: number; z: number },
-): { x: number; z: number } {
-  let best = { x: point.x, z: point.z };
-  let bestDistance = Number.POSITIVE_INFINITY;
-  for (const road of world.roads) {
-    for (const endpoint of [road.from, road.to]) {
-      const distance = Math.hypot(endpoint.x - point.x, endpoint.z - point.z);
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        best = { x: endpoint.x, z: endpoint.z };
-      }
-    }
-  }
-  return best;
+interface VisualRoute {
+  connected: boolean;
+  points: Array<{x:number;z:number}>;
 }
 
-function lerpPoint(
-  a: {x:number;z:number},
-  b: {x:number;z:number},
+function routePoint(
+  route: VisualRoute | undefined,
   t: number,
+  fallback: {x:number;z:number},
 ): {x:number;z:number} {
-  return { x: a.x + (b.x - a.x) * t, z: a.z + (b.z - a.z) * t };
-}
-
-function moveAlongRoute(
-  home: {x:number;z:number},
-  target: {x:number;z:number},
-  roadPoint: {x:number;z:number},
-  t: number,
-): {x:number;z:number} {
-  if (t <= 0.35) return lerpPoint(home, roadPoint, t / 0.35);
-  if (t <= 0.7) return lerpPoint(roadPoint, { x: 0, z: 2 }, (t - 0.35) / 0.35);
-  return lerpPoint({ x: 0, z: 2 }, target, (t - 0.7) / 0.3);
+  if (!route?.connected || route.points.length === 0) return fallback;
+  return samplePolyline(route.points, t);
 }
 
 function schedulePosition(
@@ -285,44 +263,54 @@ function schedulePosition(
   const home = mesh.userData.home as {x:number;z:number};
   const work = mesh.userData.work as {x:number;z:number};
   const leisure = mesh.userData.leisure as {x:number;z:number};
-  const roadPoint = mesh.userData.roadPoint as {x:number;z:number};
+  const homeToWork = mesh.userData.homeToWork as VisualRoute | undefined;
+  const workToLeisure = mesh.userData.workToLeisure as VisualRoute | undefined;
+  const leisureToHome = mesh.userData.leisureToHome as VisualRoute | undefined;
+  const homeToShelter = mesh.userData.homeToShelter as VisualRoute | undefined;
   const child = Boolean(mesh.userData.child);
   const hour = ((current.simulationSeconds % 1440) / 1440) * 24;
 
   if (current.combat && current.combat.status !== "RESOLVED") {
     return {
-      ...moveAlongRoute(home, {x:0,z:0}, roadPoint, Math.min(1, current.combat.elapsedSeconds / 5)),
-      activity: "SHELTER",
+      ...routePoint(
+        homeToShelter,
+        Math.min(1, current.combat.elapsedSeconds / 5),
+        home,
+      ),
+      activity: homeToShelter?.connected ? "SHELTER" : "SHELTER_BLOCKED",
     };
   }
 
   const commute = (
-    start: number,
-    end: number,
-    from: {x:number;z:number},
-    to: {x:number;z:number},
+    startHour: number,
+    endHour: number,
+    route: VisualRoute | undefined,
+    fallback: {x:number;z:number},
     activity: string,
   ) => {
-    const t = Math.max(0, Math.min(1, (hour - start) / Math.max(0.01, end - start)));
-    return { ...moveAlongRoute(from, to, roadPoint, t), activity };
+    const t = Math.max(0, Math.min(1, (hour - startHour) / Math.max(0.01, endHour - startHour)));
+    return {
+      ...routePoint(route, t, fallback),
+      activity: route?.connected ? activity : `${activity}_BLOCKED`,
+    };
   };
 
   if (child) {
     if (hour < 7.5) return { ...home, activity: "HOME" };
-    if (hour < 8.5) return commute(7.5, 8.5, home, work, "TO_SCHOOL");
+    if (hour < 8.5) return commute(7.5, 8.5, homeToWork, home, "TO_SCHOOL");
     if (hour < 15) return { ...work, activity: "SCHOOL" };
-    if (hour < 16) return commute(15, 16, work, leisure, "TO_PLAY");
+    if (hour < 16) return commute(15, 16, workToLeisure, work, "TO_PLAY");
     if (hour < 18.5) return { ...leisure, activity: "PLAY" };
-    if (hour < 19.5) return commute(18.5, 19.5, leisure, home, "HOMEWARD");
+    if (hour < 19.5) return commute(18.5, 19.5, leisureToHome, leisure, "HOMEWARD");
     return { ...home, activity: "HOME" };
   }
 
   if (hour < 6.5) return { ...home, activity: "HOME" };
-  if (hour < 8) return commute(6.5, 8, home, work, "TO_WORK");
+  if (hour < 8) return commute(6.5, 8, homeToWork, home, "TO_WORK");
   if (hour < 17) return { ...work, activity: "WORK" };
-  if (hour < 18) return commute(17, 18, work, leisure, "TO_LEISURE");
+  if (hour < 18) return commute(17, 18, workToLeisure, work, "TO_LEISURE");
   if (hour < 20.5) return { ...leisure, activity: "LEISURE" };
-  if (hour < 21.5) return commute(20.5, 21.5, leisure, home, "HOMEWARD");
+  if (hour < 21.5) return commute(20.5, 21.5, leisureToHome, leisure, "HOMEWARD");
   return { ...home, activity: "HOME" };
 }
 
@@ -737,10 +725,27 @@ export function WorldView({
           ? (childAnchor?.position ?? fallbackLeisure)
           : (adultAnchor?.position ?? fallbackLeisure);
 
-        citizen.userData.home = { x: home.x, z: home.z };
-        citizen.userData.work = { x: work.x, z: work.z };
-        citizen.userData.leisure = { x: leisure.x, z: leisure.z };
-        citizen.userData.roadPoint = nearestRoadPoint(current, { x: home.x, z: home.z });
+        const homePoint = { x: home.x, z: home.z };
+        const workPoint = { x: work.x, z: work.z };
+        const leisurePoint = { x: leisure.x, z: leisure.z };
+        const shelterPoint = { x: 0, z: 0 };
+        const homeToWork = routeAlongRoads(current.roads, homePoint, workPoint);
+        const workToLeisure = routeAlongRoads(current.roads, workPoint, leisurePoint);
+        const leisureToHome = routeAlongRoads(current.roads, leisurePoint, homePoint);
+        const homeToShelter = routeAlongRoads(current.roads, homePoint, shelterPoint);
+
+        citizen.userData.home = homePoint;
+        citizen.userData.work = workPoint;
+        citizen.userData.leisure = leisurePoint;
+        citizen.userData.homeToWork = homeToWork;
+        citizen.userData.workToLeisure = workToLeisure;
+        citizen.userData.leisureToHome = leisureToHome;
+        citizen.userData.homeToShelter = homeToShelter;
+        citizen.userData.routingConnected =
+          homeToWork.connected &&
+          workToLeisure.connected &&
+          leisureToHome.connected &&
+          homeToShelter.connected;
 
         const angle = (i * 2.399963229728653) % (Math.PI * 2);
         const radius = 0.35 + (i % 4) * 0.12;
@@ -750,6 +755,12 @@ export function WorldView({
         dynamic.add(citizen);
         citizensRef.current.push(citizen);
       }
+
+      const disconnectedRoutes = citizensRef.current.filter(
+        (citizen) => citizen.userData.routingConnected === false,
+      ).length;
+      host.dataset.disconnectedRoutes = String(disconnectedRoutes);
+      host.dataset.routedCitizens = String(citizensRef.current.length);
 
       if (homes.length > 0) {
         const dog = new THREE.Group();
@@ -816,8 +827,15 @@ export function WorldView({
         const i = Number(mesh.userData.index);
         const offsetX = Number(mesh.userData.offsetX ?? 0);
         const offsetZ = Number(mesh.userData.offsetZ ?? 0);
-        mesh.position.x += (scheduled.x + offsetX - mesh.position.x) * 0.12;
-        mesh.position.z += (scheduled.z + offsetZ - mesh.position.z) * 0.12;
+        const targetX = scheduled.x + offsetX;
+        const targetZ = scheduled.z + offsetZ;
+        const dx = targetX - mesh.position.x;
+        const dz = targetZ - mesh.position.z;
+        mesh.position.x += dx * 0.12;
+        mesh.position.z += dz * 0.12;
+        if (Math.hypot(dx, dz) > 0.02) {
+          mesh.rotation.y = Math.atan2(dx, dz);
+        }
         mesh.position.y = 0.65 + Math.sin(time / 220 + i) * 0.035;
         mesh.userData.activity = scheduled.activity;
       });
