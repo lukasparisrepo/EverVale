@@ -8,7 +8,7 @@ const zero = {
   moneyPerWorker: 0, powerProduction: 0, powerCapAdd: 0, powerUse: 0,
   waterProduction: 0, waterCapAdd: 0, waterUse: 0, varumProduction: 0,
   varumCapAdd: 0, techProduction: 0, upkeep: 0, housingAdd: 0,
-  educationCoverageAdd: 0, recreationCoverageAdd: 0, safetyAdd: 0, combatSpawn: {},
+  educationCoverageAdd: 0, recreationCoverageAdd: 0, safetyAdd: 0, combatSpawn: {}, constructionSlotsAdd: 0,
 };
 
 const defs: SimulationDefinitions = {
@@ -40,7 +40,7 @@ test("starter economy advances without negative resources", () => {
       building("tc","town_center"), building("h1","house_small"), building("h2","house_small"), building("h3","house_small"),
       building("p","power_plant"), building("w","water_plant"), building("shop","workshop"),
     ],
-    combat:null, events:[],
+    roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}], combat:null, events:[],
   };
 
   const next = advanceWorld(world, defs, 600);
