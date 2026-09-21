@@ -134,3 +134,19 @@ Current M1 runtime-quality baseline includes:
 - Playwright page-error detection
 
 Latest Engineering and Preflight workflows are PASS.
+
+
+## M1.4 stress / memory baseline
+
+See:
+`docs/75_M1_4_STRESS_MEMORY_AUDIT.md`
+
+CI now verifies:
+- 40 presented citizens
+- 40/40 road routing
+- draw-call / triangle budgets
+- renderer geometry/texture stability
+- bounded post-GC heap growth
+- no browser page errors
+
+Target-hardware FPS and a long physical-browser soak remain separate validation gates.
