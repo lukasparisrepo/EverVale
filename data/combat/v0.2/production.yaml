@@ -89,7 +89,7 @@ production:
   scout_plane:
     source: airfield
     mode: queued_aircraft
-    tech_tier: 2
+    tech_tier: 4
     build_cycles: 5
     money_cost: 900
     varum_cost: 15
