@@ -40,6 +40,8 @@ When documents overlap, use the authority below.
 | Early combat levels 1–10 | `docs/55_EARLY_COMBAT_SIMULATION_01_10.md` |
 | 24h online wave cadence | `docs/56_ONLINE_24H_WAVE_SIMULATION.md` |
 | Ambient threat activity | `docs/57_AMBIENT_THREAT_ACTIVITY.md` |
+| Studio readiness audit | `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md` |
+| Implementation start gate | `docs/59_IMPLEMENTATION_START_GATE.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
 | Military roster/art | `docs/47_MILITARY_ROSTER_AND_ART.md` |
 | Enemy/UFO roster & wave ladder | `docs/48_ENEMY_UFO_WAVE_LADDER.md` |
