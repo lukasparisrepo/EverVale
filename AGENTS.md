@@ -220,3 +220,14 @@ Before implementing gameplay/content, read `docs/44_CONTENT_AUTHORITY_INDEX.md`.
 If an older document conflicts with the authority index, the indexed canonical file wins.
 
 Do not merge superseded rules back into code.
+
+
+## Implementation start gate
+
+Before substantial runtime implementation, read:
+- `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md`
+- `docs/59_IMPLEMENTATION_START_GATE.md`
+
+M0/M1 vertical-slice scope takes priority over broad content ambitions.
+
+Do not implement the full 78-building catalogue before M1 exits successfully.
