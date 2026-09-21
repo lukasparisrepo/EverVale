@@ -47,6 +47,7 @@ When documents overlap, use the authority below.
 | Persistence DB contract | `docs/64_PERSISTENCE_DATABASE_CONTRACT.md` |
 | Performance budgets | `docs/65_PERFORMANCE_BUDGETS.md` |
 | Pre-engineering lock | `docs/66_PRE_ENGINEERING_DESIGN_LOCK.md` |
+| M1 runtime quality | `docs/69_M1_RUNTIME_QUALITY_AUDIT.md` |
 | Studio readiness audit | `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md` |
 | Implementation start gate | `docs/59_IMPLEMENTATION_START_GATE.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
