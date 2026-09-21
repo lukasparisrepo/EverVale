@@ -93,12 +93,28 @@ Hill Lift is a real transit edge.
 
 State:
 - ACTIVE
+- EMERGENCY_PEDESTRIAN
 - QUEUED
 - FAULT
 - DAMAGED
 - REPAIRING
 
 Capacity affects traffic cost but MVP does not require individual elevator queue physics.
+
+### Emergency pedestrian mode
+
+A Power shortage must not create a circular soft-lock where residents or utility workers cannot leave a terrace because the powered Lift stopped.
+
+If the Lift is mechanically intact but unpowered:
+- pedestrians and guards on foot can still cross at very high traversal cost
+- capacity is strongly reduced
+- civilian vehicles cannot cross
+- tanks/heavy service vehicles cannot cross
+
+A physically damaged Lift may fully block the edge until repaired.
+
+Generator rule:
+- mandatory T0 bootstrap may never depend on a powered Lift as its only route.
 
 # Strategic consequence
 
