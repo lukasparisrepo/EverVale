@@ -34,6 +34,15 @@ async function apiCommand(
 }
 
 test("M1 loop: login, authoritative build, persistence, offline catch-up, combat, repair", async ({ page, request }) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => {
+    pageErrors.push(error.message);
+    console.log("M1_PAGE_ERROR", error.message);
+  });
+  page.on("console", (message) => {
+    if (message.type() === "error") console.log("M1_CONSOLE_ERROR", message.text());
+  });
+
   await page.goto("/");
   await page.getByLabel("Builder name").fill(HANDLE);
   await page.getByRole("button", { name: "Enter the Vale" }).click();
@@ -42,18 +51,18 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
   await expect(page.getByTestId("building-count")).toContainText("7");
   await expect(page.getByTestId("blocker-list")).toBeVisible();
 
-  const runtime = page.getByTestId("runtime-metrics");
-  await expect.poll(async () => Number(await runtime.getAttribute("data-draw-calls"))).toBeGreaterThan(0);
-  const drawCalls = Number(await runtime.getAttribute("data-draw-calls"));
-  const triangles = Number(await runtime.getAttribute("data-triangles"));
-  const citizens = Number(await runtime.getAttribute("data-citizens"));
-  const p95 = Number(await runtime.getAttribute("data-frame-p95"));
+  const worldView = page.locator(".world-view");
+  await expect.poll(async () => Number(await worldView.getAttribute("data-frame-count"))).toBeGreaterThan(5);
+  const drawCalls = Number(await worldView.getAttribute("data-draw-calls"));
+  const triangles = Number(await worldView.getAttribute("data-triangles"));
+  const citizens = Number(await worldView.getAttribute("data-citizens"));
+  expect(drawCalls).toBeGreaterThan(0);
   expect(drawCalls).toBeLessThanOrEqual(450);
+  expect(triangles).toBeGreaterThan(0);
   expect(triangles).toBeLessThanOrEqual(1_500_000);
   expect(citizens).toBeGreaterThan(0);
   expect(citizens).toBeLessThanOrEqual(30);
-  expect(p95).toBeGreaterThan(0);
-  console.log("M1_RENDER_METRICS", { drawCalls, triangles, citizens, p95 });
+  console.log("M1_RENDER_METRICS", { drawCalls, triangles, citizens });
 
   const ownerId = await page.evaluate(() => localStorage.getItem("evervale.owner"));
   expect(ownerId).toBe("dev:e2e-builder");
@@ -140,4 +149,5 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
   expect(
     persisted.world.buildings.some((building: { damageState: string }) => building.damageState === "REPAIRING"),
   ).toBeTruthy();
+  expect(pageErrors).toEqual([]);
 });
