@@ -64,6 +64,15 @@ export interface BuildingDefinition {
   constructionSlotsAdd: number;
 }
 
+export interface BlockerDefinition {
+  id: string;
+  moneyCost: number;
+  varumCost: number;
+  clearCycles: number;
+  techTier: number;
+  radius: number;
+}
+
 export interface CombatActorDefinition {
   id: string;
   side: "DEFENDER" | "ENEMY";
@@ -78,6 +87,7 @@ export interface SimulationDefinitions {
   buildings: Record<string, BuildingDefinition>;
   defenders: Record<string, CombatActorDefinition>;
   enemies: Record<string, CombatActorDefinition>;
+  blockers: Record<string, BlockerDefinition>;
   referenceCycleSeconds: number;
 }
 
@@ -100,6 +110,14 @@ export interface RoadSegment {
   type: "DIRT";
   from: Vec3;
   to: Vec3;
+}
+
+export interface BlockerInstance {
+  id: string;
+  definitionId: string;
+  position: Vec3;
+  state: "BLOCKING" | "CLEARING";
+  clearRemainingSeconds: number;
 }
 
 export interface CombatActor {
@@ -142,6 +160,7 @@ export interface WorldState {
   society: SocietyState;
   buildings: BuildingInstance[];
   roads: RoadSegment[];
+  blockers: BlockerInstance[];
   combat: CombatState | null;
   events: WorldEvent[];
 }
