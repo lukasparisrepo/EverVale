@@ -241,3 +241,20 @@ The simulation never decides by itself to:
 - choose a Tech specialization
 
 See `docs/42_ANTI_IDLE_PROGRESSION.md`.
+
+
+## M1.3 runtime implementation
+
+Runtime presentation authority:
+
+`docs/74_M1_3_CONSTRUCTION_PRESENTATION.md`
+
+Implemented:
+- persistent construction total duration
+- footprint/foundation/frame/shell/finishing visuals
+- scaffold and visual material stacks
+- road-routed builder actor
+- construction progress HUD
+- save/reload browser proof
+
+No construction-goods resource was added.
