@@ -3,9 +3,12 @@
 Status: **COMBAT BASELINE v0.2**
 
 Detailed values:
-- `data/balance/v0.1/combat.yaml`
+- `data/combat/v0.2/defense_units.yaml`
+- `data/combat/v0.2/enemies.yaml`
+- `data/combat/v0.2/waves.yaml`
 - `data/balance/v0.1/threats.yaml`
 - `docs/34_THREAT_CADENCE.md`
+- `docs/49_ENEMY_UFO_WAVE_PROGRESSION.md`
 
 ## Threat philosophy
 
@@ -73,6 +76,31 @@ With Radar:
 - better direction information
 
 Radar does not prevent attacks.
+
+## Settlement Rating
+
+Wave composition is gated by a derived Settlement Rating, not only elapsed time.
+
+Rating considers:
+- Population
+- Tech Tier
+- functional building count
+- Varum sites
+- military power
+- cleared territory
+
+Low-rating settlements receive a few nuisance creatures.
+
+High-rating settlements unlock:
+- armored monsters
+- drones
+- UFO scouts
+- drop pods
+- alien walkers
+- command saucers
+- carriers / boss-like anomalies
+
+See `docs/49_ENEMY_UFO_WAVE_PROGRESSION.md`.
 
 ## Wave budget
 
