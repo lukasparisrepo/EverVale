@@ -211,3 +211,12 @@ A gameplay feature must pass:
 - acceptance tests
 - no fake buttons
 - no hidden placeholder production path
+
+
+## Content authority
+
+Before implementing gameplay/content, read `docs/44_CONTENT_AUTHORITY_INDEX.md`.
+
+If an older document conflicts with the authority index, the indexed canonical file wins.
+
+Do not merge superseded rules back into code.
