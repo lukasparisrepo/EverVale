@@ -211,7 +211,7 @@ function addWorkshop(group:THREE.Group,width:number,depth:number): void {
   awning.rotation.x=-0.12;
   const wheel=mesh(new THREE.TorusGeometry(0.62,0.12,8,18),material("metal",0.55,0.35),-width*0.32,1.25,depth*0.46+0.13,false);
   group.add(wheel);
-  for(let i=0;i<3;i+=1) box(group,0.5,0.38,0.5,material("wood"),-width*0.34+i*0.52,0.19,-depth*0.58,false);
+  for(let i=0;i<3;i+=1) box(group,0.5,0.38,0.5,material("timber"),-width*0.34+i*0.52,0.19,-depth*0.58,false);
 }
 
 function addPowerPlant(group:THREE.Group,width:number,depth:number): void {
@@ -301,7 +301,7 @@ function addFarm(group:THREE.Group,width:number,depth:number): void {
     group.add(silo);
   }
   for(let i=0;i<4;i+=1) {
-    box(group,0.1,0.72,0.1,material("wood"),-width*0.4+i*(width*0.8/3),0.36,-depth*0.52,false);
+    box(group,0.1,0.72,0.1,material("timber"),-width*0.4+i*(width*0.8/3),0.36,-depth*0.52,false);
   }
 }
 
@@ -316,7 +316,7 @@ function addRestaurant(group:THREE.Group,width:number,depth:number): void {
   awning.rotation.x=-0.1;
   box(group,1.5,0.3,0.08,material("timberDark"),0,h+0.15,depth*0.43+0.08,false);
   for(const x of [-width*0.26,0,width*0.26]) {
-    const top=mesh(new THREE.CylinderGeometry(0.34,0.34,0.08,10),material("wood"),x,0.72,depth*0.62,false);
+    const top=mesh(new THREE.CylinderGeometry(0.34,0.34,0.08,10),material("timber"),x,0.72,depth*0.62,false);
     top.rotation.z=Math.PI/2;
     group.add(top);
   }
@@ -329,7 +329,7 @@ function addBuildersYard(group:THREE.Group,width:number,depth:number): void {
   const roof=box(group,width*0.6,0.16,depth*0.72,material("roof"),-width*0.16,shedH+0.12,0);
   roof.rotation.z=-0.06;
   for(let i=0;i<4;i+=1) {
-    box(group,0.62,0.42,0.62,i%2 ? material("stone") : material("wood"),width*0.32+(i%2)*0.64,0.21+Math.floor(i/2)*0.43,-depth*0.24,false);
+    box(group,0.62,0.42,0.62,i%2 ? material("stone") : material("timber"),width*0.32+(i%2)*0.64,0.21+Math.floor(i/2)*0.43,-depth*0.24,false);
   }
   for(const x of [-width*0.46,width*0.46]) {
     box(group,0.08,2.6,0.08,material("metal"),x,1.3,depth*0.42,false);

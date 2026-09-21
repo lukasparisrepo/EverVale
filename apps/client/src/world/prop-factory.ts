@@ -73,10 +73,11 @@ function mesh(
   x: number,
   y: number,
   z: number,
+  castShadow = true,
 ): THREE.Mesh {
   const m = new THREE.Mesh(geometry, material);
   m.position.set(x, y, z);
-  m.castShadow = true;
+  m.castShadow = castShadow;
   m.receiveShadow = true;
   return m;
 }
@@ -125,7 +126,7 @@ function addTree(
     return;
   }
 
-  const crownLayout=kind==="tree_oak"
+  const crownLayout: Array<readonly [number, number, number, number]> = kind==="tree_oak"
     ? [[-0.48,2.2,0.08,1.0],[0.42,2.35,0.16,0.9],[0,2.78,-0.16,1.04],[-0.08,2.5,0.42,0.78]]
     : [[-0.3,2.18,0.08,0.75],[0.32,2.35,-0.02,0.72],[0.03,2.65,-0.18,0.78]];
 
