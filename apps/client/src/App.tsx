@@ -131,6 +131,7 @@ export default function App() {
         world={w}
         mode={mode}
         selectedBuild={selectedBuild}
+        buildCatalog={view.buildCatalog}
         roadStart={roadStart}
         onGroundClick={groundClick}
         onMetrics={setMetrics}
