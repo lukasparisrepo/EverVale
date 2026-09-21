@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import type { WorldState } from "@evervale/domain/world.types";
+import type { BuildCatalogEntryDto } from "@evervale/protocol/world";
 
 export interface RuntimeMetrics {
   fps: number;
@@ -14,7 +15,7 @@ export interface RuntimeMetrics {
 interface Props {
   world: WorldState;
   mode: "SELECT" | "BUILD" | "ROAD";
-  selectedBuildId: string | undefined;
+  selectedBuild: BuildCatalogEntryDto | null;
   roadStart: { x: number; z: number } | null;
   onGroundClick(position: { x: number; z: number }): void;
   onMetrics: ((metrics: RuntimeMetrics) => void) | undefined;
@@ -144,11 +145,34 @@ function pointSegmentDistance(
   return Math.hypot(px - (ax + t * vx), pz - (az + t * vz));
 }
 
-function approximatePlacementValid(world: WorldState, x: number, z: number): boolean {
-  const collision = world.buildings.some((b) => Math.hypot(b.position.x - x, b.position.z - z) < 5);
+function approximatePlacementValid(
+  world: WorldState,
+  selected: BuildCatalogEntryDto,
+  x: number,
+  z: number,
+): boolean {
+  const width = selected.footprintCellsX * selected.gridCellMeters;
+  const depth = selected.footprintCellsZ * selected.gridCellMeters;
+
+  const collision = world.buildings.some((b) => {
+    // Existing starter/save buildings may predate footprint metadata in state,
+    // so use the visual graybox default only for client preview. Server remains authoritative.
+    const existingWidth = 6;
+    const existingDepth = 5;
+    return (
+      Math.abs(b.position.x - x) < (existingWidth + width) / 2 &&
+      Math.abs(b.position.z - z) < (existingDepth + depth) / 2
+    );
+  });
   if (collision) return false;
-  const blocked = world.blockers.some((b) => Math.hypot(b.position.x - x, b.position.z - z) < 6);
+
+  const blocked = world.blockers.some((b) => {
+    const dx = Math.max(0, Math.abs(b.position.x - x) - width / 2);
+    const dz = Math.max(0, Math.abs(b.position.z - z) - depth / 2);
+    return Math.hypot(dx, dz) < 3.5;
+  });
   if (blocked) return false;
+
   return world.roads.some((road) =>
     pointSegmentDistance(x, z, road.from.x, road.from.z, road.to.x, road.to.z) <= 10,
   );
@@ -233,7 +257,7 @@ function schedulePosition(
 export function WorldView({
   world,
   mode,
-  selectedBuildId,
+  selectedBuild,
   roadStart,
   onGroundClick,
   onMetrics,
@@ -243,7 +267,7 @@ export function WorldView({
   const clickRef = useRef(onGroundClick);
   const metricsRef = useRef(onMetrics);
   const modeRef = useRef(mode);
-  const selectedBuildRef = useRef(selectedBuildId);
+  const selectedBuildRef = useRef(selectedBuild);
   const roadStartRef = useRef(roadStart);
   const dynamicRef = useRef<THREE.Group | null>(null);
   const citizensRef = useRef<THREE.Mesh[]>([]);
@@ -253,7 +277,7 @@ export function WorldView({
   useEffect(() => { clickRef.current = onGroundClick; }, [onGroundClick]);
   useEffect(() => { metricsRef.current = onMetrics; }, [onMetrics]);
   useEffect(() => { modeRef.current = mode; }, [mode]);
-  useEffect(() => { selectedBuildRef.current = selectedBuildId; }, [selectedBuildId]);
+  useEffect(() => { selectedBuildRef.current = selectedBuild; }, [selectedBuild]);
   useEffect(() => { roadStartRef.current = roadStart; }, [roadStart]);
 
   useEffect(() => {
@@ -300,6 +324,13 @@ export function WorldView({
     ground.name = "ground";
     scene.add(ground);
 
+    const buildGrid = new THREE.GridHelper(110, 55, 0x6f8068, 0x78906f);
+    buildGrid.position.y = 0.035;
+    buildGrid.material.transparent = true;
+    buildGrid.material.opacity = 0.38;
+    buildGrid.visible = false;
+    scene.add(buildGrid);
+
     // First terrain-readability pass: raised perimeter ridges, leaving the central starter plateau open.
     const ridgeMaterial = new THREE.MeshStandardMaterial({ color: 0x71856a, roughness: 1 });
     for (const [x, z, sx, sz, height] of [
@@ -327,8 +358,8 @@ export function WorldView({
       opacity: 0.45,
       depthWrite: false,
     });
-    const ghost = new THREE.Mesh(new THREE.BoxGeometry(5, 3, 4), ghostMaterial);
-    ghost.position.y = 1.5;
+    const ghost = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), ghostMaterial);
+    ghost.position.y = 0.18;
     ghost.visible = false;
     preview.add(ghost);
 
@@ -351,19 +382,26 @@ export function WorldView({
     const onMove = (event: PointerEvent) => {
       const hit = groundPoint(event);
       if (!hit) return;
-      const x = Math.round(hit.x);
-      const z = Math.round(hit.z);
+      const gridMeters = selectedBuildRef.current?.gridCellMeters ?? 2;
+      const x = Math.round(hit.x / gridMeters) * gridMeters;
+      const z = Math.round(hit.z / gridMeters) * gridMeters;
 
       ghost.visible = modeRef.current === "BUILD" && !!selectedBuildRef.current;
       roadPreview.visible = modeRef.current === "ROAD" && !!roadStartRef.current;
 
-      if (ghost.visible) {
-        const valid = approximatePlacementValid(worldRef.current, x, z);
+      if (ghost.visible && selectedBuildRef.current) {
+        const selected = selectedBuildRef.current;
+        const width = selected.footprintCellsX * selected.gridCellMeters;
+        const depth = selected.footprintCellsZ * selected.gridCellMeters;
+        const valid = approximatePlacementValid(worldRef.current, selected, x, z);
         host.dataset.placementValid = String(valid);
-        ghost.position.set(x, 1.5, z);
+        host.dataset.placementSize = selected.sizeTitle;
+        ghost.scale.set(width, 0.32, depth);
+        ghost.position.set(x, 0.18, z);
         ghostMaterial.color.setHex(valid ? 0x75b76e : 0xd46d61);
       } else {
         delete host.dataset.placementValid;
+        delete host.dataset.placementSize;
       }
 
       if (roadPreview.visible && roadStartRef.current) {
@@ -382,7 +420,13 @@ export function WorldView({
     const onPointer = (event: PointerEvent) => {
       if (modeRef.current === "SELECT") return;
       const hit = groundPoint(event);
-      if (hit) clickRef.current({ x: Math.round(hit.x), z: Math.round(hit.z) });
+      if (hit) {
+        const gridMeters = selectedBuildRef.current?.gridCellMeters ?? 2;
+        clickRef.current({
+          x: Math.round(hit.x / gridMeters) * gridMeters,
+          z: Math.round(hit.z / gridMeters) * gridMeters,
+        });
+      }
     };
     renderer.domElement.addEventListener("pointermove", onMove);
     renderer.domElement.addEventListener("pointerdown", onPointer);
@@ -502,6 +546,7 @@ export function WorldView({
 
     renderer.setAnimationLoop((time) => {
       const current = worldRef.current;
+      buildGrid.visible = modeRef.current === "BUILD" || modeRef.current === "ROAD";
       if (current.revision !== lastRevision || frame % 120 === 0) {
         rebuild();
         lastRevision = current.revision;
