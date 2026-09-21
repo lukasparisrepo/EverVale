@@ -406,3 +406,29 @@ button:disabled { opacity: .4; cursor: default; }
     max-width: calc(100vw - 430px);
   }
 }
+
+
+.construction-list {
+  display: grid;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(222, 188, 112, .14);
+}
+
+.construction-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-transform: capitalize;
+}
+
+.construction-row > span {
+  display: grid;
+  gap: 1px;
+}
+
+.construction-row small {
+  opacity: .68;
+  font-size: 10px;
+}
