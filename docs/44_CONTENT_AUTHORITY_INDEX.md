@@ -10,7 +10,7 @@ When documents overlap, use the authority below.
 | Core gameplay loop | `docs/03_GAMEPLAY_LOOP.md` |
 | Economy/resources | `docs/04_ECONOMY_RESOURCES.md` |
 | Infrastructure/access | `docs/05_INFRASTRUCTURE.md` + `docs/41_WORLD_CONNECTIVITY_AND_LEVELS.md` |
-| Construction | `docs/06_BUILDINGS_CONSTRUCTION.md` |
+| Construction | `docs/06_BUILDINGS_CONSTRUCTION.md` + `docs/74_M1_3_CONSTRUCTION_PRESENTATION.md` |
 | Citizens/workforce | `docs/07_CITIZENS_SOCIETY.md` + `docs/32_AUTOMATIC_WORKFORCE.md` |
 | Threat/combat cadence | `docs/08_THREATS_DEFENSE.md` + `docs/34_THREAT_CADENCE.md` + `docs/49_ENEMY_UFO_WAVE_PROGRESSION.md` |
 | Offline/anti-idle | `docs/09_OFFLINE_SIMULATION.md` + `docs/42_ANTI_IDLE_PROGRESSION.md` |
@@ -52,6 +52,7 @@ When documents overlap, use the authority below.
 | HUD/audio asset pipeline | `docs/71_HUD_AUDIO_ASSET_PIPELINE.md` |
 | M1.1 Decor runtime | `docs/72_M1_1_DECOR_MODE.md` |
 | M1.2 road routing | `docs/73_M1_2_ROAD_ROUTING.md` |
+| M1.3 construction presentation | `docs/74_M1_3_CONSTRUCTION_PRESENTATION.md` |
 | Studio readiness audit | `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md` |
 | Implementation start gate | `docs/59_IMPLEMENTATION_START_GATE.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
