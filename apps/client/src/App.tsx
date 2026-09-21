@@ -416,6 +416,10 @@ export default function App() {
         <div><strong>Recreation</strong> {Math.round(w.society.recreationCoverage * 100)}%</div>
         <div><strong>Safety</strong> {Math.round(w.society.safety * 100)}%</div>
         <div><strong>Beauty</strong> {w.society.beauty.toFixed(2)} / 5</div>
+        <div data-testid="routing-status">
+          <strong>Road routing</strong>{" "}
+          <span id="routing-status-value">live</span>
+        </div>
 
         <div
           className="perf-probe"
