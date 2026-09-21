@@ -1,0 +1,79 @@
+version: "0.1"
+status: ASSET_SLOTS_LOCKED
+
+defaults:
+  master_gain: 0.72
+  crossfade_seconds: 2.5
+  threat_crossfade_seconds: 0.9
+  loop_preload: true
+  preferred_format: ogg
+  fallback_format: webm
+
+tracks:
+  town_day:
+    title: "Vale in Motion"
+    state: calm_day
+    target_duration_seconds: 120
+    loop: true
+    bpm_range: [72, 84]
+    instrumentation: ["soft piano", "plucked strings", "warm woodwind", "light hand percussion"]
+    mood: "cozy, industrious, hopeful, miniature town"
+    runtime_file: "/audio/music/town_day.ogg"
+
+  town_evening:
+    title: "Lantern Streets"
+    state: calm_evening
+    target_duration_seconds: 120
+    loop: true
+    bpm_range: [64, 76]
+    instrumentation: ["felt piano", "soft strings", "wood flute", "subtle bells"]
+    mood: "warm, safe, reflective, lantern-lit"
+    runtime_file: "/audio/music/town_evening.ogg"
+
+  rain:
+    title: "Rain on the Vale"
+    state: rain
+    target_duration_seconds: 100
+    loop: true
+    bpm_range: [60, 72]
+    instrumentation: ["felt piano", "muted plucks", "soft pad", "very light percussion"]
+    mood: "cozy rain, shelter, calm productivity"
+    runtime_file: "/audio/music/rain.ogg"
+
+  threat_warning:
+    title: "Something Beyond the Ridge"
+    state: threat_warning
+    target_duration_seconds: 45
+    loop: true
+    bpm_range: [76, 88]
+    instrumentation: ["low plucks", "soft frame drum", "odd glass tones", "sub bass pulse"]
+    mood: "curious danger, playful alien tension, not horror"
+    runtime_file: "/audio/music/threat_warning.ogg"
+
+  combat_light:
+    title: "Defend the Vale"
+    state: combat
+    target_duration_seconds: 75
+    loop: true
+    bpm_range: [96, 112]
+    instrumentation: ["tight percussion", "short strings", "brass accents", "Varum-like synth sparkle"]
+    mood: "energetic, fun defense, strange UFO battle, not militaristic realism"
+    runtime_file: "/audio/music/combat_light.ogg"
+
+  recovery:
+    title: "Still Standing"
+    state: recovery
+    target_duration_seconds: 40
+    loop: false
+    bpm_range: [68, 78]
+    instrumentation: ["piano", "warm strings", "small bell motif"]
+    mood: "relief, repair, town resumes life"
+    runtime_file: "/audio/music/recovery.ogg"
+
+rules:
+  no_lyrics: true
+  no_copyright_melody_imitation: true
+  seamless_loop_required: true
+  normalize_lufs_target: -16
+  avoid_fatiguing_high_frequency: true
+  combat_never_overrides_ui_sfx: true
