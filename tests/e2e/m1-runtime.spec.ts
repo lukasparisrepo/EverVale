@@ -33,7 +33,7 @@ async function apiCommand(
   return response;
 }
 
-test("M1 loop: login, authoritative build, persistence, offline catch-up, combat, repair", async ({ page, request }) => {
+test("M1 loop: build, Decor, persistence, offline catch-up, combat, repair", async ({ page, request }) => {
   const pageErrors: string[] = [];
   page.on("pageerror", (error) => {
     pageErrors.push(error.message);
@@ -84,9 +84,47 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
   const ownerId = await page.evaluate(() => localStorage.getItem("evervale.owner"));
   expect(ownerId).toBe("dev:e2e-builder");
 
+  // Decor catalog is a real editor lane with 1m snap.
+  await page.getByRole("button", { name: "Decor", exact: true }).click();
+  await page.getByRole("button", { name: "street", exact: true }).click();
+  const benchButton = page.getByRole("button", { name: /Wooden Bench/i });
+  await expect(benchButton).toContainText("2×0.8m");
+  await benchButton.click();
+  await expect(worldView).toHaveAttribute("data-grid-size", "1");
+
   const initial = await apiWorld(request, ownerId!);
   expect(initial.world.buildings).toHaveLength(7);
   expect(initial.world.blockers).toHaveLength(2);
+  expect(initial.world.props).toHaveLength(0);
+
+  const placedProp = await apiCommand(request, ownerId!, "PLACE_PROP", {
+    definitionId: "bench_wood",
+    x: 21.4,
+    z: 12.6,
+    rotationY: 0.8,
+  });
+  expect(placedProp.ok()).toBeTruthy();
+  const placedPropBody = await placedProp.json();
+  const bench = placedPropBody.world.props.at(-1);
+  expect(bench.position).toEqual({ x: 21, y: 0, z: 13 });
+  expect(bench.rotationY).toBeCloseTo(Math.PI / 4, 6);
+  await expect(page.getByTestId("prop-count")).toContainText("1");
+  await expect.poll(async () => Number(await worldView.getAttribute("data-props"))).toBe(1);
+
+  const movedProp = await apiCommand(request, ownerId!, "MOVE_PROP", {
+    propId: bench.id,
+    x: 24.4,
+    z: 14.4,
+  });
+  expect(movedProp.ok()).toBeTruthy();
+  expect((await movedProp.json()).world.props.at(-1).position).toEqual({ x: 24, y: 0, z: 14 });
+
+  const rotatedProp = await apiCommand(request, ownerId!, "ROTATE_PROP", {
+    propId: bench.id,
+    rotationY: Math.PI / 2,
+  });
+  expect(rotatedProp.ok()).toBeTruthy();
+  expect((await rotatedProp.json()).world.props.at(-1).rotationY).toBeCloseTo(Math.PI / 2, 6);
 
   // Terrain blocker must participate in authoritative placement.
   const blockerPlacement = await apiCommand(request, ownerId!, "PLACE_BUILDING", {
@@ -136,6 +174,7 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
   await page.reload();
   await expect(page.locator("canvas")).toBeVisible();
   await expect(page.getByTestId("building-count")).toContainText("8");
+  await expect(page.getByTestId("prop-count")).toContainText("1");
 
   const beforeLogout = await apiWorld(request, ownerId!);
   const simBefore = beforeLogout.world.simulationSeconds as number;
