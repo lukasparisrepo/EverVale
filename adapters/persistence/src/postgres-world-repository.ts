@@ -1,5 +1,9 @@
 import { Pool, type PoolClient } from "pg";
-import type { WorldRepository } from "@evervale/application/ports";
+import type {
+  AcceptedCommandContext,
+  AcceptedCommandReceipt,
+  WorldRepository,
+} from "@evervale/application/ports";
 import type { WorldState } from "@evervale/domain/world.types";
 
 export class PostgresWorldRepository implements WorldRepository {
@@ -44,6 +48,34 @@ export class PostgresWorldRepository implements WorldRepository {
     return result.rows[0]?.snapshot ?? null;
   }
 
+  async findAcceptedCommand(commandId: string): Promise<AcceptedCommandReceipt | null> {
+    const result = await this.pool.query<{
+      command_id: string;
+      world_id: string;
+      user_id: string;
+      expected_revision: string | number | null;
+      command_type: string;
+      result: { world?: WorldState };
+    }>(
+      `SELECT command_id, world_id, user_id, expected_revision, command_type, result
+       FROM world_commands
+       WHERE command_id = $1 AND status = 'ACCEPTED'
+       LIMIT 1`,
+      [commandId],
+    );
+    const row = result.rows[0];
+    const world = row?.result?.world;
+    if (!row || !world) return null;
+    return {
+      commandId: row.command_id,
+      worldId: row.world_id,
+      ownerId: row.user_id,
+      expectedRevision: Number(row.expected_revision ?? 0),
+      commandType: row.command_type,
+      world,
+    };
+  }
+
   async create(world: WorldState): Promise<void> {
     const client = await this.pool.connect();
     try {
@@ -59,6 +91,21 @@ export class PostgresWorldRepository implements WorldRepository {
         [world.worldId, world.ownerId],
       );
       await this.insertSnapshot(client, world);
+      if (acceptedCommand) {
+        await client.query(
+          `INSERT INTO world_commands
+            (command_id, world_id, user_id, expected_revision, command_type, status, result)
+           VALUES ($1::uuid, $2, $3, $4, $5, 'ACCEPTED', $6::jsonb)`,
+          [
+            acceptedCommand.commandId,
+            world.worldId,
+            acceptedCommand.ownerId,
+            acceptedCommand.expectedRevision,
+            acceptedCommand.commandType,
+            JSON.stringify({ world }),
+          ],
+        );
+      }
       await client.query("COMMIT");
     } catch (error) {
       await client.query("ROLLBACK");
@@ -68,7 +115,11 @@ export class PostgresWorldRepository implements WorldRepository {
     }
   }
 
-  async save(world: WorldState, previousRevision: number): Promise<void> {
+  async save(
+    world: WorldState,
+    previousRevision: number,
+    acceptedCommand?: AcceptedCommandContext,
+  ): Promise<void> {
     const client = await this.pool.connect();
     try {
       await client.query("BEGIN");
