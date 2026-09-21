@@ -58,7 +58,7 @@ const world: WorldState = {
   simulationSeconds:0,
   lastSimulatedAt:new Date(0).toISOString(),
   resources:{money:500,moneyCap:5000,power:60,powerCap:120,water:60,waterCap:120,varum:0,varumCap:0,techPoints:0,techTier:0},
-  society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5},
+  society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5,beauty:0},
   buildings:[{
     id:"tc",definitionId:"town_center",position:{x:0,y:0,z:0},rotationY:0,
     constructionState:"COMPLETE",constructionRemainingSeconds:0,workersAssigned:0,priority:0,
@@ -66,6 +66,7 @@ const world: WorldState = {
   }],
   roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}],
   blockers:[{id:"b1",definitionId:"fallen_tree",position:{x:10,y:0,z:3},state:"BLOCKING",clearRemainingSeconds:0}],
+  props:[],
   combat:null,
   events:[],
 };
