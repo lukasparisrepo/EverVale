@@ -123,6 +123,102 @@ function addPerimeterLandscape(scene:THREE.Scene): void {
   patches.receiveShadow=true;
   group.add(patches);
 
+  const grassBladeGeo = new THREE.ConeGeometry(0.08, 0.55, 4);
+  const grassBladeMat = new THREE.MeshStandardMaterial({
+    color: 0x5f7d55,
+    roughness: 1,
+    flatShading: true,
+  });
+  const grass = new THREE.InstancedMesh(grassBladeGeo, grassBladeMat, 120);
+  for (let i = 0; i < 120; i += 1) {
+    const angle = pseudo(i + 500) * Math.PI * 2;
+    const radius = 29 + pseudo(i + 520) * 19;
+    dummy.position.set(
+      Math.cos(angle) * radius,
+      0.24,
+      Math.sin(angle) * radius,
+    );
+    dummy.rotation.set(
+      (pseudo(i + 540) - 0.5) * 0.16,
+      pseudo(i + 560) * Math.PI * 2,
+      (pseudo(i + 580) - 0.5) * 0.18,
+    );
+    const s = 0.7 + pseudo(i + 600) * 0.85;
+    dummy.scale.set(s, s, s);
+    dummy.updateMatrix();
+    grass.setMatrixAt(i, dummy.matrix);
+  }
+  grass.instanceMatrix.needsUpdate = true;
+  grass.castShadow = false;
+  grass.receiveShadow = true;
+  group.add(grass);
+
+  const flowerGeo = new THREE.OctahedronGeometry(0.1, 0);
+  const flowerMat = new THREE.MeshStandardMaterial({
+    color: 0xd8b76f,
+    roughness: 0.95,
+    flatShading: true,
+  });
+  const flowers = new THREE.InstancedMesh(flowerGeo, flowerMat, 48);
+  for (let i = 0; i < 48; i += 1) {
+    const angle = pseudo(i + 700) * Math.PI * 2;
+    const radius = 27 + pseudo(i + 720) * 17;
+    dummy.position.set(
+      Math.cos(angle) * radius,
+      0.34 + pseudo(i + 740) * 0.08,
+      Math.sin(angle) * radius,
+    );
+    dummy.rotation.set(0, pseudo(i + 760) * Math.PI * 2, 0);
+    const s = 0.7 + pseudo(i + 780) * 0.55;
+    dummy.scale.setScalar(s);
+    dummy.updateMatrix();
+    flowers.setMatrixAt(i, dummy.matrix);
+  }
+  flowers.instanceMatrix.needsUpdate = true;
+  flowers.castShadow = false;
+  group.add(flowers);
+
+  const trunkGeo = new THREE.CylinderGeometry(0.16, 0.24, 2.15, 6);
+  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x70553e, roughness: 1 });
+  const treeTrunks = new THREE.InstancedMesh(trunkGeo, trunkMat, 22);
+  const crownGeo = new THREE.DodecahedronGeometry(0.82, 0);
+  const crownMat = new THREE.MeshStandardMaterial({
+    color: 0x4f6d4b,
+    roughness: 1,
+    flatShading: true,
+  });
+  const treeCrowns = new THREE.InstancedMesh(crownGeo, crownMat, 22);
+  for (let i = 0; i < 22; i += 1) {
+    const angle = (i / 22) * Math.PI * 2 + (pseudo(i + 820) - 0.5) * 0.2;
+    const radius = 43 + pseudo(i + 840) * 7;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    const s = 0.78 + pseudo(i + 860) * 0.65;
+
+    dummy.position.set(x, 1.05 * s, z);
+    dummy.rotation.set(0, pseudo(i + 880) * Math.PI * 2, 0);
+    dummy.scale.set(s, s, s);
+    dummy.updateMatrix();
+    treeTrunks.setMatrixAt(i, dummy.matrix);
+
+    dummy.position.set(x, 2.55 * s, z);
+    dummy.rotation.set(
+      0,
+      pseudo(i + 900) * Math.PI * 2,
+      (pseudo(i + 920) - 0.5) * 0.12,
+    );
+    dummy.scale.set(1.05 * s, 0.88 * s, 1.05 * s);
+    dummy.updateMatrix();
+    treeCrowns.setMatrixAt(i, dummy.matrix);
+  }
+  treeTrunks.instanceMatrix.needsUpdate = true;
+  treeCrowns.instanceMatrix.needsUpdate = true;
+  treeTrunks.castShadow = false;
+  treeCrowns.castShadow = false;
+  treeTrunks.receiveShadow = true;
+  treeCrowns.receiveShadow = true;
+  group.add(treeTrunks, treeCrowns);
+
   scene.add(group);
 }
 
@@ -134,6 +230,7 @@ export function createEnvironmentVisuals(
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.05;
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
 
   const sky=new THREE.Color(0xbfd1c1);
   scene.background=sky;
