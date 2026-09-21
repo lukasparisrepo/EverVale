@@ -1,0 +1,99 @@
+version: "0.2"
+
+rules:
+  hp_zero_state: DISABLED
+  permanent_deletion_from_wave_damage: false
+  condition_damage_from_hp_loss_formula: "round(damage_fraction * 40)"
+  critical_structure_floor_offline_fraction: 0.30
+
+structures:
+  town_center:
+    hp: 2500
+    armor: 30
+    critical: true
+    objective_weight: 100
+
+  house_small:
+    hp: 600
+    armor: 5
+    critical: false
+    objective_weight: 15
+
+  workshop:
+    hp: 800
+    armor: 10
+    critical: false
+    objective_weight: 30
+
+  restaurant:
+    hp: 650
+    armor: 5
+    critical: false
+    objective_weight: 20
+
+  farm:
+    hp: 700
+    armor: 4
+    critical: false
+    objective_weight: 20
+
+  power_plant:
+    hp: 1200
+    armor: 15
+    critical: true
+    objective_weight: 85
+
+  water_plant:
+    hp: 1100
+    armor: 12
+    critical: true
+    objective_weight: 85
+
+  school:
+    hp: 800
+    armor: 6
+    critical: false
+    objective_weight: 40
+
+  guard_post:
+    hp: 900
+    armor: 15
+    critical: false
+    objective_weight: 55
+
+  varum_mine:
+    hp: 1250
+    armor: 18
+    critical: false
+    objective_weight: 70
+
+  radar:
+    hp: 750
+    armor: 10
+    critical: false
+    objective_weight: 60
+
+  vehicle_factory:
+    hp: 1450
+    armor: 20
+    critical: false
+    objective_weight: 65
+
+  airfield:
+    hp: 1900
+    armor: 18
+    critical: false
+    objective_weight: 75
+
+  varum_shield:
+    hp: 1600
+    armor: 24
+    critical: false
+    objective_weight: 80
+
+objective_tags:
+  civic_core: [town_center, school]
+  utility: [power_plant, water_plant]
+  economy: [workshop, restaurant, farm]
+  varum: [varum_mine, varum_storage, research_lab]
+  military: [guard_post, radar, vehicle_factory, airfield, anti_air, varum_shield]
