@@ -1,0 +1,41 @@
+version: "0.1"
+
+anchor_types:
+  front_door: { capacity: 2, actor: citizen }
+  porch: { capacity: 2, actor: citizen }
+  garden: { capacity: 2, actor: citizen }
+  pet_yard: { capacity: 2, actor: pet }
+  driveway: { capacity: 1, actor: vehicle }
+
+  worker_entrance: { capacity: 4, actor: worker }
+  workbench: { capacity: 1, actor: worker }
+  loading_area: { capacity: 1, actor: vehicle }
+  break_spot: { capacity: 3, actor: worker }
+
+  entrance: { capacity: 6, actor: citizen }
+  schoolyard: { capacity: 16, actor: child }
+  pickup_zone: { capacity: 3, actor: vehicle }
+
+  walking_loop: { capacity: 20, actor: citizen }
+  bench: { capacity: 2, actor: citizen }
+  playground: { capacity: 8, actor: child }
+  picnic: { capacity: 6, actor: citizen }
+  pond_edge: { capacity: 6, actor: citizen }
+  dog_area: { capacity: 5, actor: dog }
+  fountain: { capacity: 6, actor: citizen }
+  bicycle_rack: { capacity: 4, actor: bicycle }
+
+  field_work: { capacity: 8, actor: worker }
+  barn: { capacity: 6, actor: farm_animal }
+  chicken_zone: { capacity: 12, actor: chicken }
+  duck_pond: { capacity: 10, actor: duck }
+  tractor_start: { capacity: 1, actor: vehicle }
+  fence_gate: { capacity: 2, actor: mixed }
+
+  guard_spawn: { capacity: 4, actor: guard }
+  patrol_start: { capacity: 2, actor: guard }
+  gate_watch: { capacity: 2, actor: guard }
+  response_vehicle: { capacity: 1, actor: military_vehicle }
+
+  mine_entry: { capacity: 4, actor: worker }
+  equipment: { capacity: 2, actor: ambient_machine }
