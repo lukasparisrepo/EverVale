@@ -10,6 +10,14 @@ import type { WorldCommand } from "@evervale/protocol/world";
 const PORT = Number(process.env.PORT ?? 2567);
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
 const gameData = loadGameData();
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function validateCommandEnvelope(command: WorldCommand): void {
+  if (!UUID_PATTERN.test(command.commandId)) throw new Error("INVALID_COMMAND_ID");
+  if (!Number.isInteger(command.expectedRevision) || command.expectedRevision < 0) {
+    throw new Error("INVALID_EXPECTED_REVISION");
+  }
+}
 
 class NodeIds implements IdGenerator {
   next(): string {
@@ -105,6 +113,7 @@ const server = createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/api/world/command") {
       const command = await body<WorldCommand>(req);
+      validateCommandEnvelope(command);
       const world = await service.command(owner(req), command);
       json(res, 200, { accepted: true, world });
       return;
@@ -116,7 +125,7 @@ const server = createServer(async (req, res) => {
     const status =
       message === "UNAUTHORIZED" ? 401 :
       message === "REVISION_CONFLICT" || message === "COMMAND_ID_CONFLICT" ? 409 :
-      message.startsWith("NOT_ENOUGH") || message.startsWith("NO_") || message.startsWith("REPAIR_") || message.startsWith("BLOCKER_") || message.startsWith("PROP_") || message === "UNKNOWN_PROP" || message.includes("LOCKED") || message.includes("COLLISION") ? 400 :
+      message.startsWith("INVALID_") || message.startsWith("NOT_ENOUGH") || message.startsWith("NO_") || message.startsWith("REPAIR_") || message.startsWith("BLOCKER_") || message.startsWith("PROP_") || message === "UNKNOWN_PROP" || message.includes("LOCKED") || message.includes("COLLISION") ? 400 :
       500;
     console.error("[EverVale]", message);
     json(res, status, { accepted: false, error: message });
