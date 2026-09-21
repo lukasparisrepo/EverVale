@@ -41,7 +41,7 @@ tiers:
     confirmation_required: true
     unlocks:
       - tank
-      - rocket_truck
+      - rocket_rover
       - heavy_turret
 
   4:
@@ -58,5 +58,5 @@ tiers:
     confirmation_required: true
     unlocks:
       - varum_shield
-      - ufo_interceptor
+      - interceptor
       - beam_tank
