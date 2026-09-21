@@ -200,16 +200,16 @@ export function updateEnvironmentLighting(
 
   const daySky=new THREE.Color(0xbfd4c4);
   const duskSky=new THREE.Color(0xd5ad8a);
-  const nightSky=new THREE.Color(0x253342);
+  const nightSky=new THREE.Color(0x52677a);
   const sky=nightSky.clone().lerp(duskSky,Math.max(daylight*0.45,twilight*0.65)).lerp(daySky,daylight);
-  rig.renderer.toneMappingExposure=0.78+daylight*0.3+twilight*0.04;
+  rig.renderer.toneMappingExposure=0.98+daylight*0.16+twilight*0.04;
   rig.fog.color.copy(sky);
   if (rig.scene.background instanceof THREE.Color) rig.scene.background.copy(sky);
 
-  rig.sun.intensity=0.16+daylight*2.45+twilight*0.32;
-  rig.hemisphere.intensity=0.42+daylight*1.38;
-  rig.hemisphere.color.copy(new THREE.Color(0xb7c9c0).lerp(new THREE.Color(0xffefd1),daylight));
-  rig.hemisphere.groundColor.copy(new THREE.Color(0x26313a).lerp(new THREE.Color(0x64725f),daylight));
+  rig.sun.intensity=0.3+daylight*2.3+twilight*0.32;
+  rig.hemisphere.intensity=0.82+daylight*1.05;
+  rig.hemisphere.color.copy(new THREE.Color(0xaec4d2).lerp(new THREE.Color(0xffefd1),daylight));
+  rig.hemisphere.groundColor.copy(new THREE.Color(0x435363).lerp(new THREE.Color(0x64725f),daylight));
   rig.sun.color.copy(new THREE.Color(0xffa45f).lerp(new THREE.Color(0xfff0ce),daylight));
   rig.sun.position.set(Math.cos(angle)*52,Math.max(10,18+Math.max(0,elevation)*52),Math.sin(angle)*42);
   rig.sun.target.position.set(0,0,0);
