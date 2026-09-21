@@ -1,0 +1,137 @@
+version: "0.1"
+
+cadence:
+  first_event_minutes_min: 10
+  first_event_minutes_max: 25
+  interval_minutes_min: 20
+  interval_minutes_max: 55
+  max_per_24h_online: 18
+  suppress_after_major_minutes: 25
+  suppress_during_major_combat: true
+
+class_weights:
+  visual: 0.50
+  clue: 0.35
+  probe: 0.15
+
+events:
+  distant_ufo_flyby:
+    class: visual
+    tech_min: 1
+    weight: 10
+    effects: [sky_flyby, civilian_look_up, dog_bark]
+
+  strange_night_lights:
+    class: visual
+    tech_min: 0
+    weight: 9
+    conditions: [night_preferred]
+    effects: [distant_lights, citizen_comment]
+
+  birds_scatter:
+    class: visual
+    tech_min: 0
+    weight: 7
+    effects: [bird_scatter, civilian_glance]
+
+  forest_silhouette:
+    class: visual
+    tech_min: 0
+    weight: 8
+    effects: [edge_creature_sighting]
+
+  monster_tracks:
+    class: clue
+    tech_min: 0
+    weight: 10
+    clue_tags: [ground, creature]
+    next_composition_bias:
+      ground_creature: 0.08
+
+  damaged_fence:
+    class: clue
+    tech_min: 0
+    weight: 6
+    clue_tags: [ground]
+
+  varum_interference:
+    class: clue
+    tech_min: 1
+    weight: 8
+    requires_any: [varum_mine, varum_storage]
+    clue_tags: [unknown, varum]
+
+  radar_anomaly:
+    class: clue
+    tech_min: 2
+    weight: 10
+    requires_any: [radar]
+    clue_tags: [air, unknown]
+    warning_confidence_bonus: 0.10
+
+  alien_hum:
+    class: clue
+    tech_min: 2
+    weight: 5
+    clue_tags: [air]
+
+  scout_drone_flyby:
+    class: visual
+    tech_min: 2
+    weight: 8
+    effects: [air_flyby, guard_track, radar_track]
+
+  scout_drone_probe:
+    class: probe
+    tech_min: 2
+    weight: 5
+    units:
+      scout_drone: 1
+    objective: edge_scan
+    resets_major_pressure: false
+
+  nibbler_probe:
+    class: probe
+    tech_min: 0
+    weight: 8
+    units:
+      nibbler: 2
+    objective: farm_or_decor_nuisance
+    resets_major_pressure: false
+
+  burrower_probe:
+    class: probe
+    tech_min: 1
+    weight: 4
+    units:
+      burrower: 1
+    objective: emerge_and_retreat
+    resets_major_pressure: false
+
+  ufo_observation:
+    class: probe
+    tech_min: 3
+    weight: 4
+    units:
+      ufo_scout: 1
+    objective: varum_scan_then_retreat
+    resets_major_pressure: false
+
+  distant_drop_pod:
+    class: visual
+    tech_min: 3
+    weight: 3
+    effects: [distant_impact_light, dust_plume]
+
+  carrier_shadow:
+    class: visual
+    tech_min: 4
+    weight: 2
+    effects: [cloud_shadow, distant_hum, civilian_look_up]
+
+rules:
+  exact_attack_time_reveal: false
+  ambient_event_guarantees_attack: false
+  visual_events_create_damage: false
+  probes_use_major_wave_budget: false
+  probes_reset_major_pressure: false
