@@ -1,0 +1,72 @@
+version: "0.1"
+
+density:
+  base_visible_citizen_fraction: 0.65
+  near_camera_actor_cap: 60
+  mid_camera_actor_cap: 100
+  ambient_vehicle_cap: 24
+  pet_cap: 24
+  farm_animal_cap: 40
+  bird_cap: 36
+
+household_pets:
+  dog_household_probability: 0.22
+  cat_household_probability: 0.26
+  max_pets_per_household: 2
+
+animals:
+  dog:
+    persistent_owner_optional: true
+    movement: path_and_yard
+    threat_behavior: RETURN_HOME
+    night_multiplier: 0.20
+
+  cat:
+    persistent_owner_optional: true
+    movement: local_free_wander
+    threat_behavior: HIDE
+    night_multiplier: 0.55
+
+  chicken:
+    persistent: false
+    movement: bounded_farm_zone
+    threat_behavior: CLUSTER_SAFE
+    night_multiplier: 0.0
+
+  duck:
+    persistent: false
+    movement: pond_and_ground
+    threat_behavior: CLUSTER_SAFE
+    night_multiplier: 0.05
+
+  bird:
+    persistent: false
+    movement: local_flight
+    threat_behavior: SCATTER
+    night_multiplier: 0.05
+
+  butterfly:
+    persistent: false
+    movement: vegetation_wander
+    weather_required: clear
+    threat_behavior: DESPAWN
+
+traffic:
+  population_per_ambient_vehicle: 5
+  road_class_weight:
+    footpath: 0.0
+    dirt_road: 0.35
+    paved_local: 0.75
+    main_road: 1.0
+    bridge: 0.70
+
+  time_multiplier:
+    early_morning: 0.30
+    morning_commute: 1.0
+    morning_core: 0.45
+    midday: 0.55
+    afternoon_core: 0.45
+    school_exit: 0.80
+    evening_commute: 1.0
+    evening_leisure: 0.45
+    night: 0.10
