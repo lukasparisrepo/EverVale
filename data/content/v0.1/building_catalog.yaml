@@ -103,7 +103,12 @@ categories:
     - tunnel_entrance
 
 content_counts:
-  functional_definition_target_min: 45
-  functional_definition_target_max: 60
+  current_planned_buildables: 78
+  functional_definition_target_min: 70
+  functional_definition_target_max: 85
   decor_definition_target_min: 80
   decor_definition_target_max: 150
+
+design_rule:
+  unique_mechanic_count_must_be_lower_than_buildable_count: true
+  variants_and_upgrades_should_reuse_shared_systems: true
