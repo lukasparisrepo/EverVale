@@ -48,6 +48,7 @@ When documents overlap, use the authority below.
 | Performance budgets | `docs/65_PERFORMANCE_BUDGETS.md` |
 | Pre-engineering lock | `docs/66_PRE_ENGINEERING_DESIGN_LOCK.md` |
 | M1 runtime quality | `docs/69_M1_RUNTIME_QUALITY_AUDIT.md` |
+| Build grid / footprints / Props | `docs/70_BUILD_GRID_FOOTPRINT_PROP_CONTRACT.md` |
 | Studio readiness audit | `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md` |
 | Implementation start gate | `docs/59_IMPLEMENTATION_START_GATE.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
@@ -59,6 +60,8 @@ When documents overlap, use the authority below.
 When prose disagrees with machine-readable balance/content data, the versioned data wins unless an audit explicitly changes it.
 
 - Building balance: `data/balance/v0.2/buildings.yaml`
+- Building footprints/grid: `data/content/v0.2/build_footprints.yaml`
+- Prop/decor metadata: `data/content/v0.2/props.yaml`
 - Workforce: `data/balance/v0.1/workforce.yaml`
 - Tech: `data/balance/v0.1/tech.yaml`
 - Threat cadence: `data/balance/v0.1/threats.yaml`
