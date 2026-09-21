@@ -1,0 +1,164 @@
+version: "0.2"
+
+enemies:
+  nibbler:
+    bracket_min: 0
+    class: ground
+    hp: 45
+    dps: 3
+    armor: 0
+    budget: 3
+    behavior: swarm
+
+  wobble_slime:
+    bracket_min: 0
+    class: ground
+    hp: 70
+    dps: 4
+    armor: 0
+    budget: 4
+    behavior: wobble_swarm
+
+  burrower:
+    bracket_min: 0
+    class: ground
+    hp: 85
+    dps: 5
+    armor: 2
+    budget: 5
+    behavior: outer_sector_burrow
+
+  shellback:
+    bracket_min: 1
+    class: ground
+    hp: 180
+    dps: 8
+    armor: 18
+    budget: 12
+    behavior: armored_roll
+
+  scrap_gobbler:
+    bracket_min: 1
+    class: ground
+    hp: 140
+    dps: 10
+    armor: 5
+    budget: 10
+    behavior: building_harass
+
+  leaper:
+    bracket_min: 2
+    class: ground
+    hp: 160
+    dps: 12
+    armor: 4
+    budget: 12
+    behavior: jump_small_obstacles
+
+  brute:
+    bracket_min: 2
+    class: ground
+    hp: 375
+    dps: 18
+    armor: 12
+    budget: 30
+    behavior: heavy
+
+  spitter:
+    bracket_min: 3
+    class: ground
+    hp: 230
+    dps: 20
+    armor: 6
+    budget: 20
+    behavior: ranged
+
+  scout_drone:
+    bracket_min: 2
+    class: air
+    hp: 220
+    dps: 10
+    armor: 5
+    budget: 18
+    behavior: air_scout
+
+  ufo_scout:
+    bracket_min: 3
+    class: air
+    hp: 420
+    dps: 18
+    armor: 10
+    budget: 32
+    behavior: scan_and_attack
+
+  ufo_raider:
+    bracket_min: 4
+    class: air
+    hp: 900
+    dps: 35
+    armor: 25
+    budget: 70
+    behavior: beam_assault
+
+  drop_pod:
+    bracket_min: 4
+    class: air_delivery
+    hp: 360
+    dps: 0
+    armor: 12
+    budget: 30
+    behavior: deploy_ground_units
+
+  alien_walker:
+    bracket_min: 4
+    class: ground
+    hp: 1100
+    dps: 38
+    armor: 30
+    budget: 80
+    behavior: siege_walk
+
+  shield_drone:
+    bracket_min: 4
+    class: air
+    hp: 360
+    dps: 6
+    armor: 12
+    budget: 35
+    behavior: ally_shield
+
+  command_saucer:
+    bracket_min: 5
+    class: air
+    hp: 1500
+    dps: 45
+    armor: 32
+    budget: 120
+    behavior: support_ufo
+
+  siege_beast:
+    bracket_min: 5
+    class: ground
+    hp: 1700
+    dps: 50
+    armor: 28
+    budget: 120
+    behavior: siege
+
+  carrier:
+    bracket_min: 6
+    class: air
+    hp: 3200
+    dps: 75
+    armor: 45
+    budget: 220
+    behavior: deploy_air_and_pods
+
+  anomaly_giant:
+    bracket_min: 6
+    class: ground
+    hp: 3800
+    dps: 85
+    armor: 38
+    budget: 240
+    behavior: boss_like
