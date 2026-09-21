@@ -1,109 +1,214 @@
 # 17 — Acceptance Tests
 
+Status: **CANON-ALIGNED v0.2**
+
 ## A. Persistence
 
 1. Create world.
-2. Place road + generator + pump + homes.
+2. Build House / Power / Water / income workplace.
 3. Disconnect.
-4. Advance server time/test clock.
-5. Reconnect from a fresh client.
-6. World state reflects elapsed progression.
-7. Client local storage deletion does not delete world.
+4. Advance authoritative test clock.
+5. Reconnect from a fresh browser/session.
+6. World reflects elapsed progression.
+7. Client local storage deletion does not delete server world.
+8. Return timeline explains meaningful changes.
 
 PASS required.
 
 ## B. Server authority
 
-Attempt client command with insufficient Money.
+Attempt a build command with insufficient Money.
 
 Expected:
 - server rejects
 - no building persists
 - client preview rolls back
+- world revision remains valid
 
-## C. Power cascade
+## C. Exclusive simulation lease
 
-1. Power pump.
-2. Confirm reservoir fills.
-3. Remove/overload power.
-4. Pump stops.
-5. Reservoir depletes.
-6. dependent consumers report water loss.
-
-## D. Road logistics
-
-Break road connectivity to refinery.
+Race:
+- ACTIVE world room
+- background catch-up worker
 
 Expected:
-- deliveries fail/reroute
-- production reason is visible
-- no teleporting commodity
+- only one acquires lease
+- Money/Tech/Varum/Growth advance once
+- no duplicate threat event
 
-## E. Citizen routine
+## D. Power / Water resource loop
 
-At least one citizen:
-- leaves home
-- reaches assigned job
-- works
-- uses recreation
-- returns home
+1. Staff Power Plant and Water Plant.
+2. Confirm production exceeds current consumption.
+3. Increase Population/building demand or unstaff a utility.
+4. Reserve begins falling.
+5. Reserve reaches zero.
+6. dependent buildings reduce operation.
+7. Happiness target falls.
+8. job allocator protects critical utility staffing by default.
 
-State remains consistent after save/load.
+No pipe/reservoir simulation is required.
 
-## F. School
+## E. Road connectivity
 
-Children attend school when capacity/path exists. Capacity shortage is visible and affects education service.
-
-## G. Varum chain
-
-Mine produces raw Varum.
-Refinery consumes raw Varum plus utilities/workers and outputs refined Varum.
-Advanced production cannot consume nonexistent refined Varum.
-
-## H. Threat secrecy
-
-No client payload exposes exact scheduled attack timestamp when design intends uncertainty.
-
-## I. Offline attack fairness
-
-Simulate long absence with threat.
+Disconnect a workplace from the canonical road graph.
 
 Expected:
-- threat may resolve
-- defenses matter
-- damage/loss recorded
-- offline safety budget prevents unreasonable annihilation
-- after-action timeline explains outcome
+- building does not request workers
+- citizen visual commute does not enter it
+- building reports DISCONNECTED
+- reconnecting road restores eligibility
 
-## J. Navigation edit
+## F. Automatic Workforce allocation
+
+Create more requested job slots than available Workforce.
+
+Expected:
+- assigned workers never exceed Workforce
+- critical utilities fill first
+- lower-priority buildings become partially staffed or idle
+- partial output scales consistently
+- player can reorder non-critical priorities
+- deterministic tie breakers produce same result for same state
+
+## G. Citizen routine
+
+With an operating town:
+- adult leaves home
+- adult travels toward assigned workplace
+- child travels toward School
+- optional citizen visits Park
+- evening returns toward home
+
+Player issues no per-citizen move order.
+
+## H. Living-world contradiction guard
+
+Examples that must PASS:
+- disabled School → no School arrival activity
+- active attack → Park leisure density approaches zero
+- night → civilian traffic reduced
+- disconnected Farm → no farmer work loop
+- rain → outdoor Park usage reduced
+
+## I. School / Tech
+
+Staff School with Power/Water available.
+
+Expected:
+- Tech increases at configured rate
+- Education coverage exists
+- threshold unlocks correct Tech Tier
+- removing staff reduces/halts Tech output
+
+## J. Varum
+
+At required Tech Tier:
+- build Varum Mine
+- staff it
+- provide Power/Water
+
+Expected:
+- Mine produces Varum directly
+- no Raw/Refined split
+- advanced unit purchase rejects insufficient Varum
+- Varum respects storage cap
+
+## K. Population Growth
+
+With spare Housing and Happiness >= threshold:
+- Growth accumulates
+- Population eventually increases
+- Workforce recalculates
+- Growth stops when Housing is full
+- Growth stops below Happiness threshold
+
+## L. Threat secrecy
+
+Ordinary client payload must not expose:
+- hidden attack threshold
+- exact scheduled major-attack time
+
+Warning information may be exposed according to sensors/radar.
+
+## M. Combat / defense
+
+Ground test:
+- attacker spawns at valid edge/entry
+- defender coverage and travel time affect response
+- target filters respected
+- damage uses canonical stats/formula
+- damaged structures create repair state
+
+Air test:
+- ground-only units do not magically hit air targets
+- AA/Fighter can engage air targets
+
+## N. Offline attack fairness
+
+Simulate long absence.
+
+Expected:
+- attack may occur
+- same canonical stats are used
+- damage is bounded by offline safety rules
+- critical infrastructure is not silently erased
+- After-Action report explains loss/damage
+
+## O. Navigation edit
 
 Edit road/building footprint.
 
 Expected:
-- navmesh/path graph updates
-- citizens do not permanently walk through new obstruction
-- server logical destinations remain valid/recoverable
+- server mobility graph updates
+- local navmesh/visual path updates independently
+- economic simulation never depends on stale Recast data
+- citizens recover from invalid presentation paths
 
-## K. Asset validation
+## P. Activity anchors
 
-For production GLB:
-- scale valid
-- pivot valid
-- material count within policy
-- license metadata present
-- triangle budget passes
-- runtime loader succeeds
+Load representative House, School, Farm and Park assets.
 
-## L. Performance
+Expected:
+- required semantic anchors exist
+- anchor capacity prevents obvious overlap
+- activity system can bind actors without hardcoded asset coordinates
 
-Representative MVP scene:
-- target desktop frame rate reached at agreed quality
-- no unbounded draw-call growth from citizens/vegetation
-- DPR cap works
-- low-quality profile remains playable
+## Q. Asset validation
 
-## M. Multiplayer readiness
+Production GLB passes:
+- scale
+- pivot
+- naming
+- material budget
+- triangle/LOD policy
+- license/provenance
+- anchor metadata
+- runtime load
 
-Connect two read clients to the same test world.
+## R. Layer boundary
 
-Both receive consistent authoritative revision stream even if only owner may mutate.
+Automated architecture check eventually verifies:
+- simulation imports no Three.js/React/Drizzle/Colyseus
+- UI imports no DB adapter
+- server network handlers do not own gameplay formulas
+- no circular dependency across canonical layers
+
+## S. Performance
+
+Representative scene:
+- target desktop frame rate
+- capped DPR
+- actor density cap
+- pooled transient actors
+- static crowds require no per-frame update
+- low quality remains playable
+
+## T. Multiplayer readiness
+
+Connect two read clients to same world.
+
+Expected:
+- same authoritative revision stream
+- owner permissions enforced
+- no assumption of exactly one observer
