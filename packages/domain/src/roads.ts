@@ -24,12 +24,20 @@ function distanceToEndpoint(roads: RoadSegment[], x: number, z: number): number 
   return best;
 }
 
+const GRID_METERS = 2;
+
+const snap = (value: number): number => Math.round(value / GRID_METERS) * GRID_METERS;
+
 export function drawRoad(world: WorldState, input: DrawRoadInput): WorldState {
-  const length = Math.hypot(input.toX - input.fromX, input.toZ - input.fromZ);
+  const fromX = snap(input.fromX);
+  const fromZ = snap(input.fromZ);
+  const toX = snap(input.toX);
+  const toZ = snap(input.toZ);
+  const length = Math.hypot(toX - fromX, toZ - fromZ);
   if (length < 2) throw new Error("ROAD_TOO_SHORT");
   if (length > MAX_SEGMENT_METERS) throw new Error("ROAD_TOO_LONG");
 
-  if (world.roads.length > 0 && distanceToEndpoint(world.roads, input.fromX, input.fromZ) > SNAP_METERS) {
+  if (world.roads.length > 0 && distanceToEndpoint(world.roads, fromX, fromZ) > SNAP_METERS) {
     throw new Error("ROAD_NOT_CONNECTED");
   }
 
@@ -39,8 +47,8 @@ export function drawRoad(world: WorldState, input: DrawRoadInput): WorldState {
   const segment: RoadSegment = {
     id: input.roadId,
     type: "DIRT",
-    from: { x: input.fromX, y: 0, z: input.fromZ },
-    to: { x: input.toX, y: 0, z: input.toZ },
+    from: { x: fromX, y: 0, z: fromZ },
+    to: { x: toX, y: 0, z: toZ },
   };
 
   return {
