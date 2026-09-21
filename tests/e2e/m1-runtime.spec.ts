@@ -111,6 +111,13 @@ test("M1 loop: build, Decor, persistence, offline catch-up, combat, repair", asy
   expect(bench.rotationY).toBeCloseTo(Math.PI / 4, 6);
   await expect(page.getByTestId("prop-count")).toContainText("1");
   await expect.poll(async () => Number(await worldView.getAttribute("data-props"))).toBe(1);
+  const decorDrawCalls = Number(await worldView.getAttribute("data-draw-calls"));
+  const decorTriangles = Number(await worldView.getAttribute("data-triangles"));
+  expect(decorDrawCalls).toBeGreaterThan(0);
+  expect(decorDrawCalls).toBeLessThanOrEqual(450);
+  expect(decorTriangles).toBeGreaterThan(0);
+  expect(decorTriangles).toBeLessThanOrEqual(1_500_000);
+  console.log("M1_DECOR_RENDER_METRICS", { decorDrawCalls, decorTriangles });
 
   const movedProp = await apiCommand(request, ownerId!, "MOVE_PROP", {
     propId: bench.id,
