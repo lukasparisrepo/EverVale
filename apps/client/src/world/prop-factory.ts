@@ -28,6 +28,7 @@ function mat(name: keyof typeof palette, roughness = 0.9): THREE.MeshStandardMat
       roughness,
       metalness: name === "metal" || name === "copper" ? 0.25 : 0,
     });
+    value.userData.sharedMaterial = true;
     matCache.set(key, value);
   }
   return value;
@@ -43,6 +44,7 @@ function emissiveLamp(): THREE.MeshStandardMaterial {
       emissiveIntensity: 1.1,
       roughness: 0.5,
     });
+    value.userData.sharedMaterial = true;
     matCache.set(key, value);
   }
   return value;
