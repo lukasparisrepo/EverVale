@@ -22,6 +22,7 @@ export function createStarterWorld(
       priority: definition.priority,
       condition: 100,
       damageState: "HEALTHY",
+      repairRemainingSeconds: 0,
     };
   };
 
