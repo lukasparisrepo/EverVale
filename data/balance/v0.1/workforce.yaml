@@ -1,0 +1,31 @@
+version: "0.1"
+
+workforce_fraction: 0.75
+
+default_category_priority:
+  utility_power: 100
+  utility_water: 95
+  income: 80
+  defense_active: 75
+  defense_ready: 65
+  education: 60
+  varum: 50
+  advanced_industry: 40
+
+critical_categories:
+  - utility_power
+  - utility_water
+
+allocation:
+  allow_partial_staffing: true
+  partial_output_scales_with_staffing: true
+  partial_variable_consumption_scales_with_staffing: true
+  fixed_upkeep_scales_with_staffing: false
+  disconnected_buildings_request_workers: false
+  disabled_buildings_request_workers: false
+  production_order_buildings_request_workers_only_when_active: true
+
+tie_breakers:
+  - explicit_building_priority
+  - shortest_commute_cost
+  - stable_building_id
