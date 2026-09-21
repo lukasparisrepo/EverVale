@@ -2,7 +2,8 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import type { WorldState } from "@evervale/domain/world.types";
-import type { BuildCatalogEntryDto } from "@evervale/protocol/world";
+import type { BuildCatalogEntryDto, PropCatalogEntryDto } from "@evervale/protocol/world";
+import { createPropObject, makeSelectionRing } from "./prop-factory";
 
 export interface RuntimeMetrics {
   fps: number;
@@ -14,11 +15,17 @@ export interface RuntimeMetrics {
 
 interface Props {
   world: WorldState;
-  mode: "SELECT" | "BUILD" | "ROAD";
+  mode: "SELECT" | "BUILD" | "ROAD" | "DECOR" | "MOVE_PROP";
   selectedBuild: BuildCatalogEntryDto | null;
   buildCatalog: BuildCatalogEntryDto[];
+  selectedProp: PropCatalogEntryDto | null;
+  propCatalog: PropCatalogEntryDto[];
+  propRotation: number;
+  selectedPropId: string | null;
+  movingPropId: string | null;
   roadStart: { x: number; z: number } | null;
   onGroundClick(position: { x: number; z: number }): void;
+  onPropSelect(propId: string | null): void;
   onMetrics: ((metrics: RuntimeMetrics) => void) | undefined;
 }
 
@@ -273,8 +280,14 @@ export function WorldView({
   mode,
   selectedBuild,
   buildCatalog,
+  selectedProp,
+  propCatalog,
+  propRotation,
+  selectedPropId,
+  movingPropId,
   roadStart,
   onGroundClick,
+  onPropSelect,
   onMetrics,
 }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -284,10 +297,18 @@ export function WorldView({
   const modeRef = useRef(mode);
   const selectedBuildRef = useRef(selectedBuild);
   const buildCatalogRef = useRef(buildCatalog);
+  const selectedPropRef = useRef(selectedProp);
+  const propCatalogRef = useRef(propCatalog);
+  const propRotationRef = useRef(propRotation);
+  const selectedPropIdRef = useRef(selectedPropId);
+  const movingPropIdRef = useRef(movingPropId);
+  const propSelectRef = useRef(onPropSelect);
   const roadStartRef = useRef(roadStart);
   const dynamicRef = useRef<THREE.Group | null>(null);
   const citizensRef = useRef<THREE.Mesh[]>([]);
   const animalsRef = useRef<THREE.Group[]>([]);
+  const propWaterRef = useRef<THREE.Mesh[]>([]);
+  const propGlowRef = useRef<THREE.Mesh[]>([]);
 
   useEffect(() => { worldRef.current = world; }, [world]);
   useEffect(() => { clickRef.current = onGroundClick; }, [onGroundClick]);
@@ -295,6 +316,12 @@ export function WorldView({
   useEffect(() => { modeRef.current = mode; }, [mode]);
   useEffect(() => { selectedBuildRef.current = selectedBuild; }, [selectedBuild]);
   useEffect(() => { buildCatalogRef.current = buildCatalog; }, [buildCatalog]);
+  useEffect(() => { selectedPropRef.current = selectedProp; }, [selectedProp]);
+  useEffect(() => { propCatalogRef.current = propCatalog; }, [propCatalog]);
+  useEffect(() => { propRotationRef.current = propRotation; }, [propRotation]);
+  useEffect(() => { selectedPropIdRef.current = selectedPropId; }, [selectedPropId]);
+  useEffect(() => { movingPropIdRef.current = movingPropId; }, [movingPropId]);
+  useEffect(() => { propSelectRef.current = onPropSelect; }, [onPropSelect]);
   useEffect(() => { roadStartRef.current = roadStart; }, [roadStart]);
 
   useEffect(() => {
