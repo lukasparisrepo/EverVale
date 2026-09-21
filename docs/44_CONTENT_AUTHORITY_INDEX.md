@@ -28,7 +28,7 @@ When documents overlap, use the authority below.
 | Decor/world dressing | `docs/43_DECOR_AND_WORLD_DRESSING.md` + `docs/72_M1_1_DECOR_MODE.md` |
 | Seasons/weather | `docs/46_SEASONS_WEATHER_NATURAL_HAZARDS.md` |
 | Architecture | `docs/35_LAYERED_ARCHITECTURE.md` |
-| Persistence/data contracts | `docs/14_PERSISTENCE_MULTIPLAYER.md` + `docs/20_DATA_CONTRACTS.md` |
+| Persistence/data contracts | `docs/14_PERSISTENCE_MULTIPLAYER.md` + `docs/20_DATA_CONTRACTS.md` + `docs/76_M1_5_PERSISTENCE_CONCURRENCY_HARDENING.md` |
 | Three.js/dependencies | `docs/11_THREEJS_STACK.md` + `docs/18_LIBRARY_REFERENCE_MATRIX.md` |
 | Blender/assets | `docs/12_BLENDER_PIPELINE.md` + `docs/19_ASSET_STANDARDS.md` |
 | Whistlevale reference | `docs/36_WHISTLEVALE_REFERENCE_AUDIT.md` |
@@ -54,6 +54,7 @@ When documents overlap, use the authority below.
 | M1.2 road routing | `docs/73_M1_2_ROAD_ROUTING.md` |
 | M1.3 construction presentation | `docs/74_M1_3_CONSTRUCTION_PRESENTATION.md` |
 | M1.4 stress / memory | `docs/75_M1_4_STRESS_MEMORY_AUDIT.md` |
+| M1.5 persistence / concurrency | `docs/76_M1_5_PERSISTENCE_CONCURRENCY_HARDENING.md` |
 | Studio readiness audit | `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md` |
 | Implementation start gate | `docs/59_IMPLEMENTATION_START_GATE.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
