@@ -119,6 +119,8 @@ export default function App() {
       ? `${w.combat.outcome} — ${w.combat.summary ?? ""}`
       : "";
 
+  const damaged = w.buildings.filter((b) => b.damageState !== "HEALTHY");
+
   return (
     <div className="game-shell">
       <WorldView world={w} mode={mode} onGroundClick={groundClick} />
@@ -171,6 +173,29 @@ export default function App() {
         <div><strong>Education</strong> {Math.round(w.society.educationCoverage * 100)}%</div>
         <div><strong>Recreation</strong> {Math.round(w.society.recreationCoverage * 100)}%</div>
         <div><strong>Safety</strong> {Math.round(w.society.safety * 100)}%</div>
+        {damaged.length > 0 && (
+          <div className="repair-list">
+            <strong>Repairs</strong>
+            {damaged.map((b) => (
+              <div key={b.id} className="repair-row">
+                <span>{b.definitionId} · {Math.round(b.condition)}%</span>
+                {b.damageState === "REPAIRING" ? (
+                  <small>{Math.ceil(b.repairRemainingSeconds)}s</small>
+                ) : (
+                  <button onClick={() => void command({ type:"REPAIR_BUILDING", payload:{buildingId:b.id} })}>
+                    Repair
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {w.events.length > 0 && (
+          <div className="event-log">
+            <strong>Last event</strong>
+            <small>{w.events[w.events.length - 1]?.summary}</small>
+          </div>
+        )}
         <button
           className="danger"
           disabled={!!w.combat && w.combat.status !== "RESOLVED"}
