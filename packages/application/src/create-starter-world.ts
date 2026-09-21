@@ -57,6 +57,7 @@ export function createStarterWorld(
       educationCoverage: 0,
       recreationCoverage: 0,
       safety: 0.5,
+      beauty: 0,
     },
     buildings: [
       place("town_center", 0, 0),
@@ -75,6 +76,7 @@ export function createStarterWorld(
       { id: ids.next("blocker"), definitionId: "fallen_tree", position: { x: 29, y: 0, z: 11 }, state: "BLOCKING", clearRemainingSeconds: 0 },
       { id: ids.next("blocker"), definitionId: "rubble", position: { x: -30, y: 0, z: -12 }, state: "BLOCKING", clearRemainingSeconds: 0 },
     ],
+    props: [],
     combat: null,
     events: [],
   };
