@@ -37,8 +37,7 @@ const world: WorldState = {
   society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5},
   buildings:[],
   roads:[],
-  combat:null,
-  events:[],
+  blockers:[], combat:null, events:[],
 };
 
 test("one large advance crosses warning into combat and resolves the M1 wave", () => {
