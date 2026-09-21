@@ -30,7 +30,7 @@ Every important building should have a clear mechanical purpose and an activity 
 - Money workplace
 - creates rural visual identity
 - supports chickens, ducks, tractor/farm activity
-- does **not** create a Food resource in v0.1
+- does **not** create a Food resource in the core model
 
 **Café** — T1
 - Money workplace
@@ -102,7 +102,7 @@ Every definition may declare:
 - visual variants
 
 Machine-readable baseline:
-`data/balance/v0.1/buildings.yaml`
+`data/balance/v0.2/buildings.yaml`
 
 ## Staffing modes
 
@@ -124,7 +124,7 @@ This prevents an idle advanced factory from consuming Workforce forever.
 
 ## Construction model
 
-v0.1 construction uses:
+Current construction uses:
 - Money
 - optional Varum
 - time
