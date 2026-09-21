@@ -163,6 +163,33 @@ function addTimberFront(group:THREE.Group,width:number,depth:number,height:numbe
   }
 }
 
+function addStoneStep(group: THREE.Group, x: number, z: number, width = 1.25): void {
+  box(group, width, 0.16, 0.5, material("stone"), x, 0.12, z, false);
+  box(group, width * 0.78, 0.12, 0.34, material("stoneDark"), x, 0.26, z - 0.12, false);
+}
+
+function addFlowerBox(group: THREE.Group, x: number, y: number, z: number): void {
+  box(group, 0.78, 0.16, 0.22, material("timberDark"), x, y, z, false);
+  for (const dx of [-0.24, 0, 0.24]) {
+    const blossom = mesh(
+      new THREE.OctahedronGeometry(0.09, 0),
+      dx === 0 ? material("awning") : material("plasterWarm"),
+      x + dx,
+      y + 0.18 + Math.abs(dx) * 0.08,
+      z + 0.02,
+      false,
+    );
+    group.add(blossom);
+  }
+}
+
+function addEaveBrackets(group: THREE.Group, width: number, depth: number, y: number): void {
+  for (const x of [-width * 0.35, -width * 0.12, width * 0.12, width * 0.35]) {
+    const bracket = box(group, 0.09, 0.34, 0.28, material("timberDark"), x, y, depth / 2 + 0.16, false);
+    bracket.rotation.x = -0.32;
+  }
+}
+
 function addChimney(group:THREE.Group,x:number,z:number,y:number): void {
   box(group,0.48,1.35,0.48,material("brick"),x,y+0.3,z);
   box(group,0.62,0.14,0.62,material("stoneDark"),x,y+0.98,z,false);
@@ -175,8 +202,12 @@ function addHouse(group:THREE.Group,width:number,depth:number): void {
   addTimberFront(group,width*0.88,depth*0.86,h);
   addGabledRoof(group,width*0.96,depth*0.92,h+0.34,material("roofWarm"),1.15);
   addDoor(group,0,depth*0.43+0.08);
+  addStoneStep(group,0,depth*0.48+0.32);
   addWindow(group,-width*0.24,1.62,depth*0.43+0.09);
   addWindow(group,width*0.24,1.62,depth*0.43+0.09);
+  addFlowerBox(group,-width*0.24,1.13,depth*0.45+0.14);
+  addFlowerBox(group,width*0.24,1.13,depth*0.45+0.14);
+  addEaveBrackets(group,width*0.88,depth*0.86,h+0.15);
   addChimney(group,-width*0.27,-depth*0.18,h+0.15);
   box(group,width*0.28,0.08,0.48,material("soil"),width*0.26,0.08,depth*0.54,false);
 }
@@ -188,6 +219,8 @@ function addTownCenter(group:THREE.Group,width:number,depth:number): void {
   addTimberFront(group,width*0.9,depth*0.84,h);
   addGabledRoof(group,width*0.98,depth*0.9,h+0.34,material("roof"),1.35);
   addDoor(group,0,depth*0.42+0.08,1.2,1.9);
+  addStoneStep(group,0,depth*0.47+0.34,1.7);
+  addEaveBrackets(group,width*0.9,depth*0.84,h+0.14);
   for (const x of [-width*0.28,width*0.28]) {
     addWindow(group,x,1.75,depth*0.42+0.09);
     addWindow(group,x,3.05,depth*0.42+0.09);
@@ -251,6 +284,8 @@ function addSchool(group:THREE.Group,width:number,depth:number): void {
   box(group,width*0.9,h,depth*0.82,material("plasterWarm"),0,h/2+0.34,0);
   addGabledRoof(group,width*0.96,depth*0.88,h+0.34,material("roofWarm"),1.0);
   addDoor(group,0,depth*0.41+0.08,1.05,1.75);
+  addStoneStep(group,0,depth*0.46+0.3,1.45);
+  addEaveBrackets(group,width*0.9,depth*0.82,h+0.13);
   for(const x of [-width*0.3,-width*0.1,width*0.1,width*0.3]) addWindow(group,x,1.65,depth*0.41+0.09);
   box(group,0.72,1.0,0.72,material("stone"),0,h+0.72,0);
   const bell=mesh(new THREE.ConeGeometry(0.24,0.35,10),material("copper",0.45,0.3),0,h+0.9,depth*0.38,false);
@@ -312,7 +347,10 @@ function addRestaurant(group:THREE.Group,width:number,depth:number): void {
   box(group,width*0.9,h,depth*0.82,material("cream"),0,h/2+0.34,0);
   addGabledRoof(group,width*0.96,depth*0.88,h+0.34,material("roofWarm"),0.9);
   addDoor(group,width*0.22,depth*0.41+0.08);
+  addStoneStep(group,width*0.22,depth*0.46+0.3,1.2);
   addWindow(group,-width*0.26,1.62,depth*0.41+0.09);
+  addFlowerBox(group,-width*0.26,1.13,depth*0.43+0.14);
+  addEaveBrackets(group,width*0.9,depth*0.82,h+0.12);
   const awning=box(group,width*0.48,0.12,0.9,material("awning"),-width*0.18,2.18,depth*0.5);
   awning.rotation.x=-0.1;
   box(group,1.5,0.3,0.08,material("timberDark"),0,h+0.15,depth*0.43+0.08,false);
