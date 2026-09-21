@@ -259,6 +259,15 @@ buildings:
     art_tags: ["heavy_industry", "varum_machinery"]
     incidents: ["machinery_breakdown", "varum_anomaly", "explosion"]
 
+  civic_shelter:
+    name: "Hearth Shelter"
+    category: safety
+    tech_tier: 1
+    function: ["civilian_shelter"]
+    shelter_capacity: 24
+    art_tags: ["stone_cellar", "warm_lamps", "reinforced_door"]
+    incidents: ["utility_fault", "damage"]
+
   guard_post:
     name: "Oakwatch Guardhouse"
     category: safety
@@ -322,6 +331,14 @@ buildings:
     function: ["aircraft_operations"]
     art_tags: ["runway", "hangar", "windsock", "service_cart"]
     incidents: ["storm_damage", "equipment_failure"]
+
+  heavy_turret:
+    name: "Stonebolt Battery"
+    category: defense
+    tech_tier: 3
+    function: ["heavy_ground_defense"]
+    art_tags: ["stone_base", "chunky_turret", "copper_mechanism"]
+    incidents: ["equipment_failure", "damage"]
 
   anti_air:
     name: "Skyshield Battery"
