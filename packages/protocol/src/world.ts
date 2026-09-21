@@ -9,9 +9,18 @@ export interface BuildCatalogEntryDto {
   buildCycles: number;
 }
 
+export interface BlockerCatalogEntryDto {
+  id: string;
+  moneyCost: number;
+  varumCost: number;
+  clearCycles: number;
+  techTier: number;
+}
+
 export interface WorldViewDto {
   world: WorldState;
   buildCatalog: BuildCatalogEntryDto[];
+  blockerCatalog: BlockerCatalogEntryDto[];
   serverNow: string;
 }
 
