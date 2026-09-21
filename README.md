@@ -105,3 +105,12 @@ No gameplay runtime should be built until the canon, stack boundaries and MVP ac
 - [Decor & world dressing](docs/43_DECOR_AND_WORLD_DRESSING.md)
 - [Content authority index](docs/44_CONTENT_AUTHORITY_INDEX.md)
 - [Anti-idle/content audit](docs/45_ANTI_IDLE_AND_CONTENT_AUDIT_2026-09-21.md)
+
+
+## Start here for implementation
+
+- [Studio readiness audit](docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md)
+- [Implementation start gate](docs/59_IMPLEMENTATION_START_GATE.md)
+
+Current decision: **GREENLIGHT M0/M1 vertical slice.**
+Full-content production remains gated behind M1 proof.
