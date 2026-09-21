@@ -226,3 +226,15 @@ If an implementation agent tries to:
 stop and return to this gate.
 
 The vertical slice is the proof that EverVale is a game, not only a large design document.
+
+
+## Preflight now available
+
+Before substantial M0 coding, CI/preflight must run:
+- `python tools/validation/validate_content.py`
+- `python tools/validation/validate_worldgen.py --seeds 1000`
+- `python tools/simulation/simulate_long_run.py --trials 20`
+- `python tools/simulation/simulate_spatial_combat.py --trials 20`
+
+Canonical pre-engineering lock:
+`docs/66_PRE_ENGINEERING_DESIGN_LOCK.md`
