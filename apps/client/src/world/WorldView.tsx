@@ -5,6 +5,11 @@ import { routeAlongRoads, samplePolyline } from "@evervale/domain/road-routing";
 import type { WorldState } from "@evervale/domain/world.types";
 import type { BuildCatalogEntryDto, PropCatalogEntryDto } from "@evervale/protocol/world";
 import { createPropObject, makeSelectionRing } from "./prop-factory";
+import {
+  constructionVisualState,
+  createBuilderObject,
+  createConstructionObject,
+} from "./construction-visual";
 
 export interface RuntimeMetrics {
   fps: number;
@@ -352,6 +357,12 @@ export function WorldView({
   const animalsRef = useRef<THREE.Group[]>([]);
   const propWaterRef = useRef<THREE.Mesh[]>([]);
   const propGlowRef = useRef<THREE.Mesh[]>([]);
+  const buildersRef = useRef<Array<{
+    object: THREE.Group;
+    route: { connected: boolean; points: Array<{x:number;z:number}> };
+    site: {x:number;z:number};
+    progress: number;
+  }>>([]);
 
   useEffect(() => { worldRef.current = world; }, [world]);
   useEffect(() => { clickRef.current = onGroundClick; }, [onGroundClick]);
@@ -647,6 +658,7 @@ export function WorldView({
       animalsRef.current = [];
       propWaterRef.current = [];
       propGlowRef.current = [];
+      buildersRef.current = [];
       const current = worldRef.current;
 
       for (const road of current.roads ?? []) {
@@ -665,10 +677,56 @@ export function WorldView({
 
       (current.blockers ?? []).forEach((blocker) => dynamic.add(makeBlocker(blocker)));
 
+      const activeConstruction = current.buildings.filter(
+        (building) => building.constructionState === "BUILDING",
+      );
+
       current.buildings.forEach((building) => {
         const meta = buildCatalogRef.current.find((item) => item.id === building.definitionId);
-        dynamic.add(makeBuilding(building.definitionId, building, meta));
+        dynamic.add(
+          building.constructionState === "BUILDING"
+            ? createConstructionObject(building, meta)
+            : makeBuilding(building.definitionId, building, meta),
+        );
       });
+
+      host.dataset.activeConstruction = String(activeConstruction.length);
+      if (activeConstruction[0]) {
+        host.dataset.constructionStage = constructionVisualState(activeConstruction[0]).stage;
+      } else {
+        delete host.dataset.constructionStage;
+      }
+
+      const builderSource =
+        current.buildings.find(
+          (building) =>
+            building.definitionId === "builders_yard" &&
+            building.constructionState === "COMPLETE" &&
+            building.damageState !== "DISABLED",
+        ) ??
+        current.buildings.find(
+          (building) =>
+            building.definitionId === "town_center" &&
+            building.constructionState === "COMPLETE" &&
+            building.damageState !== "DISABLED",
+        );
+
+      if (builderSource) {
+        for (const project of activeConstruction.slice(0, 3)) {
+          const source = { x: builderSource.position.x, z: builderSource.position.z };
+          const site = { x: project.position.x, z: project.position.z };
+          const route = routeAlongRoads(current.roads, source, site);
+          const builder = createBuilderObject();
+          builder.position.set(source.x, 0, source.z);
+          dynamic.add(builder);
+          buildersRef.current.push({
+            object: builder,
+            route,
+            site,
+            progress: constructionVisualState(project).progress,
+          });
+        }
+      }
 
       for (const prop of current.props ?? []) {
         const meta = propCatalogRef.current.find((item) => item.id === prop.definitionId);
@@ -851,6 +909,38 @@ export function WorldView({
         if (object.userData.combatBob) {
           object.position.y = 0.7 + Math.sin(time / 130 + i) * 0.12;
         }
+      });
+
+      buildersRef.current.forEach((builder, i) => {
+        const travelT = Math.max(0, Math.min(1, builder.progress / 0.08));
+        let target = builder.site;
+
+        if (travelT < 1 && builder.route.connected) {
+          target = samplePolyline(builder.route.points, travelT);
+        } else if (travelT >= 1) {
+          const phase = time / 900 + i * 1.7;
+          target = {
+            x: builder.site.x + Math.cos(phase) * 1.25,
+            z: builder.site.z + Math.sin(phase * 0.9) * 0.9,
+          };
+        }
+
+        const dx = target.x - builder.object.position.x;
+        const dz = target.z - builder.object.position.z;
+        builder.object.position.x += dx * 0.16;
+        builder.object.position.z += dz * 0.16;
+        if (Math.hypot(dx, dz) > 0.02) {
+          builder.object.rotation.y = Math.atan2(dx, dz);
+        }
+        builder.object.position.y = travelT >= 1
+          ? Math.abs(Math.sin(time / 160 + i)) * 0.025
+          : 0;
+
+        builder.object.traverse((child) => {
+          if (child.userData.builderHammer) {
+            child.rotation.z = -0.3 + Math.sin(time / 120 + i) * 0.45;
+          }
+        });
       });
 
       animalsRef.current.forEach((dog, i) => {
