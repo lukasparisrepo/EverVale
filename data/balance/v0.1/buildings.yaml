@@ -14,7 +14,7 @@ buildings:
       town_warden: 2
     activity_profile: town_center
 
-  house:
+  house_small:
     tech_tier: 0
     money_cost: 120
     build_cycles: 2
@@ -38,7 +38,7 @@ buildings:
     activity_profile: workshop
 
   market:
-    tech_tier: 0
+    tech_tier: 2
     money_cost: 220
     build_cycles: 2
     workers: 3
@@ -64,6 +64,37 @@ buildings:
     water_use_per_cycle: 4
     upkeep_per_cycle: 3
     activity_profile: farm
+
+  restaurant:
+    tech_tier: 0
+    money_cost: 280
+    build_cycles: 3
+    workers: 3
+    job_category: income
+    default_job_priority: 72
+    staffing_mode: continuous
+    money_per_worker_per_cycle: 7
+    power_use_per_cycle: 2
+    water_use_per_cycle: 3
+    upkeep_per_cycle: 3
+    recreation_coverage_add: 0.10
+    activity_profile: cafe
+
+  builders_yard:
+    tech_tier: 0
+    money_cost: 320
+    build_cycles: 3
+    workers: 2
+    job_category: advanced_industry
+    default_job_priority: 42
+    staffing_mode: continuous
+    money_per_worker_per_cycle: 1
+    power_use_per_cycle: 1
+    water_use_per_cycle: 1
+    upkeep_per_cycle: 3
+    construction_slots_add: 1
+    repair_capacity_add: 1
+    activity_profile: workshop
 
   power_plant:
     tech_tier: 0
@@ -126,7 +157,7 @@ buildings:
     build_cycles: 2
     workers: 2
     job_category: defense_ready
-    default_job_priority: 65
+    default_job_priority: 45
     staffing_mode: continuous
     power_use_per_cycle: 2
     water_use_per_cycle: 1
