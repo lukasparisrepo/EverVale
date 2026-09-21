@@ -1,11 +1,12 @@
 version: "0.1"
+model_revision: "0.2"
 
 pressure:
-  per_cycle_formula: "0.50 + 0.02*population + 0.25*tech_tier + 0.30*active_varum_mines"
-  first_attack_threshold_min: 8
-  first_attack_threshold_max: 12
-  normal_threshold_min: 15
-  normal_threshold_max: 25
+  per_cycle_formula: "0.35 + 0.01*population + 0.12*tech_tier + 0.15*active_varum_mines"
+  first_attack_threshold_min: 5
+  first_attack_threshold_max: 7
+  normal_threshold_min: 20
+  normal_threshold_max: 32
   reset_after_major_attack: true
   major_attack_cooldown_cycles: 6
 
@@ -13,6 +14,20 @@ wave_budget:
   formula: "20 + 1.2*population + 15*tech_tier + 8*active_varum_mines + seeded_variance"
   seeded_variance_min: -10
   seeded_variance_max: 10
+
+frequency_design:
+  growth_changes_intensity_more_than_frequency: true
+  exact_countdown_exposed: false
+
+minor_incidents:
+  reset_major_pressure: false
+  examples:
+    - critter_incursion
+    - raider_scout
+    - monster_tracks
+    - radar_anomaly
+    - ufo_flyover
+    - damaged_fence
 
 family_unlocks:
   0: [critter, raider]
