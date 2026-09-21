@@ -199,6 +199,52 @@ function approximatePlacementValid(
   );
 }
 
+function approximatePropPlacementValid(
+  world: WorldState,
+  catalog: PropCatalogEntryDto[],
+  selected: PropCatalogEntryDto,
+  x: number,
+  z: number,
+  rotationY: number,
+  ignorePropId: string | null,
+): boolean {
+  const c = Math.abs(Math.cos(rotationY));
+  const s = Math.abs(Math.sin(rotationY));
+  const width = selected.sizeXMeters * c + selected.sizeZMeters * s;
+  const depth = selected.sizeXMeters * s + selected.sizeZMeters * c;
+
+  const buildingCollision = world.buildings.some((building) => {
+    const halfW = 3;
+    const halfD = 2.5;
+    return (
+      Math.abs(building.position.x - x) < halfW + width / 2 &&
+      Math.abs(building.position.z - z) < halfD + depth / 2
+    );
+  });
+  if (buildingCollision) return false;
+
+  const propCollision = (world.props ?? []).some((prop) => {
+    if (prop.id === ignorePropId) return false;
+    const meta = catalog.find((item) => item.id === prop.definitionId);
+    if (!meta) return false;
+    const pc = Math.abs(Math.cos(prop.rotationY));
+    const ps = Math.abs(Math.sin(prop.rotationY));
+    const otherW = meta.sizeXMeters * pc + meta.sizeZMeters * ps;
+    const otherD = meta.sizeXMeters * ps + meta.sizeZMeters * pc;
+    return (
+      Math.abs(prop.position.x - x) < (otherW + width) / 2 &&
+      Math.abs(prop.position.z - z) < (otherD + depth) / 2
+    );
+  });
+  if (propCollision) return false;
+
+  return !world.blockers.some((blocker) => {
+    const dx = Math.max(0, Math.abs(blocker.position.x - x) - width / 2);
+    const dz = Math.max(0, Math.abs(blocker.position.z - z) - depth / 2);
+    return Math.hypot(dx, dz) < 3.5;
+  });
+}
+
 function nearestRoadPoint(world: WorldState, point: { x: number; z: number }): { x: number; z: number } {
   let best = { x: point.x, z: point.z };
   let bestDistance = Number.POSITIVE_INFINITY;
