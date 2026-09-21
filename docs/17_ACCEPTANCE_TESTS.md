@@ -212,3 +212,41 @@ Expected:
 - same authoritative revision stream
 - owner permissions enforced
 - no assumption of exactly one observer
+
+
+## U. Procedural world fairness
+
+Generate at least 1000 seeded worlds.
+
+Every accepted seed must provide:
+- starter buildable area above minimum
+- starter structures mutually reachable
+- at least two expansion routes
+- one T1-reachable Varum deposit
+- no mandatory progression deadlock
+- valid external threat approach
+- expansion/clearance cost inside bounded range
+
+Invalid seeds are rejected/re-rolled.
+
+## V. Vertical access failure
+
+Create an inhabited upper terrace whose main connection is Hill Lift.
+
+Expected:
+- ACTIVE Lift supports configured traffic
+- Power loss switches intact Lift to EMERGENCY_PEDESTRIAN
+- pedestrians can still escape/reach recovery route slowly
+- cars/tanks cannot use emergency mode
+- physical Lift damage can fully disconnect the edge
+- UI reports isolation/repair cause
+
+## W. Content registry scalability
+
+Register a new Money building and a new Decor definition through data/registry paths.
+
+Expected:
+- no economy core switch statement edit
+- no renderer mega-file edit
+- activity profile can attach through semantic anchors
+- content validator rejects duplicate IDs and unknown mechanic types
