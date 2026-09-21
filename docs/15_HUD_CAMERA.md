@@ -7,71 +7,98 @@ Primary:
 - pitch approximately 48–55°
 - FOV approximately 35–45°
 - smooth orbit
-- zoom from city management to close diorama
+- zoom from management view to close diorama
 - constrained pan
 
-Camera should preserve depth; do not use true orthographic as default.
+## Top resource bar
 
-## Obstruction
+Always readable:
+- Money: current / Treasury cap
+- Power: reserve, production and consumption
+- Water: reserve, production and consumption
+- Varum: current / storage cap
+- Population: current / Housing capacity
+- Happiness
+- Tech Tier + progress
 
-Foreground buildings/trees may fade when blocking selection or important citizens.
+## Resource warning language
 
-## HUD principle
+Prefer:
+- Power +40 / -35
+- Reserve 82 / 120
 
-The world is the main screen. HUD stays compact.
+over obscure engineering units.
 
-### Top bar
+## Workforce panel
+
+Show:
+- available Workforce
+- assigned jobs
+- unassigned workers
+- job priority
+
+Key categories:
 - Money
-- Electricity
-- Water
+- Utilities
+- Education
 - Varum
-- population
-- world time/speed
+- Defense
 
-### Build palette
-Categories rather than dozens of permanently visible buttons.
+## Build palette
 
-### Inspector
-Context-sensitive for building, citizen, road, district, or threat.
+Categories:
+- Housing
+- Economy
+- Utility
+- Education
+- Civic
+- Varum
+- Defense
+- Roads
 
-### Alerts
-Cause-oriented:
-- Water shortage: East District
-- Refinery stopped: no power
-- School capacity full
+## Inspector
+
+Explain causes:
+- NO_WORKERS
+- LOW_POWER
+- LOW_WATER
+- DISCONNECTED
+- TECH_LOCKED
+- NO_MONEY
+- NO_VARUM
+- DAMAGED
 
 ## Overlays
 
-Toggle overlays:
-- power
-- water
-- roads/logistics
+- road connectivity
+- worker commute
 - service coverage
 - safety
-- Varum/industry
+- threat/radar
+- building operation
 
-Use world tint/lines/icons carefully so scene remains readable.
+MVP does not need cable/pipe overlays because Power/Water are settlement resource systems rather than detailed networks.
 
 ## Time controls
 
-Online single-owner:
-- pause where permitted
+Single-owner ACTIVE world:
+- Pause
 - 1x
-- faster simulation modes subject to server rules
+- 2x
+- 4x
 
-Future multiplayer may restrict time acceleration.
+Logout always resumes persistent world at 1x.
+
+Future shared multiplayer may restrict speed control.
 
 ## Threat UI
 
-Do not display an exact hidden attack countdown.
+Never expose hidden attack threshold or exact event time.
 
-Show evidence:
+Show:
+- rumors/clues
 - scout report
 - radar contact
-- unusual activity
-- threat level language
-- damaged perimeter
-
-## Mobile
-
-Mobile layout may use collapsible drawers. Do not shrink desktop HUD blindly.
+- danger direction
+- current attack
+- after-action report
