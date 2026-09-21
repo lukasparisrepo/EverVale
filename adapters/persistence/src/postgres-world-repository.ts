@@ -91,21 +91,6 @@ export class PostgresWorldRepository implements WorldRepository {
         [world.worldId, world.ownerId],
       );
       await this.insertSnapshot(client, world);
-      if (acceptedCommand) {
-        await client.query(
-          `INSERT INTO world_commands
-            (command_id, world_id, user_id, expected_revision, command_type, status, result)
-           VALUES ($1::uuid, $2, $3, $4, $5, 'ACCEPTED', $6::jsonb)`,
-          [
-            acceptedCommand.commandId,
-            world.worldId,
-            acceptedCommand.ownerId,
-            acceptedCommand.expectedRevision,
-            acceptedCommand.commandType,
-            JSON.stringify({ world }),
-          ],
-        );
-      }
       await client.query("COMMIT");
     } catch (error) {
       await client.query("ROLLBACK");
@@ -138,6 +123,21 @@ export class PostgresWorldRepository implements WorldRepository {
       );
       if (updated.rowCount !== 1) throw new Error("REVISION_CONFLICT");
       await this.insertSnapshot(client, world);
+      if (acceptedCommand) {
+        await client.query(
+          `INSERT INTO world_commands
+            (command_id, world_id, user_id, expected_revision, command_type, status, result)
+           VALUES ($1::uuid, $2, $3, $4, $5, 'ACCEPTED', $6::jsonb)`,
+          [
+            acceptedCommand.commandId,
+            world.worldId,
+            acceptedCommand.ownerId,
+            acceptedCommand.expectedRevision,
+            acceptedCommand.commandType,
+            JSON.stringify({ world }),
+          ],
+        );
+      }
       await client.query("COMMIT");
     } catch (error) {
       await client.query("ROLLBACK");
