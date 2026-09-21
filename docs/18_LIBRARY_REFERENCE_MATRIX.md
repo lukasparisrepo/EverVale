@@ -21,6 +21,7 @@ Status: **APPROVED RESEARCH BASELINE — 2026-09-21**
 | Shader reference | `cryptomanavan/ShoreBreak` | Reference | MIT code | rendering/water/perf |
 | AI reference | `Mugen87/yuka` | Reference | MIT | steering ideas |
 | Nav fallback | `donmccurdy/three-pathfinding` | Reference | MIT | simple nav examples |
+| Miniature-world architecture | `nickfromlater/whistlevale` | Reference only | MIT | modular scenes, deterministic life, subsystem QA |
 
 ## Responsibility split
 
@@ -47,3 +48,21 @@ Reference projects may teach algorithms and architecture. They are not permissio
 No general rigid-body engine is canonical for MVP.
 
 The old standalone `dimforge/rapier.js` repository is archived; reassess current maintained options only if physics becomes a real requirement.
+
+
+## Whistlevale classification
+
+Whistlevale is **not** a runtime dependency.
+
+Approved learnings:
+- module/registry-based scene composition
+- deterministic procedural detail
+- static-vs-animated life budgeting
+- geometry and subsystem QA
+- explicit agent contribution rules
+
+Do not copy:
+- custom WebGL renderer
+- global script-order architecture
+- client-only state ownership
+- large central-file structure
