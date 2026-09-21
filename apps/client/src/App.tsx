@@ -183,7 +183,15 @@ export default function App() {
         <div><strong>Education</strong> {Math.round(w.society.educationCoverage * 100)}%</div>
         <div><strong>Recreation</strong> {Math.round(w.society.recreationCoverage * 100)}%</div>
         <div><strong>Safety</strong> {Math.round(w.society.safety * 100)}%</div>
-        <div className="perf-probe" data-testid="runtime-metrics">
+        <div
+          className="perf-probe"
+          data-testid="runtime-metrics"
+          data-fps={metrics?.fps ?? 0}
+          data-frame-p95={metrics?.frameMsP95 ?? 0}
+          data-draw-calls={metrics?.drawCalls ?? 0}
+          data-triangles={metrics?.triangles ?? 0}
+          data-citizens={metrics?.animatedCitizens ?? 0}
+        >
           <strong>Runtime</strong>
           <small>
             {metrics
