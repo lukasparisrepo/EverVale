@@ -1,83 +1,123 @@
 # 06 — Buildings & Construction
 
-## Categories
+## Core building families
 
 ### Residential
-Homes, apartments, later specialized housing.
+**House**
+- provides Population capacity
+- contributes to Growth when Happiness is high
 
-### Civic
-School, clinic, park, plaza, shelter, administration.
+### Money
+**Workshop / Business**
+- employs citizens
+- primary early Money generator
 
 ### Utility
-Generator, pump, water treatment, reservoir, substation.
+**Power Plant**
+- produces Power
 
-### Economy
-Farm, shop/market, storage, workshop, logistics depot.
+**Water Plant**
+- produces Water
+- consumes some Power
 
-### Varum industry
-Mine, refinery, secure storage, advanced factory.
+### Education
+**School**
+- produces Tech Points
+- improves education coverage
+
+### Happiness
+**Park**
+- raises recreation coverage
+- creates visible leisure activity
+
+### Varum
+**Varum Mine**
+- produces Varum directly
+- unlocked at Tech T1
 
 ### Defense
-Guard post, wall/gate, watchtower, radar, vehicle depot, airfield, anti-air, shield infrastructure.
+- Guard Post
+- Watchtower
+- Radar
+- Vehicle Factory
+- Airfield
+- Anti-Air
+- Varum Shield
 
-## Building contract
+## Building definition contract
 
-Every building definition contains:
-- id/type
+Every building definition declares:
+- ID
+- Tech requirement
 - footprint
-- build cost
-- build time
-- workers
-- electricity demand/production
-- water demand/production
-- road requirement
-- input/output
-- storage
-- service effect
+- Money cost
+- optional Varum cost
+- construction time
+- worker slots
+- Money yield per worker
+- Power production/consumption
+- Water production/consumption
+- Varum production
+- Tech production
 - upkeep
-- upgrade path
+- housing capacity
+- service effects
+- storage contribution
 - visual variants
 
-## Construction
+## Construction model
 
-Construction is visible.
+MVP construction uses:
+- Money
+- optional Varum for advanced structures
+- construction time
 
-Preferred stages:
-1. surveyed footprint
-2. foundations
+There is **no construction-goods commodity in v0.1**.
+
+This prevents bootstrap deadlocks and keeps the first economy legible.
+
+## Construction stages
+
+Visually:
+1. footprint
+2. foundation
 3. frame
 4. shell
-5. completed
-6. operational commissioning
+5. finished
 
-Workers and delivered materials should appear where budget permits.
+The simulation may use fewer internal stages while the client interpolates visuals.
+
+## Construction capacity
+
+The settlement has limited concurrent construction capacity.
+
+Initial target:
+- 1 active construction slot
+- later Town/Builder upgrades can add slots
+
+This creates pacing without adding a material chain.
 
 ## Placement
 
-Placement preview must validate:
+Server validates:
 - terrain
-- collision
-- road access
-- forbidden overlap
-- utility constraints when relevant
-
-Server revalidates final placement.
+- overlap
+- road reachability
+- Money
+- Varum
+- Tech
+- construction capacity
 
 ## Upgrades
 
-Upgrades should alter the physical asset or attach visible modules.
+Upgrades should visibly change the building or attach modules where practical.
 
-Do not silently turn a cottage into a factory through stat-only level changes.
+## Damage
 
-## Damage and repair
-
-Damage states should be visible and repairable.
-
-Buildings can be:
+States:
 - healthy
-- degraded
 - damaged
 - disabled
 - repairing
 
-Offline attacks may damage buildings, but safety budgets prevent unreasonable total destruction.
+MVP offline attacks can disable buildings but do not permanently delete critical infrastructure.
