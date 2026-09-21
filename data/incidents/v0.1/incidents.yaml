@@ -138,3 +138,45 @@ incidents:
       happiness_local: -2
     counters: [service_yard]
     eligible: [park, market, sports_green]
+
+
+  road_blockage:
+    severity: low
+    duration_cycles: [1, 3]
+    effects:
+      path_block: true
+    counters: [builders_yard, service_yard]
+    eligible: [road_dirt, road_stone, road_main]
+
+  bridge_fault:
+    severity: medium
+    duration_cycles: [1, 3]
+    effects:
+      access_disabled: true
+    counters: [builders_yard, service_yard]
+    eligible: [bridge]
+
+  lightning_fire:
+    severity: medium
+    duration_cycles: [1, 3]
+    effects:
+      operation_mult: 0.0
+      condition_damage: [10, 28]
+    counters: [fire_station, water_available]
+    eligible: [house_small, workshop, restaurant, power_plant, farm, vehicle_factory]
+
+  storm_damage:
+    severity: medium
+    duration_cycles: [1, 4]
+    effects:
+      condition_damage: [5, 20]
+    counters: [builders_yard, service_yard]
+    eligible: [house_small, house_medium, row_housing, park, watchtower, radar, airfield, weather_station]
+
+  equipment_failure:
+    severity: low
+    duration_cycles: [1, 2]
+    effects:
+      efficiency_mult: 0.65
+    counters: [maintenance, service_yard]
+    eligible: [weather_station, guard_post, watchtower, radar, fire_station, clinic, service_yard]
