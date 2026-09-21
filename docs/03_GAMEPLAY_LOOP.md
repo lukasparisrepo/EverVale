@@ -2,87 +2,158 @@
 
 ## Primary loop
 
-`Plan → Build → Connect → Operate → Observe → Improve → Defend → Recover → Expand`
+`Plan → Build → Staff Automatically → Observe → Improve → Defend → Recover → Expand`
+
+The player manages systems, not individual citizens.
 
 ## Build
 
 Player places or edits:
 - roads
-- utility networks
-- residences
-- production
-- services
-- parks
+- houses
+- Money workplaces
+- Power Plant
+- Water Plant
+- School
+- Park
+- Farm
+- Market/Café
+- Varum Mine
 - defense
-- logistics
+- advanced military facilities
 
-Construction takes time and uses money/material capacity. Workers and deliveries should make progress visible.
+Construction uses:
+- Money
+- time
+- optional Varum for advanced structures
+
+There is no construction-goods resource in v0.1.
 
 ## Connect
 
-A building can be physically present but operationally blocked.
+Road connection is the physical access rule.
 
-Operational checklist can include:
-- road
-- electricity
-- water
-- staffing
-- inputs
-- output storage
+A building can exist but be inactive because it is:
+- disconnected
+- understaffed
+- short on Power
+- short on Water
+- Tech locked
+- damaged
+- unfunded
+
+MVP does not require player-drawn Power or Water networks.
+
+## Staff Automatically
+
+Buildings request workers.
+
+The job allocator assigns available Workforce using:
+- critical utility priority
+- player category priority
+- building priority
+- road accessibility
+- commute cost
+
+The player never drags individual citizens into workplaces.
 
 ## Operate
 
-The server resolves:
-- production
-- consumption
-- jobs
-- service capacity
-- infrastructure demand
-- citizen schedules
-- economy
+Server resolves:
+- Money
+- Power
+- Water
+- Varum
+- Tech
+- Population Growth
+- Happiness
+- Workforce allocation
+- construction
 - threat pressure
+- combat/events
+
+## Visible Life
+
+The client turns world state into believable autonomous activity:
+- adults commute to jobs
+- children attend School
+- citizens use Parks
+- farmers work fields
+- dogs/cats appear around homes
+- chickens/ducks animate around Farms
+- civilian traffic changes by hour
+- guards patrol
+- town quiets under threat
+
+These behaviors must reflect authoritative state rather than random decoration.
 
 ## Observe
 
-The UI shows causes, not only symptoms.
+The UI explains causes.
 
-Instead of “Bakery efficiency 42%”, diagnostics should explain:
-- 2/4 workers
-- water available
-- power unstable
-- flour delayed by road congestion
+Good:
+
+```
+Varum Mine — 50% output
+1 / 2 workers
+Power OK
+Water OK
+Road OK
+```
+
+Bad:
+
+```
+Efficiency 50%
+```
+
+with no explanation.
 
 ## Improve
 
-Player actions:
-- reroute roads
-- add capacity
-- upgrade utilities
-- rebalance workforce
-- expand school/service coverage
-- relocate industry
-- add storage
-- improve defense
+Player can:
+- build more Housing
+- improve Happiness
+- add income workplaces
+- add utility capacity
+- change job priorities
+- expand School capacity
+- build Varum production
+- improve roads
+- add defense
+- upgrade Tech-locked systems
 
 ## Defend
 
-Threats arrive without a precise countdown. Prepared systems respond.
+Threats arrive without exact countdown.
+
+Preparation matters through:
+- staffing
+- placement
+- radar
+- defense coverage
+- vehicles
+- aircraft
+- Varum technology
+
+Combat is autonomous by default.
 
 ## Recover
 
 After danger:
-- damage is visible
-- repair consumes capacity
-- citizens resume routines
-- economy absorbs losses
-- player can redesign weak points
+- damage remains visible
+- repair consumes Money/time
+- injured actors recover
+- disabled vehicles repair
+- routines resume
+- After-Action history explains what happened
 
 ## Session loop
 
-A short 10–20 minute session should offer:
-- one meaningful construction decision
+A short session should normally offer:
+- one meaningful build or priority decision
 - one visible system consequence
-- one citizen/world observation
+- one living-world observation
 - optional decoration/optimization
 
-Long sessions deepen planning rather than requiring constant clicking.
+A long session deepens planning rather than increasing click frequency.
