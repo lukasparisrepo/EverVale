@@ -1,6 +1,7 @@
 import * as THREE from "three";
 
 export interface EnvironmentVisualRig {
+  scene: THREE.Scene;
   ground: THREE.Mesh;
   sun: THREE.DirectionalLight;
   hemisphere: THREE.HemisphereLight;
@@ -32,11 +33,11 @@ function moundGeometry(radius:number,height:number,seed:number): THREE.BufferGeo
     }
   }
   const idx=(ring:number,i:number)=>1+(ring-1)*segments+(i%segments+segments)%segments;
-  for(let i=0;i<segments;i+=1) indices.push(0,idx(1,i),idx(1,i+1));
+  for(let i=0;i<segments;i+=1) indices.push(0,idx(1,i+1),idx(1,i));
   for(let ring=1;ring<rings;ring+=1) {
     for(let i=0;i<segments;i+=1) {
       const a=idx(ring,i),b=idx(ring,i+1),c=idx(ring+1,i),d=idx(ring+1,i+1);
-      indices.push(a,c,b,b,c,d);
+      indices.push(a,b,c,b,d,c);
     }
   }
   const geometry=new THREE.BufferGeometry();
@@ -179,7 +180,7 @@ export function createEnvironmentVisuals(
   scene.add(skirt);
 
   addPerimeterLandscape(scene);
-  return {ground,sun,hemisphere,fog,renderer};
+  return {scene,ground,sun,hemisphere,fog,renderer};
 }
 
 function smoothstep(a:number,b:number,x:number): number {
@@ -201,11 +202,9 @@ export function updateEnvironmentLighting(
   const duskSky=new THREE.Color(0xd5ad8a);
   const nightSky=new THREE.Color(0x253342);
   const sky=nightSky.clone().lerp(duskSky,Math.max(daylight*0.45,twilight*0.65)).lerp(daySky,daylight);
-  if (rig.renderer.domElement) rig.renderer.toneMappingExposure=0.78+daylight*0.3+twilight*0.04;
-  if (rig.fog) rig.fog.color.copy(sky);
-  if (rig.renderer && rig.renderer.getContext()) {
-    if (rig.sun.parent?.background instanceof THREE.Color) rig.sun.parent.background.copy(sky);
-  }
+  rig.renderer.toneMappingExposure=0.78+daylight*0.3+twilight*0.04;
+  rig.fog.color.copy(sky);
+  if (rig.scene.background instanceof THREE.Color) rig.scene.background.copy(sky);
 
   rig.sun.intensity=0.16+daylight*2.45+twilight*0.32;
   rig.hemisphere.intensity=0.42+daylight*1.38;
