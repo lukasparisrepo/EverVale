@@ -88,12 +88,24 @@ def main():
         title = pdef.get("title")
         sx = pdef.get("size_x_m")
         sz = pdef.get("size_z_m")
+        money_cost = pdef.get("money_cost")
+        decor_class = pdef.get("decor_class")
+        beauty = pdef.get("beauty", 0)
+        activity_anchor = pdef.get("activity_anchor")
         if not isinstance(title, str) or not title.strip():
             fail(errors, f"prop {pid} missing title")
         if not isinstance(sx, (int, float)) or sx <= 0:
             fail(errors, f"prop {pid} invalid size_x_m")
         if not isinstance(sz, (int, float)) or sz <= 0:
             fail(errors, f"prop {pid} invalid size_z_m")
+        if not isinstance(money_cost, (int, float)) or money_cost < 0:
+            fail(errors, f"prop {pid} invalid money_cost")
+        if decor_class not in {"visual", "beauty", "activity_anchor"}:
+            fail(errors, f"prop {pid} invalid decor_class: {decor_class}")
+        if not isinstance(beauty, (int, float)) or beauty < 0:
+            fail(errors, f"prop {pid} invalid beauty")
+        if decor_class == "activity_anchor" and (not isinstance(activity_anchor, str) or not activity_anchor.strip()):
+            fail(errors, f"prop {pid} activity_anchor class requires activity_anchor")
 
     for bid in starter["starting_buildings"]:
         if bid not in content_ids:
