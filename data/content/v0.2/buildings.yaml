@@ -1,0 +1,372 @@
+version: "0.2"
+
+buildings:
+  town_center:
+    name: "Hearth Hall"
+    category: civic
+    tech_tier: 0
+    buildable: false
+    function: ["treasury", "base_maintenance", "construction_slot"]
+    art_tags: ["warm_stone", "cream_plaster", "timber", "copper", "bell"]
+    incidents: ["electrical_fault", "storm_damage"]
+
+  builders_yard:
+    name: "Builder's Yard"
+    category: service
+    tech_tier: 0
+    function: ["construction_capacity", "repair_capacity"]
+    art_tags: ["timber_shed", "scaffolding", "stone_stack", "hoist"]
+    incidents: ["machinery_breakdown", "fire"]
+
+  storehouse:
+    name: "Storehouse"
+    category: storage
+    tech_tier: 1
+    function: ["storage"]
+    art_tags: ["timber_warehouse", "loading_awning", "crates"]
+    incidents: ["rats", "fire"]
+
+  house_small:
+    name: "Hearth Cottage"
+    category: residential
+    tech_tier: 0
+    housing: 4
+    art_tags: ["plaster", "timber", "chimney", "garden"]
+    incidents: ["rats", "house_fire", "storm_damage"]
+
+  house_medium:
+    name: "Willow House"
+    category: residential
+    tech_tier: 2
+    housing: 8
+    art_tags: ["two_storey", "balcony", "garden"]
+    incidents: ["rats", "house_fire", "storm_damage"]
+
+  row_housing:
+    name: "Lantern Row"
+    category: residential
+    tech_tier: 3
+    housing: 16
+    art_tags: ["townhouse", "courtyard", "lamps"]
+    incidents: ["rats", "house_fire", "utility_fault"]
+
+  garden_residence:
+    name: "Garden Residence"
+    category: residential
+    tech_tier: 2
+    housing: 6
+    happiness_local: true
+    art_tags: ["premium_cottage", "hedges", "flowers", "conservatory"]
+    incidents: ["storm_damage"]
+
+  workshop:
+    name: "Copperwheel Workshop"
+    category: money
+    tech_tier: 0
+    function: ["money"]
+    art_tags: ["brick", "timber", "loading_yard", "mechanism"]
+    incidents: ["machinery_breakdown", "fire", "rats"]
+
+  restaurant:
+    name: "Honeybell Kitchen"
+    category: money_happiness
+    tech_tier: 0
+    function: ["money", "happiness"]
+    art_tags: ["awning", "terrace", "warm_windows", "kitchen_chimney"]
+    incidents: ["kitchen_fire", "rats", "equipment_failure"]
+
+  market:
+    name: "Market Square"
+    category: money_happiness
+    tech_tier: 2
+    function: ["money", "happiness", "activity"]
+    art_tags: ["stalls", "awnings", "crates", "fountain"]
+    incidents: ["rats", "litter", "fire"]
+
+  cafe:
+    name: "Sunleaf Café"
+    category: money_happiness
+    tech_tier: 1
+    function: ["money", "happiness"]
+    art_tags: ["terrace", "parasols", "planters"]
+    incidents: ["kitchen_fire", "rats"]
+
+  boutique:
+    name: "Crafts Boutique"
+    category: money
+    tech_tier: 2
+    function: ["money"]
+    art_tags: ["shopfront", "display_window", "artisan_sign"]
+    incidents: ["fire", "equipment_failure"]
+
+  inn:
+    name: "Hearthside Inn"
+    category: money_happiness
+    tech_tier: 2
+    function: ["money", "happiness", "visitor_activity"]
+    art_tags: ["timber_lodge", "porch", "lanterns"]
+    incidents: ["fire", "rats", "storm_damage"]
+
+  power_plant:
+    name: "Sunwheel Power Works"
+    category: utility
+    tech_tier: 0
+    function: ["power_production", "power_storage"]
+    art_tags: ["industrial_brick", "copper_flywheel", "short_stack", "amber_lights"]
+    incidents: ["generator_fault", "overload", "fire", "explosion"]
+
+  water_plant:
+    name: "Clearbrook Water Works"
+    category: utility
+    tech_tier: 0
+    function: ["water_production", "water_storage"]
+    art_tags: ["pale_masonry", "round_tanks", "pumps", "wet_paving"]
+    incidents: ["pump_failure", "contamination", "utility_fault"]
+
+  power_storage:
+    name: "Hilltop Battery House"
+    category: utility
+    tech_tier: 2
+    function: ["power_storage"]
+    art_tags: ["masonry_station", "coils", "status_lamps"]
+    incidents: ["utility_fault", "fire"]
+
+  water_storage:
+    name: "Bluebell Cistern"
+    category: utility
+    tech_tier: 2
+    function: ["water_storage"]
+    art_tags: ["elevated_tank", "stone_base", "gauges"]
+    incidents: ["leak", "contamination"]
+
+  school:
+    name: "Willowbell School"
+    category: education
+    tech_tier: 0
+    function: ["tech", "education"]
+    art_tags: ["brick", "bell", "schoolyard", "bike_rack"]
+    incidents: ["utility_fault", "rats", "maintenance_closure"]
+
+  academy:
+    name: "Alder Academy"
+    category: education
+    tech_tier: 3
+    function: ["tech", "education"]
+    art_tags: ["civic_campus", "observatory_wing"]
+    incidents: ["utility_fault", "maintenance_closure"]
+
+  research_lab:
+    name: "Varum Research House"
+    category: education
+    tech_tier: 5
+    function: ["advanced_tech"]
+    art_tags: ["brass_instruments", "varum_accent", "cozy_lab"]
+    incidents: ["varum_anomaly", "utility_fault"]
+
+  park:
+    name: "Lantern Grove"
+    category: happiness
+    tech_tier: 0
+    function: ["happiness", "recreation"]
+    art_tags: ["curved_paths", "trees", "benches", "pond", "playground"]
+    incidents: ["fallen_tree", "litter", "pests"]
+
+  botanical_garden:
+    name: "Roseglass Garden"
+    category: happiness
+    tech_tier: 2
+    function: ["happiness"]
+    art_tags: ["greenhouse", "flower_beds", "decorative_pond"]
+    incidents: ["storm_damage", "utility_fault"]
+
+  theatre:
+    name: "Little Theatre"
+    category: happiness
+    tech_tier: 3
+    function: ["happiness", "events"]
+    art_tags: ["playhouse", "posters", "evening_lights"]
+    incidents: ["fire", "utility_fault"]
+
+  bath_house:
+    name: "Bath House"
+    category: happiness
+    tech_tier: 2
+    function: ["happiness"]
+    art_tags: ["stone_spa", "steam", "small_pools"]
+    incidents: ["water_fault", "utility_fault"]
+
+  sports_green:
+    name: "Sports Green"
+    category: happiness
+    tech_tier: 2
+    function: ["happiness", "youth_activity"]
+    art_tags: ["grass_field", "stands", "sports_props"]
+    incidents: ["storm_damage"]
+
+  farm:
+    name: "Greenpatch Farm"
+    category: rural_money
+    tech_tier: 0
+    function: ["money", "happiness"]
+    art_tags: ["barn", "farmhouse", "fields", "animals"]
+    incidents: ["rats", "animal_escape", "barn_fire", "storm_damage"]
+
+  orchard:
+    name: "Orchard House"
+    category: rural_money
+    tech_tier: 1
+    function: ["money"]
+    art_tags: ["fruit_rows", "shed", "baskets"]
+    incidents: ["pests", "storm_damage"]
+
+  windmill_farm:
+    name: "Windmill Meadow"
+    category: rural_money_happiness
+    tech_tier: 2
+    function: ["money", "happiness"]
+    art_tags: ["windmill", "fields", "barn"]
+    incidents: ["machinery_breakdown", "storm_damage"]
+
+  varum_mine:
+    name: "Starroot Varum Mine"
+    category: varum
+    tech_tier: 1
+    function: ["varum"]
+    art_tags: ["mine_portal", "winch", "carts", "teal_crystal"]
+    incidents: ["cave_in", "machinery_breakdown", "varum_anomaly", "explosion"]
+
+  varum_storage:
+    name: "Varum Depot"
+    category: storage
+    tech_tier: 2
+    function: ["varum_storage"]
+    art_tags: ["reinforced_warehouse", "sealed_crates", "teal_lights"]
+    incidents: ["varum_anomaly", "fire"]
+
+  vehicle_factory:
+    name: "Ironleaf Motor Works"
+    category: military_industry
+    tech_tier: 2
+    function: ["vehicle_production"]
+    art_tags: ["assembly_shed", "large_doors", "hoist", "vehicle_chassis"]
+    incidents: ["machinery_breakdown", "fire", "explosion"]
+
+  advanced_factory:
+    name: "Skyforge Works"
+    category: military_industry
+    tech_tier: 4
+    function: ["advanced_production"]
+    art_tags: ["heavy_industry", "varum_machinery"]
+    incidents: ["machinery_breakdown", "varum_anomaly", "explosion"]
+
+  guard_post:
+    name: "Oakwatch Guardhouse"
+    category: safety
+    tech_tier: 0
+    function: ["safety", "guards"]
+    art_tags: ["stone", "timber", "training_yard", "banner"]
+    incidents: ["equipment_failure"]
+
+  watchtower:
+    name: "Northlight Watchtower"
+    category: defense
+    tech_tier: 1
+    function: ["ground_defense", "spotting"]
+    art_tags: ["tower", "lantern", "flag"]
+    incidents: ["storm_damage", "equipment_failure"]
+
+  fire_station:
+    name: "Emberwatch Brigade"
+    category: service
+    tech_tier: 1
+    function: ["fire_response"]
+    art_tags: ["brick_hall", "bell_tower", "hose_rack", "fire_vehicle"]
+    incidents: ["equipment_failure"]
+
+  clinic:
+    name: "Meadow Clinic"
+    category: service
+    tech_tier: 2
+    function: ["recovery", "resilience"]
+    art_tags: ["bright_plaster", "garden", "clinic_sign"]
+    incidents: ["utility_fault"]
+
+  service_yard:
+    name: "Civic Service Yard"
+    category: service
+    tech_tier: 3
+    function: ["maintenance", "pest_response", "cleanup"]
+    art_tags: ["utility_sheds", "carts", "tools"]
+    incidents: ["equipment_failure", "fire"]
+
+  radar:
+    name: "Skylark Radar Station"
+    category: defense
+    tech_tier: 2
+    function: ["warning", "air_detection"]
+    art_tags: ["bunker", "dish", "antenna"]
+    incidents: ["utility_fault", "equipment_failure"]
+
+  armored_depot:
+    name: "Ironleaf Garage"
+    category: defense
+    tech_tier: 3
+    function: ["vehicle_storage", "vehicle_repair"]
+    art_tags: ["reinforced_shed", "repair_pit"]
+    incidents: ["fire", "equipment_failure"]
+
+  airfield:
+    name: "Cloudstep Airfield"
+    category: defense
+    tech_tier: 4
+    function: ["aircraft_operations"]
+    art_tags: ["runway", "hangar", "windsock", "service_cart"]
+    incidents: ["storm_damage", "equipment_failure"]
+
+  anti_air:
+    name: "Skyshield Battery"
+    category: defense
+    tech_tier: 4
+    function: ["anti_air"]
+    art_tags: ["tracking_mount", "sensor", "varum_core"]
+    incidents: ["equipment_failure"]
+
+  varum_shield:
+    name: "Aurora Ward"
+    category: defense
+    tech_tier: 5
+    function: ["structure_damage_reduction"]
+    art_tags: ["ring_pylons", "varum_core", "energy_arcs"]
+    incidents: ["varum_anomaly", "overload"]
+
+  gate:
+    name: "Border Gate"
+    category: defense_access
+    tech_tier: 2
+    function: ["chokepoint"]
+    art_tags: ["gatehouse", "barrier", "flag"]
+    incidents: ["damage"]
+
+  wall:
+    name: "Stonewall Section"
+    category: defense
+    tech_tier: 2
+    function: ["ground_delay"]
+    art_tags: ["stone", "timber_brace"]
+    incidents: ["damage", "storm_damage"]
+
+  hill_lift:
+    name: "Hill Lift"
+    category: access
+    tech_tier: 1
+    function: ["vertical_access"]
+    art_tags: ["lift_tower", "cage", "timber_metal_station"]
+    incidents: ["lift_fault", "power_loss", "damage"]
+
+  service_tunnel:
+    name: "Service Tunnel"
+    category: access
+    tech_tier: 3
+    function: ["terrain_shortcut"]
+    art_tags: ["carved_portal", "lamps"]
+    incidents: ["cave_in", "damage"]
