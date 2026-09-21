@@ -22,6 +22,7 @@ const defs: SimulationDefinitions = {
       id:"wobble_slime", side:"ENEMY", hp:70, dps:4, armor:0, target:"ground", class:"ground",
     },
   },
+  blockers: {},
 };
 
 const world: WorldState = {
