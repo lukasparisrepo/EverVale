@@ -205,3 +205,39 @@ Repair consumes:
 Advanced repair may later consume Varum.
 
 Offline attacks cannot permanently delete critical MVP infrastructure.
+
+
+## Canonical catalogue
+
+The complete named/art-directed catalogue is maintained in:
+
+`docs/37_BUILDING_CATALOG_AND_ART.md`
+
+This file owns construction rules. The catalogue owns player-facing names, visual identity, activity anchors and content taxonomy.
+
+## Expansion structures
+
+Outdoor multi-level maps can contain:
+- Bridges
+- Hill Lifts
+- Service Tunnels
+- blocker-clearance projects
+
+These are construction projects and consume construction/clearance capacity.
+
+See:
+- `docs/39_PROCEDURAL_PLAYER_MAPS.md`
+- `docs/41_WORLD_CONNECTIVITY_AND_LEVELS.md`
+
+## Anti-idle boundary
+
+Construction automation only completes work already approved/queued by the player.
+
+The simulation never decides by itself to:
+- place a new building
+- extend a road
+- clear a new blocker
+- buy an advanced military unit
+- choose a Tech specialization
+
+See `docs/42_ANTI_IDLE_PROGRESSION.md`.
