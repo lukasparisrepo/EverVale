@@ -1,72 +1,93 @@
-# 05 — Infrastructure Networks
+# 05 — Infrastructure & Connectivity
 
-## Roads
+## Philosophy
 
-Roads are the spatial backbone.
+EverVale uses **readable game infrastructure**, not a civil-engineering simulation.
 
-Canonical road classes:
+## Roads are canonical
+
+Roads are the physical connectivity source of truth.
+
+Road classes:
 - footpath
 - dirt road
 - paved local road
 - main road
 - bridge
 
-Road geometry may be spline-based on the client, but the server stores a canonical graph.
+A functioning building normally needs a valid connection to the settlement road graph.
 
-Road graph supports:
-- citizen routing
+The weighted server graph supports:
+- citizen commute cost
+- workplace access
 - service reach
-- logistics
-- emergency response
-- defense movement
+- construction access
+- defense response
+- vehicle movement
+- future trade
 
-## Electricity
+## Server graph vs Recast
 
-Power network is a graph of producers, connectors, and consumers.
+These are different systems.
 
-Server computes connectivity and capacity.
+### Server mobility graph
+Canonical for simulation and path cost.
 
-Buildings expose visual state:
-- powered
-- brownout
-- offline
+Use a weighted graph representation; Graphology / graphology-shortest-path are approved candidates.
 
-## Water
+### Recast navmesh
+Used for local 3D walkability, avoidance and visual movement where useful.
 
-Water network is a graph plus storage.
+Recast is **not** the economic source of truth.
 
-Components:
-- source
-- pump/treatment
-- pipe
-- reservoir/tank
-- consumer
+A road edit must not require the whole economy to depend on a rebuilt 3D navmesh.
 
-Loss of electricity can disable pumps, creating cascading failure.
+## Power and Water
 
-## Service coverage
+MVP does not require explicit wires or pipes.
 
-Schools, parks, clinics, security, fire response, and shelters use travel/coverage logic rather than arbitrary circles whenever practical.
+Power Plants and Water Plants generate settlement resources into stored reserves.
 
-## Failure propagation
+A connected building consumes from those reserves.
 
-Networks must report root causes.
+This is deliberately similar to shelter-management abstraction: physically simplified, mechanically readable.
 
-Example diagnostic chain:
+Later versions may introduce district grids or specialized utility routing if playtests prove it adds value.
 
-`Factory offline ← no water ← reservoir empty ← pump offline ← power feeder overloaded`
+## Disconnected buildings
+
+A disconnected building may:
+- remain under construction
+- become inactive
+- lose service
+- be unreachable by workers/defenders
+
+No teleporting workforce or production.
+
+## Service travel
+
+School, park, security and similar coverage can use road travel cost rather than perfect Euclidean circles.
+
+## Diagnostics
+
+When a building is inactive, report a concrete reason:
+- NO_ROAD
+- NO_WORKERS
+- NO_POWER
+- NO_WATER
+- NO_MONEY
+- TECH_LOCKED
+- DAMAGED
+- STORAGE_FULL
 
 ## Editing
 
 Player can:
 - draw roads
-- upgrade roads
-- demolish/replace segments
-- connect utilities
-- inspect flow overlays
+- curve roads
+- replace segments
+- upgrade road class
+- remove roads
+- build bridges
 
-Edits must update server graphs and navigation safely.
-
-## Performance
-
-Do not rebuild entire world graphs for one local edit if incremental recalculation is sufficient.
+Graph updates should be incremental where practical.
