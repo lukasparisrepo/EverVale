@@ -20,7 +20,7 @@ starting_world:
   construction_slots: 1
   buildings:
     town_center: 1
-    house: 3
+    house_small: 3
     power_plant: 1
     water_plant: 1
     workshop: 1
