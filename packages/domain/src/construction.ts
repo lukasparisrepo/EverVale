@@ -111,6 +111,7 @@ export function placeBuilding(
     rotationY,
     constructionState: definition.buildCycles > 0 ? "BUILDING" : "COMPLETE",
     constructionRemainingSeconds: definition.buildCycles * definitions.referenceCycleSeconds,
+    constructionTotalSeconds: definition.buildCycles * definitions.referenceCycleSeconds,
     workersAssigned: 0,
     priority: definition.priority,
     condition: 100,
