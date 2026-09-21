@@ -32,6 +32,9 @@ const materials = {
   cloth: new THREE.MeshStandardMaterial({ color: 0xb87952, roughness: 0.95 }),
   worker: new THREE.MeshStandardMaterial({ color: 0x6f7e67, roughness: 0.92 }),
   skin: new THREE.MeshStandardMaterial({ color: 0xc89a77, roughness: 0.95 }),
+  wheel: new THREE.MeshStandardMaterial({ color: 0x444843, roughness: 0.9 }),
+  water: new THREE.MeshStandardMaterial({ color: 0x6f9fa6, roughness: 0.38 }),
+  chalk: new THREE.MeshStandardMaterial({ color: 0xe5d8b8, roughness: 1 }),
 };
 
 Object.values(materials).forEach((material) => {
@@ -200,6 +203,86 @@ function addMaterialStacks(group: THREE.Group, width: number, depth: number): vo
   group.add(boards);
 }
 
+function addSiteClutter(group: THREE.Group, width: number, depth: number): void {
+  const tray = mesh(
+    new THREE.BoxGeometry(0.9, 0.18, 0.55),
+    materials.scaffold,
+    width / 2 + 0.92,
+    0.58,
+    depth / 2 - 0.35,
+  );
+  tray.rotation.z = -0.08;
+  group.add(tray);
+
+  for (const z of [-0.2, 0.2]) {
+    const handle = mesh(
+      new THREE.CylinderGeometry(0.025, 0.025, 1.05, 5),
+      materials.wood,
+      width / 2 + 1.38,
+      0.58,
+      depth / 2 - 0.35 + z,
+    );
+    handle.rotation.z = Math.PI / 2;
+    group.add(handle);
+  }
+
+  const wheel = mesh(
+    new THREE.CylinderGeometry(0.2, 0.2, 0.12, 10),
+    materials.wheel,
+    width / 2 + 0.5,
+    0.24,
+    depth / 2 - 0.35,
+  );
+  wheel.rotation.x = Math.PI / 2;
+  group.add(wheel);
+
+  const bucket = mesh(
+    new THREE.CylinderGeometry(0.22, 0.18, 0.42, 9),
+    materials.tarp,
+    -width / 2 - 0.75,
+    0.22,
+    depth / 2 - 0.55,
+  );
+  group.add(bucket);
+
+  const water = mesh(
+    new THREE.CylinderGeometry(0.18, 0.18, 0.025, 9),
+    materials.water,
+    -width / 2 - 0.75,
+    0.43,
+    depth / 2 - 0.55,
+  );
+  water.castShadow = false;
+  group.add(water);
+}
+
+function addFinishingDetails(group: THREE.Group, width: number, depth: number, height: number): void {
+  const roofY = height + 0.22;
+  for (const z of [-depth * 0.28, 0, depth * 0.28]) {
+    const rafter = mesh(
+      new THREE.BoxGeometry(width * 0.86, 0.1, 0.12),
+      materials.wood,
+      0,
+      roofY + Math.abs(z) * 0.08,
+      z,
+    );
+    rafter.rotation.z = z < 0 ? -0.05 : z > 0 ? 0.05 : 0;
+    group.add(rafter);
+  }
+
+  for (const x of [-width * 0.24, width * 0.24]) {
+    const opening = mesh(
+      new THREE.BoxGeometry(0.62, 0.72, 0.045),
+      materials.chalk,
+      x,
+      height * 0.58,
+      depth * 0.455,
+    );
+    opening.castShadow = false;
+    group.add(opening);
+  }
+}
+
 function addProgressFlag(group: THREE.Group, width: number, progress: number): void {
   const poleX = -width / 2 - 0.65;
   group.add(
@@ -276,6 +359,10 @@ export function createConstructionObject(
   }
 
   addMaterialStacks(group, width, depth);
+  addSiteClutter(group, width, depth);
+  if (state.stageIndex >= 4) {
+    addFinishingDetails(group, width, depth, height);
+  }
   addProgressFlag(group, width, state.progress);
 
   group.position.set(building.position.x, 0, building.position.z);
