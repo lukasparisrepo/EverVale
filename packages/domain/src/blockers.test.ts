@@ -29,11 +29,14 @@ const zeroBuilding = {
   recreationCoverageAdd:0,
   safetyAdd:0,
   combatSpawn:{},
-  constructionSlotsAdd:0,
+  constructionSlotsAdd: 0,
+  footprintCellsX: 3,
+  footprintCellsZ: 2,
 };
 
 const defs: SimulationDefinitions = {
-  referenceCycleSeconds:600,
+  referenceCycleSeconds: 600,
+  gridCellMeters: 2,
   buildings:{
     house_small: zeroBuilding,
     town_center:{...zeroBuilding,id:"town_center",moneyCost:0,constructionSlotsAdd:1},
