@@ -34,7 +34,7 @@ export class WorldService {
       await this.options.repository.create(created);
       return created;
     }
-    return this.catchUpAndSave(existing);
+    return this.advanceState(existing, this.options.clock.now());
   }
 
   async command(ownerId: string, command: WorldCommand): Promise<WorldState> {
@@ -132,19 +132,5 @@ export class WorldService {
     };
   }
 
-  private async catchUpAndSave(world: WorldState): Promise<WorldState> {
-    const now = this.options.clock.now();
-    const then = new Date(world.lastSimulatedAt);
-    const elapsed = Math.max(0, (now.getTime() - then.getTime()) / 1000);
-    if (elapsed < 0.25) return world;
-
-    const previousRevision = world.revision;
-    const advanced = this.advanceState(world, now);
-    const next = {
-      ...advanced,
-      revision: previousRevision + 1,
-    };
-    await this.options.repository.save(next, previousRevision);
-    return next;
-  }
 }
+
