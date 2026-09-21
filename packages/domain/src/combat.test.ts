@@ -24,6 +24,7 @@ const defs: SimulationDefinitions = {
     },
   },
   blockers: {},
+  props: {},
 };
 
 const world: WorldState = {
@@ -36,10 +37,12 @@ const world: WorldState = {
   simulationSeconds:0,
   lastSimulatedAt:new Date(0).toISOString(),
   resources:{money:1200,moneyCap:5000,power:60,powerCap:120,water:60,waterCap:120,varum:0,varumCap:0,techPoints:0,techTier:0},
-  society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5},
+  society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5,beauty:0},
   buildings:[],
   roads:[],
-  blockers:[], combat:null, events:[],
+  blockers:[],
+  props:[],
+  combat:null, events:[],
 };
 
 test("one large advance crosses warning into combat and resolves the M1 wave", () => {
