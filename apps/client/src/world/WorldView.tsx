@@ -538,6 +538,10 @@ export function WorldView({
 
       controls.update();
       renderer.render(scene, camera);
+      host.dataset.frameCount = String(frame + 1);
+      host.dataset.drawCalls = String(renderer.info.render.calls);
+      host.dataset.triangles = String(renderer.info.render.triangles);
+      host.dataset.citizens = String(citizensRef.current.length);
 
       const now = performance.now();
       const frameMs = now - lastFrameTime;
