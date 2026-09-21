@@ -25,14 +25,14 @@ When documents overlap, use the authority below.
 | Procedural player maps | `docs/39_PROCEDURAL_PLAYER_MAPS.md` |
 | Starting world | `docs/40_STARTER_WORLD_AND_EARLY_GAME.md` |
 | Terraces/blockers/access | `docs/41_WORLD_CONNECTIVITY_AND_LEVELS.md` |
-| Decor/world dressing | `docs/43_DECOR_AND_WORLD_DRESSING.md` |
+| Decor/world dressing | `docs/43_DECOR_AND_WORLD_DRESSING.md` + `docs/72_M1_1_DECOR_MODE.md` |
 | Seasons/weather | `docs/46_SEASONS_WEATHER_NATURAL_HAZARDS.md` |
 | Architecture | `docs/35_LAYERED_ARCHITECTURE.md` |
 | Persistence/data contracts | `docs/14_PERSISTENCE_MULTIPLAYER.md` + `docs/20_DATA_CONTRACTS.md` |
 | Three.js/dependencies | `docs/11_THREEJS_STACK.md` + `docs/18_LIBRARY_REFERENCE_MATRIX.md` |
 | Blender/assets | `docs/12_BLENDER_PIPELINE.md` + `docs/19_ASSET_STANDARDS.md` |
 | Whistlevale reference | `docs/36_WHISTLEVALE_REFERENCE_AUDIT.md` |
-| HUD / combat UI | `docs/50_HUD_COMBAT_UI.md` |
+| HUD / combat UI | `docs/50_HUD_COMBAT_UI.md` + `docs/71_HUD_AUDIO_ASSET_PIPELINE.md` |
 | Settings / controls / accessibility | `docs/51_SETTINGS_ACCESSIBILITY_CONTROLS.md` |
 | Story / campaign | `docs/52_STORY_CAMPAIGN_AND_WORLD_LORE.md` |
 | Combat command / deployment / win-loss | `docs/53_COMBAT_COMMAND_DEPLOYMENT_WIN_LOSS.md` |
@@ -49,6 +49,8 @@ When documents overlap, use the authority below.
 | Pre-engineering lock | `docs/66_PRE_ENGINEERING_DESIGN_LOCK.md` |
 | M1 runtime quality | `docs/69_M1_RUNTIME_QUALITY_AUDIT.md` |
 | Build grid / footprints / Props | `docs/70_BUILD_GRID_FOOTPRINT_PROP_CONTRACT.md` |
+| HUD/audio asset pipeline | `docs/71_HUD_AUDIO_ASSET_PIPELINE.md` |
+| M1.1 Decor runtime | `docs/72_M1_1_DECOR_MODE.md` |
 | Studio readiness audit | `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md` |
 | Implementation start gate | `docs/59_IMPLEMENTATION_START_GATE.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
@@ -83,11 +85,13 @@ When prose disagrees with machine-readable balance/content data, the versioned d
 - Ambient life: `data/life/v0.1/ambient.yaml`
 - Activity anchors: `data/life/v0.1/anchor_types.yaml`
 - Campaign/story: `data/story/v0.1/campaign.yaml`
+- Music state/asset slots: `data/audio/v0.1/music.yaml`
 - Map generation: `data/world/v0.1/map_generation.yaml`
 - Blockers: `data/world/v0.1/blockers.yaml`
 - Starter world: `data/world/v0.1/starter_world.yaml`
 - Planned buildables: `data/content/v0.1/building_catalog.yaml`
-- Decor: `data/content/v0.1/decor_catalog.yaml`
+- Prop/decor gameplay: `data/content/v0.2/props.yaml`
+- Legacy decor catalog: `data/content/v0.1/decor_catalog.yaml` is DEPRECATED
 - Legacy wave draft: `data/balance/v0.1/waves.yaml` is DEPRECATED; use combat v0.2
 
 ## Agent rule
