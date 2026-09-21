@@ -1,0 +1,215 @@
+version: "0.1"
+
+calendar:
+  season_duration_real_seconds_at_1x: 604800
+  season_order: [SPRING, SUMMER, AUTUMN, WINTER]
+
+episode_duration_minutes:
+  normal_min: 20
+  normal_max: 120
+  severe_min: 15
+  severe_max: 60
+
+severe:
+  cooldown_real_hours_min: 8
+  max_offline_severe_events_per_24h: 2
+  critical_building_delete_allowed: false
+
+season_weights:
+  SPRING:
+    CLEAR: 14
+    PARTLY_CLOUDY: 18
+    CLOUDY: 16
+    FOG: 8
+    LIGHT_RAIN: 18
+    RAIN: 14
+    HEAVY_RAIN: 5
+    THUNDERSTORM: 3
+    LIGHT_WIND: 3
+    STRONG_WIND: 1
+
+  SUMMER:
+    CLEAR: 30
+    PARTLY_CLOUDY: 22
+    CLOUDY: 8
+    LIGHT_RAIN: 6
+    RAIN: 5
+    HEAVY_RAIN: 4
+    THUNDERSTORM: 8
+    LIGHT_WIND: 8
+    STRONG_WIND: 2
+    HEATWAVE: 7
+
+  AUTUMN:
+    CLEAR: 10
+    PARTLY_CLOUDY: 12
+    CLOUDY: 22
+    FOG: 10
+    LIGHT_RAIN: 14
+    RAIN: 13
+    HEAVY_RAIN: 5
+    LIGHT_WIND: 7
+    STRONG_WIND: 4
+    WINDSTORM: 2
+    SEVERE_STORM: 1
+
+  WINTER:
+    CLEAR: 10
+    PARTLY_CLOUDY: 8
+    CLOUDY: 20
+    FOG: 10
+    LIGHT_WIND: 6
+    STRONG_WIND: 4
+    COLD_SNAP: 10
+    LIGHT_SNOW: 12
+    SNOW: 10
+    HEAVY_SNOW: 5
+    WINDSTORM: 3
+    SEVERE_STORM: 2
+
+modifiers:
+  CLEAR:
+    citizen_power_mult: 1.00
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.00
+    outdoor_activity_mult: 1.00
+    civilian_traffic_mult: 1.00
+    airfield_available: true
+
+  LIGHT_RAIN:
+    citizen_power_mult: 1.00
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.03
+    outdoor_activity_mult: 0.72
+    civilian_traffic_mult: 0.90
+    airfield_available: true
+
+  RAIN:
+    citizen_power_mult: 1.00
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.07
+    outdoor_activity_mult: 0.50
+    civilian_traffic_mult: 0.82
+    airfield_available: true
+
+  HEAVY_RAIN:
+    citizen_power_mult: 1.02
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.12
+    outdoor_activity_mult: 0.25
+    civilian_traffic_mult: 0.65
+    airfield_available: false
+    hazard_tags: [road_blockage, bridge_fault, storm_damage]
+
+  THUNDERSTORM:
+    citizen_power_mult: 1.03
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.10
+    outdoor_activity_mult: 0.15
+    civilian_traffic_mult: 0.55
+    airfield_available: false
+    hazard_tags: [lightning_fire, generator_fault, storm_damage]
+
+  STRONG_WIND:
+    citizen_power_mult: 1.00
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.05
+    outdoor_activity_mult: 0.55
+    civilian_traffic_mult: 0.80
+    bicycle_mult: 0.35
+    airfield_available: true
+    hazard_tags: [fallen_tree]
+
+  WINDSTORM:
+    citizen_power_mult: 1.03
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.15
+    outdoor_activity_mult: 0.10
+    civilian_traffic_mult: 0.40
+    bicycle_mult: 0.0
+    airfield_available: false
+    hazard_tags: [fallen_tree, storm_damage, lift_fault]
+
+  HEATWAVE:
+    citizen_power_mult: 1.05
+    citizen_water_mult: 1.15
+    travel_cost_mult: 1.00
+    outdoor_activity_mult: 0.70
+    civilian_traffic_mult: 0.90
+    airfield_available: true
+
+  COLD_SNAP:
+    citizen_power_mult: 1.10
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.05
+    outdoor_activity_mult: 0.55
+    civilian_traffic_mult: 0.80
+    airfield_available: true
+
+  LIGHT_SNOW:
+    citizen_power_mult: 1.08
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.10
+    outdoor_activity_mult: 0.65
+    civilian_traffic_mult: 0.70
+    bicycle_mult: 0.10
+    airfield_available: true
+
+  SNOW:
+    citizen_power_mult: 1.10
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.15
+    outdoor_activity_mult: 0.45
+    civilian_traffic_mult: 0.60
+    bicycle_mult: 0.0
+    airfield_available: true
+
+  HEAVY_SNOW:
+    citizen_power_mult: 1.15
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.25
+    outdoor_activity_mult: 0.20
+    civilian_traffic_mult: 0.35
+    bicycle_mult: 0.0
+    airfield_available: false
+    hazard_tags: [road_blockage, lift_fault, storm_damage]
+
+  SEVERE_STORM:
+    citizen_power_mult: 1.08
+    citizen_water_mult: 1.00
+    travel_cost_mult: 1.30
+    outdoor_activity_mult: 0.05
+    civilian_traffic_mult: 0.15
+    bicycle_mult: 0.0
+    airfield_available: false
+    hazard_tags: [fallen_tree, road_blockage, storm_damage, generator_fault, lift_fault]
+
+hazard_chance_per_episode:
+  road_blockage: 0.15
+  bridge_fault: 0.08
+  lightning_fire: 0.08
+  generator_fault: 0.10
+  fallen_tree: 0.18
+  storm_damage: 0.12
+  lift_fault: 0.08
+
+terrain_flavor:
+  river_valley:
+    fog_mult: 1.15
+    heavy_rain_visual_mult: 1.10
+  hill_country:
+    wind_mult: 1.15
+  lakeside:
+    fog_mult: 1.25
+  forest_basin:
+    fallen_tree_risk_mult: 1.20
+  coastal_ridge:
+    wind_mult: 1.25
+    severe_storm_mult: 1.10
+
+forecast:
+  base_horizon_real_minutes: 30
+  base_confidence: 0.60
+  weather_station_horizon_real_minutes: 120
+  weather_station_confidence: 0.85
+  exact_second_countdown_required: false
