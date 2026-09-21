@@ -39,6 +39,16 @@ type RawFootprints = {
   footprints: Record<string, { cells_x: number; cells_z: number }>;
 };
 
+type RawProps = {
+  default_snap_meters: number;
+  props: Record<string, {
+    title: string;
+    group: string;
+    size_x_m: number;
+    size_z_m: number;
+  }>;
+};
+
 const numberValue = (value: unknown, fallback = 0): number =>
   typeof value === "number" ? value : fallback;
 
@@ -147,10 +157,21 @@ export interface BlockerCatalogEntry {
   techTier: number;
 }
 
+export interface PropCatalogEntry {
+  id: string;
+  title: string;
+  group: string;
+  sizeXMeters: number;
+  sizeZMeters: number;
+  snapMeters: number;
+  sizeTitle: string;
+}
+
 export interface LoadedGameData {
   definitions: SimulationDefinitions;
   buildCatalog: BuildCatalogEntry[];
   blockerCatalog: BlockerCatalogEntry[];
+  propCatalog: PropCatalogEntry[];
 }
 
 export function loadGameData(): LoadedGameData {
@@ -160,6 +181,7 @@ export function loadGameData(): LoadedGameData {
   const enemies = readYaml<RawCombat>("data/combat/v0.2/enemies.yaml").enemies ?? {};
   const blockers = readYaml<RawBlockers>("data/world/v0.1/blockers.yaml").blockers;
   const footprintData = readYaml<RawFootprints>("data/content/v0.2/build_footprints.yaml");
+  const propData = readYaml<RawProps>("data/content/v0.2/props.yaml");
 
   const buildings = Object.fromEntries(
     Object.entries(balance.buildings).map(([id, raw]) => {
@@ -228,5 +250,17 @@ export function loadGameData(): LoadedGameData {
     }))
     .sort((a, b) => a.techTier - b.techTier || a.moneyCost - b.moneyCost);
 
-  return { definitions, buildCatalog, blockerCatalog };
+  const propCatalog = Object.entries(propData.props)
+    .map(([id, item]) => ({
+      id,
+      title: item.title,
+      group: item.group,
+      sizeXMeters: item.size_x_m,
+      sizeZMeters: item.size_z_m,
+      snapMeters: propData.default_snap_meters,
+      sizeTitle: `${item.size_x_m}×${item.size_z_m}m`,
+    }))
+    .sort((a, b) => a.group.localeCompare(b.group) || a.title.localeCompare(b.title));
+
+  return { definitions, buildCatalog, blockerCatalog, propCatalog };
 }
