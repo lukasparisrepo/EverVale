@@ -73,33 +73,78 @@ function mesh(
   x: number,
   y: number,
   z: number,
+  castShadow = true,
 ): THREE.Mesh {
   const m = new THREE.Mesh(geometry, material);
   m.position.set(x, y, z);
-  m.castShadow = true;
+  m.castShadow = castShadow;
   m.receiveShadow = true;
   return m;
 }
 
-function addTree(group: THREE.Group, seed: string, scale = 1): void {
-  const trunk = mesh(new THREE.CylinderGeometry(0.18 * scale, 0.26 * scale, 2.2 * scale, 7), mat("wood"), 0, 1.1 * scale, 0);
+function addTree(
+  group: THREE.Group,
+  seed: string,
+  kind: "tree_oak" | "tree_pine" | "tree_birch",
+): void {
+  const lean=(seeded01(seed,71)-0.5)*0.12;
+  const pine=kind==="tree_pine";
+  const birch=kind==="tree_birch";
+  const trunkMaterial=birch ? mat("cream") : mat("wood");
+  const trunkHeight=pine ? 2.55 : 2.2;
+  const trunk=mesh(
+    new THREE.CylinderGeometry(pine ? 0.14 : 0.18,pine ? 0.22 : 0.28,trunkHeight,7),
+    trunkMaterial,
+    0,
+    trunkHeight/2,
+    0,
+  );
+  trunk.rotation.z=lean;
   group.add(trunk);
 
-  const variations = [
-    [-0.35, 2.3, 0.1, 0.95],
-    [0.35, 2.5, 0.15, 0.85],
-    [0.0, 2.85, -0.2, 0.9],
-  ] as const;
+  if (birch) {
+    for (const y of [0.65,1.15,1.62]) {
+      const band=mesh(new THREE.CylinderGeometry(0.192,0.192,0.08,7),mat("darkStone"),lean*y,y,0,false);
+      group.add(band);
+    }
+  }
 
-  variations.forEach(([x, y, z, s], i) => {
-    const crown = mesh(
-      new THREE.DodecahedronGeometry(s * scale, 0),
-      i % 2 === 0 ? mat("leafA") : mat("leafB"),
-      (x + (seeded01(seed, i) - 0.5) * 0.18) * scale,
-      y * scale,
-      (z + (seeded01(seed, i + 4) - 0.5) * 0.18) * scale,
+  if (pine) {
+    for (let i=0;i<4;i+=1) {
+      const radius=1.05-i*0.15;
+      const crown=mesh(
+        new THREE.ConeGeometry(radius,1.35,8),
+        i%2===0 ? mat("leafA") : mat("leafB"),
+        (seeded01(seed,i+4)-0.5)*0.12,
+        1.72+i*0.55,
+        (seeded01(seed,i+12)-0.5)*0.12,
+        i<2,
+      );
+      crown.rotation.y=seeded01(seed,i+30)*Math.PI;
+      group.add(crown);
+    }
+    return;
+  }
+
+  const crownLayout: Array<readonly [number, number, number, number]> = kind==="tree_oak"
+    ? [[-0.48,2.2,0.08,1.0],[0.42,2.35,0.16,0.9],[0,2.78,-0.16,1.04],[-0.08,2.5,0.42,0.78]]
+    : [[-0.3,2.18,0.08,0.75],[0.32,2.35,-0.02,0.72],[0.03,2.65,-0.18,0.78]];
+
+  crownLayout.forEach(([x,y,z,s],i)=>{
+    const crown=mesh(
+      new THREE.DodecahedronGeometry(s,0),
+      i%2===0 ? mat("leafA") : mat("leafB"),
+      x+(seeded01(seed,i)-0.5)*0.16,
+      y+(seeded01(seed,i+10)-0.5)*0.12,
+      z+(seeded01(seed,i+20)-0.5)*0.16,
+      i<2,
     );
-    crown.scale.y = 0.9 + seeded01(seed, i + 8) * 0.25;
+    crown.scale.set(
+      0.88+seeded01(seed,i+40)*0.2,
+      0.82+seeded01(seed,i+50)*0.28,
+      0.88+seeded01(seed,i+60)*0.2,
+    );
+    crown.rotation.y=seeded01(seed,i+70)*Math.PI;
     group.add(crown);
   });
 }
@@ -260,7 +305,7 @@ export function createPropObject(
     case "tree_oak":
     case "tree_pine":
     case "tree_birch":
-      addTree(group, instanceSeed, meta.id === "tree_pine" ? 0.9 : 1);
+      addTree(group, instanceSeed, meta.id);
       break;
     case "flower_bed":
     case "planter":
