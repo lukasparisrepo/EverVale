@@ -1,0 +1,74 @@
+version: "0.1"
+
+profiles:
+  house:
+    anchors:
+      required: [front_door]
+      optional: [porch, garden, pet_yard, driveway]
+    activities:
+      - { type: LEAVE_HOME, actor: citizen, windows: [morning_commute], weight: 1.0 }
+      - { type: RETURN_HOME, actor: citizen, windows: [evening_commute], weight: 1.0 }
+      - { type: PORCH_IDLE, actor: citizen, windows: [early_morning, evening_leisure], weight: 0.25 }
+      - { type: PET_YARD, actor: pet, windows: [early_morning, evening_leisure], weight: 0.30 }
+
+  workshop:
+    anchors:
+      required: [worker_entrance]
+      optional: [workbench, loading_area, break_spot]
+    activities:
+      - { type: WORKER_ARRIVAL, actor: worker, windows: [morning_commute], weight: 1.0 }
+      - { type: WORK_LOOP, actor: worker, windows: [morning_core, afternoon_core], weight: 1.0 }
+      - { type: BREAK_IDLE, actor: worker, windows: [midday], weight: 0.55 }
+      - { type: WORKER_DEPARTURE, actor: worker, windows: [evening_commute], weight: 1.0 }
+
+  school:
+    anchors:
+      required: [entrance, schoolyard]
+      optional: [bench, pickup_zone]
+    activities:
+      - { type: SCHOOL_ARRIVAL, actor: child, windows: [morning_commute], weight: 1.0 }
+      - { type: SCHOOLYARD, actor: child, windows: [midday], weight: 0.80 }
+      - { type: SCHOOL_EXIT, actor: child, windows: [school_exit], weight: 1.0 }
+      - { type: PICKUP_TRAFFIC, actor: ambient_vehicle, windows: [morning_commute, school_exit], weight: 0.55 }
+
+  park:
+    anchors:
+      required: [walking_loop]
+      optional: [bench, playground, picnic, pond_edge, dog_area, fountain, bicycle_rack]
+    activities:
+      - { type: WALK, actor: citizen, windows: [midday, school_exit, evening_leisure], weight: 0.85 }
+      - { type: BENCH_SIT, actor: citizen, windows: [midday, evening_leisure], weight: 0.65 }
+      - { type: CHILD_PLAY, actor: child, windows: [school_exit, evening_leisure], weight: 0.80 }
+      - { type: DOG_WALK, actor: citizen_pet_pair, windows: [early_morning, evening_leisure], weight: 0.55 }
+      - { type: DUCK_POND, actor: duck, windows: [morning_core, midday, afternoon_core], weight: 0.65 }
+      - { type: BICYCLE_PASS, actor: bicycle, windows: [midday, school_exit, evening_leisure], weight: 0.30 }
+
+  farm:
+    anchors:
+      required: [worker_entrance, field_work]
+      optional: [barn, chicken_zone, duck_pond, tractor_start, fence_gate]
+    activities:
+      - { type: FARMER_ARRIVAL, actor: worker, windows: [early_morning], weight: 1.0 }
+      - { type: FIELD_WORK, actor: worker, windows: [morning_core, afternoon_core], weight: 1.0 }
+      - { type: TRACTOR_LOOP, actor: ambient_vehicle, windows: [morning_core, afternoon_core], weight: 0.35 }
+      - { type: CHICKEN_ROAM, actor: chicken, windows: [morning_core, midday, afternoon_core], weight: 0.90 }
+      - { type: DUCK_ROAM, actor: duck, windows: [morning_core, midday], weight: 0.55 }
+      - { type: FARMER_DEPARTURE, actor: worker, windows: [evening_commute], weight: 1.0 }
+
+  guard_post:
+    anchors:
+      required: [guard_spawn, patrol_start]
+      optional: [gate_watch, response_vehicle]
+    activities:
+      - { type: PATROL, actor: guard, windows: [morning_core, afternoon_core, night], weight: 0.75 }
+      - { type: GATE_WATCH, actor: guard, windows: [morning_core, afternoon_core, night], weight: 0.65 }
+      - { type: RESPONSE_DEPLOY, actor: guard, trigger: active_threat, weight: 1.0 }
+
+  varum_mine:
+    anchors:
+      required: [worker_entrance, mine_entry]
+      optional: [equipment, loading_area, break_spot]
+    activities:
+      - { type: MINE_SHIFT_ARRIVAL, actor: worker, windows: [morning_commute], weight: 1.0 }
+      - { type: MINE_WORK, actor: worker, windows: [morning_core, afternoon_core], weight: 1.0 }
+      - { type: MINE_EQUIPMENT, actor: ambient_machine, windows: [morning_core, afternoon_core], weight: 0.75 }
