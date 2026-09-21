@@ -318,19 +318,21 @@ export function WorldView({
 
     const scene = new THREE.Scene();
 
-    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 400);
-    camera.position.set(48, 55, 58);
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 400);
+    camera.position.set(46, 50, 55);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     host.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0, 0);
+    controls.target.set(0, 1.15, 0);
     controls.enableDamping = true;
-    controls.maxPolarAngle = Math.PI * 0.47;
+    controls.dampingFactor = 0.075;
+    controls.minPolarAngle = 0.62;
+    controls.maxPolarAngle = 1.08;
     controls.minDistance = 22;
-    controls.maxDistance = 130;
+    controls.maxDistance = 120;
 
     const environment = createEnvironmentVisuals(scene, renderer);
     const ambient = createAmbientVisuals(scene);
