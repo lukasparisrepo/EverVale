@@ -5,12 +5,14 @@ import { WorldService } from "./world-service.js";
 import type { Clock, IdGenerator, WorldRepository } from "./ports.js";
 
 class Repo implements WorldRepository {
+  saveCalls = 0;
   constructor(public world: WorldState) {}
   async findByOwner(): Promise<WorldState | null> { return this.world; }
   async findById(): Promise<WorldState | null> { return this.world; }
   async create(world: WorldState): Promise<void> { this.world = world; }
   async save(world: WorldState, previousRevision: number): Promise<void> {
     assert.equal(this.world.revision, previousRevision);
+    this.saveCalls += 1;
     this.world = world;
   }
 }
@@ -118,4 +120,44 @@ test("command applies after elapsed time without self-inflicted revision conflic
   assert.equal(next.speed, 2);
   assert.equal(next.revision, 8);
   assert.ok(next.simulationSeconds > 0);
+});
+
+
+test("read projection advances visible simulation without mutating persisted revision", async () => {
+  const base = new Date("2026-09-21T12:00:00.000Z");
+  const world: WorldState = {
+    worldId:"world-read",
+    ownerId:"owner-read",
+    seed:2,
+    revision:3,
+    lifecycle:"ACTIVE",
+    speed:1,
+    simulationSeconds:0,
+    lastSimulatedAt:base.toISOString(),
+    resources:{money:1200,moneyCap:5000,power:60,powerCap:120,water:60,waterCap:120,varum:0,varumCap:0,techPoints:0,techTier:0},
+    society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5},
+    buildings:[
+      building("tc","town_center"),
+      building("h1","house_small"),
+      building("h2","house_small"),
+      building("h3","house_small"),
+      building("p","power_plant"),
+      building("w","water_plant"),
+      building("shop","workshop"),
+    ],
+    roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}],
+    combat:null,
+    events:[],
+  };
+  const repo = new Repo(world);
+  const clock = new FakeClock(new Date(base.getTime() + 2000));
+  const service = new WorldService({ repository:repo, definitions:defs, ids:new Ids(), clock });
+
+  const projected = await service.getOrCreate("owner-read");
+
+  assert.equal(projected.revision, 3);
+  assert.ok(projected.simulationSeconds >= 2);
+  assert.equal(repo.world.revision, 3);
+  assert.equal(repo.world.simulationSeconds, 0);
+  assert.equal(repo.saveCalls, 0);
 });
