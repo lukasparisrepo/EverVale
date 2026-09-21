@@ -364,7 +364,7 @@ export function WorldView({
     object: THREE.Group;
     route: { connected: boolean; points: Array<{x:number;z:number}> };
     site: {x:number;z:number};
-    progress: number;
+    buildingId: string;
   }>>([]);
 
   useEffect(() => { worldRef.current = world; }, [world]);
@@ -494,7 +494,9 @@ export function WorldView({
     const rebuildPropPreview = (meta: PropCatalogEntryDto) => {
       if (previewPropId === meta.id) return;
       while (propPreview.children.length > 1) {
-        propPreview.remove(propPreview.children[propPreview.children.length - 1]!);
+        const child = propPreview.children[propPreview.children.length - 1]!;
+        propPreview.remove(child);
+        disposeObjectResources(child);
       }
       const visual = createPropObject(meta, `preview:${meta.id}`);
       visual.traverse((object) => {
@@ -656,8 +658,64 @@ export function WorldView({
     observer.observe(host);
     resize();
 
+    const disposeObjectResources = (root: THREE.Object3D) => {
+      root.traverse((object) => {
+        const resourceObject = object as THREE.Object3D & {
+          geometry?: THREE.BufferGeometry;
+          material?: THREE.Material | THREE.Material[];
+        };
+        resourceObject.geometry?.dispose();
+        const materials = resourceObject.material
+          ? Array.isArray(resourceObject.material)
+            ? resourceObject.material
+            : [resourceObject.material]
+          : [];
+        materials.forEach((material) => {
+          if (!material.userData.sharedMaterial) material.dispose();
+        });
+      });
+    };
+
+    const clearGroup = (group: THREE.Group) => {
+      [...group.children].forEach((child) => disposeObjectResources(child));
+      group.clear();
+    };
+
+    const presentationSignature = (current: WorldState): string => {
+      const buildingState = current.buildings
+        .map((building) => {
+          const stage =
+            building.constructionState === "BUILDING"
+              ? constructionVisualState(building).stage
+              : "COMPLETE";
+          return `${building.id}:${building.constructionState}:${stage}:${building.damageState}`;
+        })
+        .join("|");
+      const blockerState = (current.blockers ?? [])
+        .map((blocker) => `${blocker.id}:${blocker.state}`)
+        .join("|");
+      const combatState = current.combat
+        ? `${current.combat.id}:${current.combat.status}:${current.combat.outcome ?? ""}:${current.combat.actors
+            .filter((actor) => actor.hp > 0)
+            .map((actor) => actor.id)
+            .join(",")}`
+        : "none";
+      const population = Math.min(
+        40,
+        visualPopulationRef.current ?? current.society.population,
+      );
+      return [
+        current.revision,
+        selectedPropIdRef.current ?? "",
+        population,
+        buildingState,
+        blockerState,
+        combatState,
+      ].join("::");
+    };
+
     const rebuild = () => {
-      dynamic.clear();
+      clearGroup(dynamic);
       citizensRef.current = [];
       animalsRef.current = [];
       propWaterRef.current = [];
@@ -727,7 +785,7 @@ export function WorldView({
             object: builder,
             route,
             site,
-            progress: constructionVisualState(project).progress,
+            buildingId: project.id,
           });
         }
       }
@@ -889,8 +947,8 @@ export function WorldView({
       host.dataset.gridSize =
         modeRef.current === "DECOR" || modeRef.current === "MOVE_PROP" ? "1" : "2";
 
-      const presentationKey = `${current.revision}:${selectedPropIdRef.current ?? ""}`;
-      if (presentationKey !== lastPresentationKey || frame % 120 === 0) {
+      const presentationKey = presentationSignature(current);
+      if (presentationKey !== lastPresentationKey) {
         rebuild();
         lastPresentationKey = presentationKey;
       }
@@ -920,7 +978,9 @@ export function WorldView({
       });
 
       buildersRef.current.forEach((builder, i) => {
-        const travelT = Math.max(0, Math.min(1, builder.progress / 0.08));
+        const project = current.buildings.find((building) => building.id === builder.buildingId);
+        const progress = project ? constructionVisualState(project).progress : 1;
+        const travelT = Math.max(0, Math.min(1, progress / 0.08));
         let target = builder.site;
 
         if (travelT < 1 && builder.route.connected) {
@@ -1014,6 +1074,8 @@ export function WorldView({
       renderer.domElement.removeEventListener("pointermove", onMove);
       renderer.domElement.removeEventListener("pointerdown", onPointer);
       renderer.setAnimationLoop(null);
+      clearGroup(dynamic);
+      [...preview.children].forEach((child) => disposeObjectResources(child));
       controls.dispose();
       renderer.dispose();
       host.removeChild(renderer.domElement);
