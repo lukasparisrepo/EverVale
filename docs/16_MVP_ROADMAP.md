@@ -2,41 +2,48 @@
 
 ## MVP question
 
-Can a small 3D town create a satisfying self-running loop from only:
+Can a small 3D town feel worth returning to when the player only manages:
 
-**Money + Power + Water + Varum + Population + Happiness + Tech?**
+**Money + Power + Water + Varum + Population + Happiness + Tech + priorities?**
 
 ## MVP world
 
-- one valley/map around 300×300m
+- one valley around 300×300m
 - 12 starting Population
-- growth toward 30–40 Population
+- growth toward 30–40
 - editable roads
-- 3D citizens
+- autonomous 3D citizens
+- children / School routine
+- Park activity
+- pets/farm ambience
+- civilian traffic
 - day/night
 - persistent login world
 
 ## Core buildings
 
-T0:
+### T0
 - House
 - Workshop
+- Market
+- Farm
 - Power Plant
 - Water Plant
 - School
 - Park
 - Guard Post
 
-T1:
+### T1
 - Varum Mine
+- Café
 - Watchtower
 
-T2:
+### T2
 - Radar
 - Vehicle Factory
 - Armored Car
 
-MVP threat proof may stop here.
+The first playable combat proof can stop around T2.
 
 ## Core resources
 
@@ -52,81 +59,121 @@ Progress/state:
 - Workforce
 - Happiness
 
-No Food.
-No Raw/Refined Varum split.
-No construction-goods commodity.
+Explicitly not in core:
+- Food resource
+- Raw/Refined Varum
+- construction goods
+- fuel
+- detailed pipe/electric grids
 
-## Required economic loop
+## Required economy loop
 
-`House + Happiness → Population`
+`Housing + Happiness → Population`
 
 `Population → Workforce`
 
-`Workforce at jobs → Money / Power / Water / Tech / Varum / Defense`
+`Automatic Workforce → Money / Power / Water / Tech / Varum / Defense`
 
-`Tech + Money + Varum → stronger buildings and defense`
+`Tech + Money + Varum → stronger technology`
+
+## Required living-world loop
+
+The same state must be visible through:
+- work commute
+- School commute
+- Park use
+- Farm activity
+- cats/dogs
+- chickens/ducks
+- civilian vehicles
+- guards/patrol
+- lights by time of day
+
+No per-citizen commands.
 
 ## Required threat loop
 
 - hidden pressure
-- no exact countdown
 - warning
-- autonomous defenders
-- combat
+- autonomous response
+- spatial combat
 - damage
 - repair
-- history
+- After-Action report
+
+No exact attack countdown.
 
 ## Required persistence loop
 
-`login → build → logout → economy/threats continue → login elsewhere → catch-up → history → continue`
+`login → build → logout → world continues at 1x → reconnect → catch-up → history → continue`
 
-## Phase 0 — numerical proof
+## Phase 0 — architecture and numerical proof
+
+- layered architecture
+- dependency boundaries
 - balance SSOT
-- economy simulation tests
-- combat simulation tests
-- offline determinism test
+- Workforce allocator test
+- economy simulation
+- combat simulation
+- offline lease/catch-up test
+- activity-anchor prototype
 
-## Phase 1 — living block
-- road
-- houses
-- citizens
+## Phase 1 — Living Block
+
+- terrain
+- road editing
+- Houses
 - Workshop
 - Power/Water
+- autonomous adults
 - Money
 - save/load
+- day/night
 
-## Phase 2 — growth and Tech
+## Phase 2 — Society
+
 - Happiness
-- population Growth
+- Growth
 - School
-- Tech tiers
+- children
+- Tech
 - Park
+- pets
+- traffic
+- Market/Farm
 
 ## Phase 3 — Varum
+
 - Mine
-- storage
-- T1/T2 unlocks
+- storage cap
+- T1/T2
 - advanced build costs
 
-## Phase 4 — threat
+## Phase 4 — Threat
+
 - Guard
 - Watchtower
 - Radar
-- ground attack
+- ground wave
+- spatial coverage
 - damage/repair/report
 
-## Phase 5 — advanced military
-- vehicle factory
-- tank
-- airfield
-- fighter
-- anti-air
-- UFO attack
+## Phase 5 — Advanced military
 
-## Phase 6 — scale/polish
-- LOD
-- instancing
-- richer citizens
-- visual critic loop
-- mobile quality profiles
+- Vehicle Factory
+- Armored Car
+- Tank
+- Airfield
+- Fighter
+- Anti-Air
+- UFO
+
+## Phase 6 — Scale / polish
+
+- citizen simulation LOD
+- InstancedMesh
+- static crowd batching
+- more activity profiles
+- Blender art pipeline
+- dream-loop visual critic
+- mobile quality tiers
