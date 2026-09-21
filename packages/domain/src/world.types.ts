@@ -92,6 +92,7 @@ export interface BuildingInstance {
   priority: number;
   condition: number;
   damageState: DamageState;
+  repairRemainingSeconds: number;
 }
 
 export interface RoadSegment {
