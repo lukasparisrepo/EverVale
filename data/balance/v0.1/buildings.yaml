@@ -198,6 +198,16 @@ buildings:
     recreation_coverage_add: 0.08
     activity_profile: cafe
 
+  civic_shelter:
+    tech_tier: 1
+    money_cost: 350
+    build_cycles: 3
+    workers: 0
+    power_use_per_cycle: 1
+    upkeep_per_cycle: 2
+    shelter_capacity: 24
+    activity_profile: town_center
+
   watchtower:
     tech_tier: 1
     money_cost: 400
