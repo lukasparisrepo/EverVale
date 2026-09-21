@@ -375,8 +375,11 @@ function compactBuilding(group: THREE.Group): void {
       : source.geometry.clone();
     transformed.applyMatrix4(source.matrix);
 
+    const sourceMaterial = Array.isArray(source.material)
+      ? source.material[0]!
+      : source.material;
     const key = [
-      source.material.uuid,
+      sourceMaterial.uuid,
       source.castShadow ? "cast" : "no-cast",
       source.receiveShadow ? "recv" : "no-recv",
       source.userData.buildingGlow ? "glow" : "",
@@ -386,16 +389,17 @@ function compactBuilding(group: THREE.Group): void {
 
     let bucket = buckets.get(key);
     if (!bucket) {
-      bucket = {
-        material: source.material,
-        geometries: [],
+      const created = {
+        material: sourceMaterial,
+        geometries: [] as THREE.BufferGeometry[],
         castShadow: source.castShadow,
         receiveShadow: source.receiveShadow,
         buildingGlow: Boolean(source.userData.buildingGlow),
         propWater: Boolean(source.userData.propWater),
         damageMarker: Boolean(source.userData.damageMarker),
       };
-      buckets.set(key, bucket);
+      buckets.set(key, created);
+      bucket = created;
     }
     bucket.geometries.push(transformed);
     source.geometry.dispose();
