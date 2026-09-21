@@ -131,6 +131,18 @@ export class WorldService {
       roads: world.roads ?? [],
       blockers: world.blockers ?? [],
       props: world.props ?? [],
+      buildings: world.buildings.map((building) => {
+        const definition = this.options.definitions.buildings[building.definitionId];
+        const inferredTotal = (definition?.buildCycles ?? 0) * this.options.definitions.referenceCycleSeconds;
+        return {
+          ...building,
+          constructionTotalSeconds:
+            building.constructionTotalSeconds ??
+            (building.constructionState === "BUILDING"
+              ? Math.max(building.constructionRemainingSeconds, inferredTotal)
+              : 0),
+        };
+      }),
       society: {
         ...world.society,
         beauty: world.society.beauty ?? 0,
