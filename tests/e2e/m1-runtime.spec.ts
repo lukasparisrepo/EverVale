@@ -152,7 +152,7 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
   expect(afterLogin.world.simulationSeconds).toBeGreaterThan(simBefore + 1);
 
   // Accelerate only for the runtime proof, then trigger the M1 surprise wave through UI.
-  await page.getByRole("button", { name: "4×" }).click();
+  await page.getByRole("button", { name: "4×", exact: true }).click();
   await page.getByRole("button", { name: "Test surprise wave" }).click();
   await expect(page.getByTestId("combat-status")).toBeVisible();
   await expect(page.getByTestId("event-summary")).toBeVisible({ timeout: 20_000 });
