@@ -45,6 +45,7 @@ export interface BuildingDefinition {
   priority: number;
   jobCategory?: string;
   moneyPerWorker: number;
+  moneyCapAdd: number;
   powerProduction: number;
   powerCapAdd: number;
   powerUse: number;
