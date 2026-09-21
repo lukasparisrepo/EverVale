@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { BuildingInstance } from "@evervale/domain/world.types";
 import type { BuildCatalogEntryDto } from "@evervale/protocol/world";
 
@@ -351,6 +352,79 @@ function addDamageMarker(group:THREE.Group,state:BuildingInstance["damageState"]
   group.add(marker);
 }
 
+function compactBuilding(group: THREE.Group): void {
+  const buckets = new Map<
+    string,
+    {
+      material: THREE.Material;
+      geometries: THREE.BufferGeometry[];
+      castShadow: boolean;
+      receiveShadow: boolean;
+      buildingGlow: boolean;
+      propWater: boolean;
+      damageMarker: boolean;
+    }
+  >();
+
+  for (const child of [...group.children]) {
+    const source = child as THREE.Mesh;
+    if (!source.isMesh) continue;
+    source.updateMatrix();
+    const transformed = source.geometry.index
+      ? source.geometry.toNonIndexed()
+      : source.geometry.clone();
+    transformed.applyMatrix4(source.matrix);
+
+    const key = [
+      source.material.uuid,
+      source.castShadow ? "cast" : "no-cast",
+      source.receiveShadow ? "recv" : "no-recv",
+      source.userData.buildingGlow ? "glow" : "",
+      source.userData.propWater ? "water" : "",
+      source.userData.damageMarker ? "damage" : "",
+    ].join(":");
+
+    let bucket = buckets.get(key);
+    if (!bucket) {
+      bucket = {
+        material: source.material,
+        geometries: [],
+        castShadow: source.castShadow,
+        receiveShadow: source.receiveShadow,
+        buildingGlow: Boolean(source.userData.buildingGlow),
+        propWater: Boolean(source.userData.propWater),
+        damageMarker: Boolean(source.userData.damageMarker),
+      };
+      buckets.set(key, bucket);
+    }
+    bucket.geometries.push(transformed);
+    source.geometry.dispose();
+  }
+
+  group.clear();
+
+  for (const bucket of buckets.values()) {
+    const geometry =
+      bucket.geometries.length === 1
+        ? bucket.geometries[0]!
+        : mergeGeometries(bucket.geometries, false);
+    if (!geometry) {
+      bucket.geometries.forEach((item) => item.dispose());
+      continue;
+    }
+    if (bucket.geometries.length > 1) {
+      bucket.geometries.forEach((item) => item.dispose());
+    }
+    const combined = new THREE.Mesh(geometry, bucket.material);
+    combined.castShadow = bucket.castShadow;
+    combined.receiveShadow = bucket.receiveShadow;
+    combined.userData.buildingGlow = bucket.buildingGlow;
+    combined.userData.propWater = bucket.propWater;
+    combined.userData.damageMarker = bucket.damageMarker;
+    group.add(combined);
+  }
+}
+
 export function createBuildingVisual(
   building: BuildingInstance,
   meta?: BuildCatalogEntryDto,
@@ -380,6 +454,7 @@ export function createBuildingVisual(
 
   const markerHeight=building.definitionId==="town_center" ? 6.5 : building.definitionId==="park" ? 2.5 : 4.6;
   addDamageMarker(group,building.damageState,markerHeight);
+  compactBuilding(group);
   group.position.set(building.position.x,0,building.position.z);
   group.rotation.y=building.rotationY;
   group.userData.buildingId=building.id;
