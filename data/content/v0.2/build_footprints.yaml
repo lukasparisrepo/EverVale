@@ -1,0 +1,59 @@
+version: "0.2"
+grid_cell_meters: 2
+
+footprints:
+  town_center: { cells_x: 4, cells_z: 4 }
+  builders_yard: { cells_x: 4, cells_z: 3 }
+  storehouse: { cells_x: 3, cells_z: 3 }
+  house_small: { cells_x: 3, cells_z: 2 }
+  house_medium: { cells_x: 3, cells_z: 3 }
+  row_housing: { cells_x: 4, cells_z: 2 }
+  garden_residence: { cells_x: 4, cells_z: 3 }
+  workshop: { cells_x: 3, cells_z: 3 }
+  restaurant: { cells_x: 3, cells_z: 2 }
+  market: { cells_x: 5, cells_z: 4 }
+  cafe: { cells_x: 2, cells_z: 2 }
+  boutique: { cells_x: 2, cells_z: 2 }
+  inn: { cells_x: 4, cells_z: 3 }
+  power_plant: { cells_x: 4, cells_z: 3 }
+  water_plant: { cells_x: 4, cells_z: 3 }
+  power_storage: { cells_x: 3, cells_z: 2 }
+  water_storage: { cells_x: 3, cells_z: 3 }
+  weather_station: { cells_x: 2, cells_z: 2 }
+  school: { cells_x: 4, cells_z: 3 }
+  academy: { cells_x: 5, cells_z: 4 }
+  research_lab: { cells_x: 4, cells_z: 4 }
+  park: { cells_x: 4, cells_z: 4 }
+  botanical_garden: { cells_x: 5, cells_z: 4 }
+  theatre: { cells_x: 4, cells_z: 3 }
+  bath_house: { cells_x: 4, cells_z: 3 }
+  sports_green: { cells_x: 6, cells_z: 5 }
+  farm: { cells_x: 6, cells_z: 5 }
+  orchard: { cells_x: 5, cells_z: 4 }
+  windmill_farm: { cells_x: 6, cells_z: 5 }
+  varum_mine: { cells_x: 4, cells_z: 4 }
+  varum_storage: { cells_x: 3, cells_z: 3 }
+  vehicle_factory: { cells_x: 6, cells_z: 4 }
+  advanced_factory: { cells_x: 7, cells_z: 5 }
+  civic_shelter: { cells_x: 4, cells_z: 3 }
+  guard_post: { cells_x: 2, cells_z: 2 }
+  watchtower: { cells_x: 2, cells_z: 2 }
+  fire_station: { cells_x: 4, cells_z: 3 }
+  clinic: { cells_x: 3, cells_z: 3 }
+  service_yard: { cells_x: 5, cells_z: 4 }
+  radar: { cells_x: 3, cells_z: 3 }
+  armored_depot: { cells_x: 5, cells_z: 4 }
+  airfield: { cells_x: 12, cells_z: 6 }
+  heavy_turret: { cells_x: 2, cells_z: 2 }
+  anti_air: { cells_x: 2, cells_z: 2 }
+  varum_shield: { cells_x: 3, cells_z: 3 }
+  gate: { cells_x: 3, cells_z: 1 }
+  wall: { cells_x: 2, cells_z: 1 }
+  hill_lift: { cells_x: 3, cells_z: 2 }
+  service_tunnel: { cells_x: 3, cells_z: 2 }
+
+rules:
+  placement_snap: grid
+  rotation_step_degrees: 90
+  collision_shape: oriented_rectangle
+  road_access_distance_cells: 1
