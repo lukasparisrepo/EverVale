@@ -5,7 +5,7 @@ import type { SimulationDefinitions, WorldState } from "./world.types.js";
 
 const zero = {
   moneyCost: 0, varumCost: 0, buildCycles: 0, workers: 0, priority: 0,
-  moneyPerWorker: 0, powerProduction: 0, powerCapAdd: 0, powerUse: 0,
+  moneyPerWorker: 0, moneyCapAdd: 0, powerProduction: 0, powerCapAdd: 0, powerUse: 0,
   waterProduction: 0, waterCapAdd: 0, waterUse: 0, varumProduction: 0,
   varumCapAdd: 0, techProduction: 0, upkeep: 0, housingAdd: 0,
   educationCoverageAdd: 0, recreationCoverageAdd: 0, safetyAdd: 0, combatSpawn: {}, constructionSlotsAdd: 0,
