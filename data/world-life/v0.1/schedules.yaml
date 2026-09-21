@@ -1,0 +1,31 @@
+version: "0.1"
+visual_day_seconds_at_1x: 1440
+
+profiles:
+  adult_day_worker:
+    wake: "06:30"
+    commute_start: "07:30"
+    work_start: "08:30"
+    lunch_start: "12:00"
+    lunch_end: "13:00"
+    work_end: "17:00"
+    home_or_social: "18:00"
+    sleep: "21:00"
+    jitter_minutes: 20
+
+  child_student:
+    wake: "07:00"
+    school_commute: "08:00"
+    school_start: "09:00"
+    school_end: "15:30"
+    recreation_end: "18:00"
+    sleep: "21:00"
+    jitter_minutes: 15
+
+priority:
+  - THREAT
+  - EMERGENCY
+  - WORK_OR_SCHOOL
+  - COMMUTE
+  - SOCIAL
+  - AMBIENT
