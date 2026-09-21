@@ -39,6 +39,7 @@ When documents overlap, use the authority below.
 | Animation / VFX state machines | `docs/54_ANIMATION_VFX_STATE_MACHINES.md` |
 | Early combat levels 1–10 | `docs/55_EARLY_COMBAT_SIMULATION_01_10.md` |
 | 24h online wave cadence | `docs/56_ONLINE_24H_WAVE_SIMULATION.md` |
+| Ambient threat activity | `docs/57_AMBIENT_THREAT_ACTIVITY.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
 | Military roster/art | `docs/47_MILITARY_ROSTER_AND_ART.md` |
 | Enemy/UFO roster & wave ladder | `docs/48_ENEMY_UFO_WAVE_LADDER.md` |
@@ -55,6 +56,9 @@ When prose disagrees with machine-readable balance/content data, the versioned d
 - Combat enemies: `data/combat/v0.2/enemies.yaml`
 - Combat waves: `data/combat/v0.2/waves.yaml`
 - Combat control/outcomes: `data/combat/v0.2/control.yaml`
+- Combat production/readiness: `data/combat/v0.2/production.yaml`
+- Combat structure durability/objectives: `data/combat/v0.2/structures.yaml`
+- Ambient threat activity: `data/combat/v0.2/ambient_threats.yaml`
 - Early combat levels 1–10: `data/combat/v0.2/early_levels_01_10.yaml`
 - Legacy combat draft: `data/balance/v0.1/combat.yaml` is non-authoritative when it conflicts with v0.2
 - Simulation constants: `data/balance/v0.1/simulation.yaml`
@@ -69,7 +73,7 @@ When prose disagrees with machine-readable balance/content data, the versioned d
 - Starter world: `data/world/v0.1/starter_world.yaml`
 - Planned buildables: `data/content/v0.1/building_catalog.yaml`
 - Decor: `data/content/v0.1/decor_catalog.yaml`
-- Wave tiers: `data/balance/v0.1/waves.yaml`
+- Legacy wave draft: `data/balance/v0.1/waves.yaml` is DEPRECATED; use combat v0.2
 
 ## Agent rule
 
