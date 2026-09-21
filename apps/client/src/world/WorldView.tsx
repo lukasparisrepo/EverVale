@@ -29,6 +29,7 @@ interface Props {
   roadStart: { x: number; z: number } | null;
   onGroundClick(position: { x: number; z: number }): void;
   onPropSelect(propId: string | null): void;
+  onRouting?(routedCitizens: number, disconnectedRoutes: number): void;
   onMetrics: ((metrics: RuntimeMetrics) => void) | undefined;
 }
 
@@ -329,6 +330,7 @@ export function WorldView({
   roadStart,
   onGroundClick,
   onPropSelect,
+  onRouting,
   onMetrics,
 }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -344,6 +346,7 @@ export function WorldView({
   const selectedPropIdRef = useRef(selectedPropId);
   const movingPropIdRef = useRef(movingPropId);
   const propSelectRef = useRef(onPropSelect);
+  const routingRef = useRef(onRouting);
   const roadStartRef = useRef(roadStart);
   const citizensRef = useRef<THREE.Mesh[]>([]);
   const animalsRef = useRef<THREE.Group[]>([]);
@@ -362,6 +365,7 @@ export function WorldView({
   useEffect(() => { selectedPropIdRef.current = selectedPropId; }, [selectedPropId]);
   useEffect(() => { movingPropIdRef.current = movingPropId; }, [movingPropId]);
   useEffect(() => { propSelectRef.current = onPropSelect; }, [onPropSelect]);
+  useEffect(() => { routingRef.current = onRouting; }, [onRouting]);
   useEffect(() => { roadStartRef.current = roadStart; }, [roadStart]);
 
   useEffect(() => {
@@ -763,6 +767,7 @@ export function WorldView({
       ).length;
       host.dataset.disconnectedRoutes = String(disconnectedRoutes);
       host.dataset.routedCitizens = String(citizensRef.current.length);
+      routingRef.current?.(citizensRef.current.length, disconnectedRoutes);
 
       if (homes.length > 0) {
         const dog = new THREE.Group();
