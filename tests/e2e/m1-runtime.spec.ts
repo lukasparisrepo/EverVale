@@ -177,14 +177,22 @@ test("M1 loop: build, Decor, persistence, offline catch-up, combat, repair", asy
   const placedBody = await placed.json();
   const placedHouse = placedBody.world.buildings.at(-1);
   expect(placedHouse.position).toEqual({ x: 32, y: 0, z: 4 });
+  expect(placedHouse.constructionState).toBe("BUILDING");
+  expect(placedHouse.constructionTotalSeconds).toBe(1200);
+  expect(placedHouse.constructionRemainingSeconds).toBeGreaterThan(0);
 
   await expect(page.getByTestId("building-count")).toContainText("8");
+  await expect(page.getByTestId("construction-list")).toContainText(/Hearth Cottage/i);
+  await expect(page.getByTestId("construction-list")).toContainText(/footprint/i);
+  await expect(page.locator(".world-view")).toHaveAttribute("data-active-construction", "1");
+  await expect(page.locator(".world-view")).toHaveAttribute("data-construction-stage", "FOOTPRINT");
 
   // Browser reload must reconstruct the persisted world.
   await page.reload();
   await expect(page.locator("canvas")).toBeVisible();
   await expect(page.getByTestId("building-count")).toContainText("8");
   await expect(page.getByTestId("prop-count")).toContainText("1");
+  await expect(page.getByTestId("construction-list")).toBeVisible();
 
   const beforeLogout = await apiWorld(request, ownerId!);
   const simBefore = beforeLogout.world.simulationSeconds as number;
