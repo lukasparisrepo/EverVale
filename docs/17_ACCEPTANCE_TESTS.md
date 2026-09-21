@@ -250,3 +250,49 @@ Expected:
 - no renderer mega-file edit
 - activity profile can attach through semantic anchors
 - content validator rejects duplicate IDs and unknown mechanic types
+
+
+## X. Canonical content IDs
+
+Expected:
+- starter world references only IDs present in canonical content/balance registries
+- `house_small` is used consistently
+- deprecated combat/worldgen files are rejected as runtime SSOT
+- unknown unit/building IDs fail validation
+
+## Y. Combat production chain
+
+For every buildable combat unit:
+- source building exists
+- required Tech Tier is reachable
+- source building unlock Tier <= unit Tier
+- Money/Varum costs are defined
+- build/repair path is valid
+
+No unit may exist only in a wave/reference doc without a production or supported-unit contract.
+
+## Z. Civilian safety
+
+During active threat:
+- civilians prefer Civic Shelter when reachable and capacity exists
+- otherwise use configured safe home/civic fallback
+- no civilian remains in optional Park/Café activity during major combat
+- isolated terrace reports unsafe/unreachable state
+
+## AA. Ambient threat activity
+
+Expected:
+- ambient visual event does not count as a wave
+- clue never exposes exact attack time
+- probe does not reset major pressure
+- events are suppressed during major combat
+- same seed/state produces repeatable persistent clue/probe outcome
+
+## AB. Authority/version guard
+
+CI/content validation must fail when:
+- deprecated SSOT is imported by runtime
+- two canonical registries define conflicting IDs
+- Tech unlock references nonexistent unit/building
+- wave roster references nonexistent enemy
+- production source unlocks after the unit it produces
