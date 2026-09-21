@@ -380,3 +380,15 @@ Building assets export authored anchors:
 - patrol_origin
 
 This keeps world behavior data-driven instead of hardcoded into scene coordinates.
+
+
+## Authored variant authority
+
+This catalog defines **family identity**. Repeated-instance variation is separately governed by:
+
+- `docs/79_VISUAL_IDENTITY_VARIATION_SYSTEM.md`
+- `data/presentation/v0.1/visual_identities.yaml`
+
+Common building instances must not fall back to color-only cloning. A production variant changes structural or dressing dimensions while preserving the same gameplay definition, footprint authority and function.
+
+For M1, implement only the families permitted by `docs/59_IMPLEMENTATION_START_GATE.md`; do not use visual polishing as justification to implement the full future catalogue.

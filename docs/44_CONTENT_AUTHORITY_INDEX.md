@@ -21,6 +21,8 @@ When documents overlap, use the authority below.
 | Animals/farms/pets | `docs/29_ANIMALS_FARMS_PETS.md` |
 | Visual actor contracts | `docs/31_VISUAL_STATE_CONTRACTS.md` |
 | Building catalogue/art | `docs/37_BUILDING_CATALOG_AND_ART.md` |
+| Visual identity / anti-clone / world dialect | `docs/79_VISUAL_IDENTITY_VARIATION_SYSTEM.md` + `data/presentation/v0.1/visual_identities.yaml` |
+| Visual quality audit / implementation gate | `docs/80_VISUAL_QUALITY_AUDIT_2026-09-21.md` |
 | Incidents/maintenance | `docs/38_MAINTENANCE_AND_LOCAL_INCIDENTS.md` |
 | Procedural player maps | `docs/39_PROCEDURAL_PLAYER_MAPS.md` |
 | Starting world | `docs/40_STARTER_WORLD_AND_EARLY_GAME.md` |
@@ -84,6 +86,7 @@ When prose disagrees with machine-readable balance/content data, the versioned d
 - Legacy combat draft: `data/balance/v0.1/combat.yaml` is DEPRECATED
 - Simulation constants: `data/balance/v0.1/simulation.yaml`
 - Citizen visual archetypes: `data/life/v0.1/citizen_archetypes.yaml`
+- Visual identity / authored variant presentation: `data/presentation/v0.1/visual_identities.yaml`
 - Activity profiles: `data/life/v0.1/activity_profiles.yaml`
 - Routine windows: `data/life/v0.1/routines.yaml`
 - Ambient life: `data/life/v0.1/ambient.yaml`

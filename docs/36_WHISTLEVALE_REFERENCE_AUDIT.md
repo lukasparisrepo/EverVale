@@ -150,6 +150,53 @@ Example:
 
 This preserves both simulation truth and visual density.
 
+## Additional visual-composition findings
+
+A later visual review of Whistlevale reinforces that its quality does not come from raw prop count alone.
+
+### Authored landmark hierarchy
+
+Strong scenes establish one or two dominant structures before micro-detail. Large station sheds, viaducts, water bodies, bridges and industrial halls create a readable composition from far zoom.
+
+EverVale implication:
+- Town Center and major utilities need distinctive massing
+- district silhouettes should differ before facade decoration is noticed
+- macro composition must be solved before increasing clutter density
+
+### Mid-scale rhythm and negative space
+
+Whistlevale alternates:
+- dense urban strips
+- water
+- hills/trees
+- rail corridors
+- yards
+- open green space
+
+EverVale should avoid filling every empty patch with procedural vegetation. Negative space is part of the miniature composition.
+
+### Building-to-ground integration
+
+Roads, paths, platforms, walls, vegetation and yards visually meet the buildings. Structures do not appear to float as isolated meshes on one flat terrain sheet.
+
+EverVale implication:
+- authored frontage zones
+- yard/path transitions
+- foundation/terrain contact treatment
+- district-specific edge dressing
+
+### Repeated content still has authored difference
+
+Repeated small buildings retain family resemblance while varying roof/frontage/placement/context.
+
+EverVale formalizes this in `docs/79_VISUAL_IDENTITY_VARIATION_SYSTEM.md`.
+
+### Diorama reward
+
+Close views reveal secondary details such as trim, signs, doors, interior hints, platform furniture and tiny activity props.
+
+This supports EverVale's existing two-scale rule: management readability plus diorama reward.
+
 ## Decision
 
 Whistlevale is added as:
