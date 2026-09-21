@@ -92,3 +92,16 @@ These references have specific classifications in the library matrix. A referenc
 **Phase: documentation / architecture lock.**
 
 No gameplay runtime should be built until the canon, stack boundaries and MVP acceptance gates are understood.
+
+
+## Current world/content authorities
+
+- [Named building catalog & art](docs/37_BUILDING_CATALOG_AND_ART.md)
+- [Maintenance & local incidents](docs/38_MAINTENANCE_AND_LOCAL_INCIDENTS.md)
+- [Procedural player maps](docs/39_PROCEDURAL_PLAYER_MAPS.md)
+- [Starter world](docs/40_STARTER_WORLD_AND_EARLY_GAME.md)
+- [Terraces, blockers & access](docs/41_WORLD_CONNECTIVITY_AND_LEVELS.md)
+- [Anti-idle progression](docs/42_ANTI_IDLE_PROGRESSION.md)
+- [Decor & world dressing](docs/43_DECOR_AND_WORLD_DRESSING.md)
+- [Content authority index](docs/44_CONTENT_AUTHORITY_INDEX.md)
+- [Anti-idle/content audit](docs/45_ANTI_IDLE_AND_CONTENT_AUDIT_2026-09-21.md)
