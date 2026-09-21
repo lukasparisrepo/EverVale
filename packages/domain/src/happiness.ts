@@ -9,6 +9,7 @@ export interface HappinessInputs {
   educationCoverage: number;
   recreationCoverage: number;
   safety: number;
+  beautyBonus?: number;
 }
 
 export function happinessTarget(input: HappinessInputs): number {
@@ -20,7 +21,8 @@ export function happinessTarget(input: HappinessInputs): number {
       10 * clamp01(input.housingSatisfaction) +
       5 * clamp01(input.educationCoverage) +
       5 * clamp01(input.recreationCoverage) +
-      10 * clamp01(input.safety),
+      10 * clamp01(input.safety) +
+      Math.max(0, Math.min(5, input.beautyBonus ?? 0)),
     0,
     100,
   );
