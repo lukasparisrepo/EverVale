@@ -150,3 +150,21 @@ CI now verifies:
 - no browser page errors
 
 Target-hardware FPS and a long physical-browser soak remain separate validation gates.
+
+
+## M1.5 persistence / concurrency hardening
+
+See:
+`docs/76_M1_5_PERSISTENCE_CONCURRENCY_HARDENING.md`
+
+Current runtime additionally verifies:
+- command retry idempotency
+- command-id conflict rejection
+- same-owner operation serialization
+- first-load race recovery
+- JSON receipt persistence
+- Postgres event timeline writes
+- snapshot retention
+- explicit migration runner
+
+Lease activation remains gated on introduction of a second authoritative world-advancement process.
