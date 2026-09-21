@@ -3,6 +3,7 @@ import type {
   CombatActor,
   CombatActorDefinition,
   CombatOutcome,
+  CombatState,
   SimulationDefinitions,
   WorldState,
 } from "./world.types.js";
@@ -64,26 +65,11 @@ export function triggerM1Wave(
   };
 }
 
-export function advanceCombat(
-  world: WorldState,
+function activeStep(
+  combat: CombatState,
   definitions: SimulationDefinitions,
   deltaSeconds: number,
-): WorldState {
-  const combat = world.combat;
-  if (!combat || combat.status === "RESOLVED") return world;
-
-  if (combat.status === "WARNING") {
-    const remaining = Math.max(0, combat.warningRemainingSeconds - deltaSeconds);
-    return {
-      ...world,
-      combat: {
-        ...combat,
-        warningRemainingSeconds: remaining,
-        status: remaining <= 0 ? "ACTIVE" : "WARNING",
-      },
-    };
-  }
-
+): CombatState {
   const nextActors = combat.actors.map((a) => ({ ...a }));
   const defenders = nextActors.filter((a) => a.side === "DEFENDER" && a.hp > 0);
   const enemies = nextActors.filter((a) => a.side === "ENEMY" && a.hp > 0);
@@ -101,7 +87,11 @@ export function advanceCombat(
         ? definitions.defenders[target.definitionId]
         : definitions.enemies[target.definitionId];
       if (!targetDef) return;
-      target.hp = clamp(target.hp - mitigation(sourceDef.dps * deltaSeconds, targetDef.armor), 0, target.maxHp);
+      target.hp = clamp(
+        target.hp - mitigation(sourceDef.dps * deltaSeconds, targetDef.armor),
+        0,
+        target.maxHp,
+      );
     });
   };
 
@@ -110,26 +100,80 @@ export function advanceCombat(
 
   const livingDefenders = nextActors.filter((a) => a.side === "DEFENDER" && a.hp > 0);
   const livingEnemies = nextActors.filter((a) => a.side === "ENEMY" && a.hp > 0);
+  const elapsedSeconds = combat.elapsedSeconds + deltaSeconds;
 
   let outcome: CombatOutcome | undefined;
   if (livingEnemies.length === 0) {
-    const damageFraction =
-      1 -
-      livingDefenders.reduce((sum, a) => sum + a.hp, 0) /
-        Math.max(1, nextActors.filter((a) => a.side === "DEFENDER").reduce((sum, a) => sum + a.maxHp, 0));
+    const initialHp = nextActors
+      .filter((a) => a.side === "DEFENDER")
+      .reduce((sum, a) => sum + a.maxHp, 0);
+    const remainingHp = livingDefenders.reduce((sum, a) => sum + a.hp, 0);
+    const damageFraction = 1 - remainingHp / Math.max(1, initialHp);
     outcome = damageFraction < 0.25 ? "CLEAN" : "COSTLY";
-  } else if (livingDefenders.length === 0 || combat.elapsedSeconds + deltaSeconds >= 90) {
+  } else if (livingDefenders.length === 0 || elapsedSeconds >= 90) {
     outcome = "BREACH";
   }
 
   return {
-    ...world,
-    combat: {
-      ...combat,
-      actors: nextActors,
-      elapsedSeconds: combat.elapsedSeconds + deltaSeconds,
-      status: outcome ? "RESOLVED" : "ACTIVE",
-      ...(outcome ? { outcome, summary: outcome === "BREACH" ? "Outer defense breached; recovery required." : "Threat repelled." } : {}),
-    },
+    ...combat,
+    actors: nextActors,
+    elapsedSeconds,
+    status: outcome ? "RESOLVED" : "ACTIVE",
+    ...(outcome
+      ? {
+          outcome,
+          summary:
+            outcome === "BREACH"
+              ? "Outer defense breached; recovery required."
+              : "Threat repelled.",
+        }
+      : {}),
   };
+}
+
+export function advanceCombat(
+  world: WorldState,
+  definitions: SimulationDefinitions,
+  deltaSeconds: number,
+): WorldState {
+  const original = world.combat;
+  if (!original || original.status === "RESOLVED" || deltaSeconds <= 0) return world;
+
+  let combat: CombatState = {
+    ...original,
+    actors: original.actors.map((a) => ({ ...a })),
+  };
+  let remaining = deltaSeconds;
+
+  if (combat.status === "WARNING") {
+    const warningSlice = Math.min(remaining, combat.warningRemainingSeconds);
+    combat = {
+      ...combat,
+      warningRemainingSeconds: Math.max(0, combat.warningRemainingSeconds - warningSlice),
+    };
+    remaining -= warningSlice;
+
+    if (combat.warningRemainingSeconds <= 0) {
+      combat = { ...combat, status: "ACTIVE" };
+    }
+  }
+
+  // Fixed combat stepping makes online polling and offline catch-up resolve the same battle path.
+  const stepSeconds = 0.5;
+  while (remaining > 0 && combat.status === "ACTIVE") {
+    const slice = Math.min(stepSeconds, remaining, Math.max(0, 90 - combat.elapsedSeconds));
+    if (slice <= 0) {
+      combat = {
+        ...combat,
+        status: "RESOLVED",
+        outcome: "BREACH",
+        summary: "Outer defense breached; recovery required.",
+      };
+      break;
+    }
+    combat = activeStep(combat, definitions, slice);
+    remaining -= slice;
+  }
+
+  return { ...world, combat };
 }
