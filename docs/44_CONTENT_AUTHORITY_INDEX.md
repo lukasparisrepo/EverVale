@@ -2,19 +2,24 @@
 
 Status: **CANONICAL NAVIGATION**
 
-When multiple historical documents cover the same subject, the following file is the authoritative source.
+When documents overlap, use the authority below.
 
 | Subject | Authority |
 |---|---|
 | Product constitution | `docs/00_CANON.md` |
+| Core gameplay loop | `docs/03_GAMEPLAY_LOOP.md` |
 | Economy/resources | `docs/04_ECONOMY_RESOURCES.md` |
-| Construction rules | `docs/06_BUILDINGS_CONSTRUCTION.md` |
-| Citizen/economy relationship | `docs/07_CITIZENS_SOCIETY.md` + `docs/32_AUTOMATIC_WORKFORCE.md` |
-| Threat/combat | `docs/08_THREATS_DEFENSE.md` + `docs/34_THREAT_CADENCE.md` |
-| Offline simulation | `docs/09_OFFLINE_SIMULATION.md` + `docs/42_ANTI_IDLE_PROGRESSION.md` |
+| Infrastructure/access | `docs/05_INFRASTRUCTURE.md` + `docs/41_WORLD_CONNECTIVITY_AND_LEVELS.md` |
+| Construction | `docs/06_BUILDINGS_CONSTRUCTION.md` |
+| Citizens/workforce | `docs/07_CITIZENS_SOCIETY.md` + `docs/32_AUTOMATIC_WORKFORCE.md` |
+| Threat/combat cadence | `docs/08_THREATS_DEFENSE.md` + `docs/34_THREAT_CADENCE.md` |
+| Offline/anti-idle | `docs/09_OFFLINE_SIMULATION.md` + `docs/42_ANTI_IDLE_PROGRESSION.md` |
+| Client/server | `docs/10_CLIENT_SERVER_ARCHITECTURE.md` |
 | Living-world automation | `docs/25_AMBIENT_LIFE_SIMULATION.md` + `docs/26_DAILY_SCHEDULES.md` + `docs/30_WORLD_ACTIVITY_DIRECTOR.md` |
-| Traffic | `docs/29_TRAFFIC_AND_VEHICLES.md` |
-| Animals/farms/parks | `docs/30_ANIMALS_FARMS_PARKS.md` |
+| Traffic | `docs/27_TRAFFIC_AND_TRANSPORT.md` |
+| Parks/social life | `docs/28_PARKS_AND_SOCIAL_LIFE.md` |
+| Animals/farms/pets | `docs/29_ANIMALS_FARMS_PETS.md` |
+| Visual actor contracts | `docs/31_VISUAL_STATE_CONTRACTS.md` |
 | Building catalogue/art | `docs/37_BUILDING_CATALOG_AND_ART.md` |
 | Incidents/maintenance | `docs/38_MAINTENANCE_AND_LOCAL_INCIDENTS.md` |
 | Procedural player maps | `docs/39_PROCEDURAL_PLAYER_MAPS.md` |
@@ -22,31 +27,42 @@ When multiple historical documents cover the same subject, the following file is
 | Terraces/blockers/access | `docs/41_WORLD_CONNECTIVITY_AND_LEVELS.md` |
 | Decor/world dressing | `docs/43_DECOR_AND_WORLD_DRESSING.md` |
 | Architecture | `docs/35_LAYERED_ARCHITECTURE.md` |
+| Persistence/data contracts | `docs/14_PERSISTENCE_MULTIPLAYER.md` + `docs/20_DATA_CONTRACTS.md` |
+| Three.js/dependencies | `docs/11_THREEJS_STACK.md` + `docs/18_LIBRARY_REFERENCE_MATRIX.md` |
+| Blender/assets | `docs/12_BLENDER_PIPELINE.md` + `docs/19_ASSET_STANDARDS.md` |
 | Whistlevale reference | `docs/36_WHISTLEVALE_REFERENCE_AUDIT.md` |
+| Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
+| Military roster/art | `docs/47_MILITARY_ROSTER_AND_ART.md` |
+| Enemy/UFO roster & wave ladder | `docs/48_ENEMY_UFO_WAVE_LADDER.md` |
 
-## Superseded historical topics
+## Machine-readable numeric/content authority
 
-Older files with overlapping subjects may remain in Git history or working docs.
+When prose disagrees with machine-readable balance/content data, the versioned data wins unless an audit explicitly changes it.
 
-They are non-authoritative if they conflict with the table above.
-
-Examples of superseded subjects:
-- older World Map Generation notes
-- older Building Catalog taxonomy
-- older Starting World notes
-- older Blockers/Vertical Access notes
-- older Traffic notes
-- older Animals/Farms/Pets notes
-- older Whistlevale audit
+- Building balance: `data/balance/v0.1/buildings.yaml`
+- Workforce: `data/balance/v0.1/workforce.yaml`
+- Tech: `data/balance/v0.1/tech.yaml`
+- Threat cadence: `data/balance/v0.1/threats.yaml`
+- Combat: `data/balance/v0.1/combat.yaml`
+- Simulation constants: `data/balance/v0.1/simulation.yaml`
+- Citizen visual archetypes: `data/life/v0.1/citizen_archetypes.yaml`
+- Activity profiles: `data/life/v0.1/activity_profiles.yaml`
+- Routine windows: `data/life/v0.1/routines.yaml`
+- Ambient life: `data/life/v0.1/ambient.yaml`
+- Activity anchors: `data/life/v0.1/anchor_types.yaml`
+- Map generation: `data/world/v0.1/map_generation.yaml`
+- Blockers: `data/world/v0.1/blockers.yaml`
+- Starter world: `data/world/v0.1/starter_world.yaml`
+- Planned buildables: `data/content/v0.1/building_catalog.yaml`
+- Decor: `data/content/v0.1/decor_catalog.yaml`
+- Wave tiers: `data/balance/v0.1/waves.yaml`
 
 ## Agent rule
 
-Before implementing a content/system feature:
-
+Before implementing a subsystem:
 1. read this index
-2. read the authority file(s)
-3. read `00_CANON.md`
-4. read `AGENTS.md`
-5. do not merge contradictory historical rules into implementation
-
-One subject must have one current source of truth.
+2. read `docs/00_CANON.md`
+3. read `AGENTS.md`
+4. read the authority file(s)
+5. read corresponding machine-readable data
+6. do not merge superseded rules back into code
