@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { WorldSpeed } from "@evervale/domain/world.types";
 import type { BuildCatalogEntryDto, WorldCommand, WorldViewDto } from "@evervale/protocol/world";
 import { devLogin, getWorld, sendCommand } from "./api";
-import { WorldView } from "./world/WorldView";
+import { WorldView, type RuntimeMetrics } from "./world/WorldView";
 
 type Mode = "SELECT" | "BUILD" | "ROAD";
 
@@ -43,6 +43,7 @@ export default function App() {
   const [selectedBuild, setSelectedBuild] = useState<BuildCatalogEntryDto | null>(null);
   const [roadStart, setRoadStart] = useState<{x:number;z:number} | null>(null);
   const [message, setMessage] = useState("Loading world...");
+  const [metrics, setMetrics] = useState<RuntimeMetrics | null>(null);
 
   const refresh = useCallback(async () => {
     if (!ownerId) return;
@@ -123,7 +124,14 @@ export default function App() {
 
   return (
     <div className="game-shell">
-      <WorldView world={w} mode={mode} onGroundClick={groundClick} />
+      <WorldView
+        world={w}
+        mode={mode}
+        selectedBuildId={selectedBuild?.id}
+        roadStart={roadStart}
+        onGroundClick={groundClick}
+        onMetrics={setMetrics}
+      />
 
       <header className="topbar">
         <div className="brand">EVERVALE <span>M1</span></div>
@@ -175,6 +183,40 @@ export default function App() {
         <div><strong>Education</strong> {Math.round(w.society.educationCoverage * 100)}%</div>
         <div><strong>Recreation</strong> {Math.round(w.society.recreationCoverage * 100)}%</div>
         <div><strong>Safety</strong> {Math.round(w.society.safety * 100)}%</div>
+        <div className="perf-probe" data-testid="runtime-metrics">
+          <strong>Runtime</strong>
+          <small>
+            {metrics
+              ? `${metrics.fps} FPS · p95 ${metrics.frameMsP95}ms · ${metrics.drawCalls} calls · ${metrics.triangles} tris`
+              : "measuring…"}
+          </small>
+        </div>
+        {w.blockers.length > 0 && (
+          <div className="blocker-list">
+            <strong>Expansion blockers</strong>
+            {w.blockers.map((blocker) => {
+              const meta = view.blockerCatalog.find((item) => item.id === blocker.definitionId);
+              const label = blocker.definitionId.replaceAll("_", " ");
+              return (
+                <div key={blocker.id} className="blocker-row">
+                  <span>
+                    {label}
+                    {meta ? <small> · ¤{meta.moneyCost} · {meta.clearCycles} cycles</small> : null}
+                  </span>
+                  {blocker.state === "CLEARING" ? (
+                    <small>{Math.ceil(blocker.clearRemainingSeconds)}s</small>
+                  ) : (
+                    <button
+                      onClick={() => void command({ type:"CLEAR_BLOCKER", payload:{blockerId:blocker.id} })}
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
         {damaged.length > 0 && (
           <div className="repair-list">
             <strong>Repairs</strong>
