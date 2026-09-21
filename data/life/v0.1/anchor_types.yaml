@@ -11,10 +11,16 @@ anchor_types:
   workbench: { capacity: 1, actor: worker }
   loading_area: { capacity: 1, actor: vehicle }
   break_spot: { capacity: 3, actor: worker }
+  customer_entry: { capacity: 5, actor: citizen }
+  stall: { capacity: 4, actor: citizen }
+  cafe_table: { capacity: 4, actor: citizen }
+  service_vehicle: { capacity: 1, actor: vehicle }
+  maintenance: { capacity: 2, actor: worker }
 
   entrance: { capacity: 6, actor: citizen }
   schoolyard: { capacity: 16, actor: child }
   pickup_zone: { capacity: 3, actor: vehicle }
+  plaza_edge: { capacity: 8, actor: citizen }
 
   walking_loop: { capacity: 20, actor: citizen }
   bench: { capacity: 2, actor: citizen }
@@ -39,3 +45,12 @@ anchor_types:
 
   mine_entry: { capacity: 4, actor: worker }
   equipment: { capacity: 2, actor: ambient_machine }
+
+  weapon_station: { capacity: 2, actor: military_actor }
+  console: { capacity: 2, actor: worker }
+  production_bay: { capacity: 4, actor: worker }
+  test_pad: { capacity: 1, actor: military_vehicle }
+  hangar: { capacity: 2, actor: aircraft }
+  runway_start: { capacity: 1, actor: aircraft }
+  apron: { capacity: 3, actor: aircraft }
+  core: { capacity: 1, actor: ambient_machine }
