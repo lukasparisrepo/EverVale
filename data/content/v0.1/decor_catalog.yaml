@@ -1,0 +1,65 @@
+version: "0.1"
+
+decor_groups:
+  vegetation:
+    - tree_oak
+    - tree_pine
+    - tree_birch
+    - shrub
+    - hedge
+    - flower_bed
+    - planter
+    - grass_patch
+    - reeds
+
+  street:
+    - bench_wood
+    - bench_metal
+    - lamp_post
+    - street_sign
+    - bicycle_rack
+    - bollard
+    - banner
+    - trash_bin
+    - bus_stop_prop
+
+  civic:
+    - fountain
+    - statue
+    - gazebo
+    - pergola
+    - picnic_table
+    - notice_board
+    - playground_slide
+    - playground_swing
+
+  rural:
+    - farm_fence
+    - hay_bale
+    - scarecrow
+    - crate_stack
+    - barrel_stack
+    - water_trough
+    - wagon_prop
+
+  water:
+    - pond_reeds
+    - stepping_stone
+    - dock_small
+    - lily_pad
+    - duck_house
+
+  seasonal:
+    - spring_banner
+    - summer_pennant
+    - autumn_pumpkin
+    - winter_lantern
+    - festival_table
+    - festival_lights
+
+decor_effects:
+  beauty:
+    enabled: true
+    diminishing_returns: true
+    local_cap_per_zone: 10
+    economy_exploit_forbidden: true
