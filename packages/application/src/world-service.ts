@@ -74,8 +74,21 @@ export class WorldService {
         this.options.ids,
         now,
       );
-      await this.options.repository.create(created);
-      return created;
+      try {
+        await this.options.repository.create(created);
+        return created;
+      } catch (error) {
+        if (error instanceof Error && error.message === "WORLD_OWNER_EXISTS") {
+          const winner = await this.options.repository.findByOwner(ownerId);
+          if (winner) {
+            return this.advanceState(
+              this.normalizeWorld(winner),
+              this.options.clock.now(),
+            );
+          }
+        }
+        throw error;
+      }
     }
     return this.advanceState(existing, this.options.clock.now());
   }
