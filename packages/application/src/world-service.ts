@@ -4,6 +4,7 @@ import { applyCombatAftermath } from "@evervale/domain/combat-aftermath";
 import { triggerM1Wave } from "@evervale/domain/combat";
 import { placeBuilding } from "@evervale/domain/construction";
 import { queueRepair } from "@evervale/domain/repair";
+import { deleteProp, moveProp, placeProp, rotateProp } from "@evervale/domain/props";
 import { drawRoad } from "@evervale/domain/roads";
 import type { SimulationDefinitions, WorldState } from "@evervale/domain/world.types";
 import type { WorldCommand } from "@evervale/protocol/world";
@@ -61,6 +62,35 @@ export class WorldService {
           z: command.payload.z,
           ...(command.payload.rotationY !== undefined ? { rotationY: command.payload.rotationY } : {}),
         });
+        break;
+      case "PLACE_PROP":
+        world = placeProp(world, this.options.definitions, {
+          propId: this.options.ids.next("prop"),
+          definitionId: command.payload.definitionId,
+          x: command.payload.x,
+          z: command.payload.z,
+          ...(command.payload.rotationY !== undefined ? { rotationY: command.payload.rotationY } : {}),
+        });
+        break;
+      case "MOVE_PROP":
+        world = moveProp(
+          world,
+          this.options.definitions,
+          command.payload.propId,
+          command.payload.x,
+          command.payload.z,
+        );
+        break;
+      case "ROTATE_PROP":
+        world = rotateProp(
+          world,
+          this.options.definitions,
+          command.payload.propId,
+          command.payload.rotationY,
+        );
+        break;
+      case "DELETE_PROP":
+        world = deleteProp(world, command.payload.propId);
         break;
       case "DRAW_ROAD":
         world = drawRoad(world, {
