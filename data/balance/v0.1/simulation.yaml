@@ -50,3 +50,23 @@ offline:
   storage_caps_apply: true
   major_attacks_per_24h_cap: 2
   critical_building_min_hp_fraction: 0.30
+
+
+tech_progression:
+  auto_unlock_tier_1: true
+  player_confirmation_required_from_tier: 2
+  overflow_cap_ratio_of_next_threshold_gap: 0.25
+  while_gate_pending:
+    school_output_mult: 0.25
+  no_multi_tier_offline_jump: true
+
+anti_idle:
+  money_storage_cap_enforced: true
+  power_storage_cap_enforced: true
+  water_storage_cap_enforced: true
+  varum_storage_cap_enforced: true
+  population_housing_cap_enforced: true
+  construction_only_from_player_queue: true
+  blocker_clearance_only_from_player_queue: true
+  military_purchase_automatic: false
+  road_expansion_automatic: false
