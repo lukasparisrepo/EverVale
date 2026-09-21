@@ -1,0 +1,160 @@
+version: "0.1"
+
+buildings:
+  town_center:
+    tech_tier: 0
+    buildable: false
+    money_cost: 0
+    build_cycles: 0
+    workers: 0
+    upkeep_per_cycle: 0
+    money_cap_add: 5000
+    construction_slots_add: 1
+
+  house:
+    tech_tier: 0
+    money_cost: 120
+    build_cycles: 2
+    workers: 0
+    upkeep_per_cycle: 1
+    housing_add: 4
+
+  workshop:
+    tech_tier: 0
+    money_cost: 250
+    build_cycles: 3
+    workers: 4
+    money_per_worker_per_cycle: 8
+    power_use_per_cycle: 4
+    water_use_per_cycle: 1
+    upkeep_per_cycle: 3
+
+  power_plant:
+    tech_tier: 0
+    money_cost: 350
+    build_cycles: 4
+    workers: 2
+    money_per_worker_per_cycle: 2
+    power_production_per_cycle: 40
+    power_cap_add: 120
+    upkeep_per_cycle: 4
+
+  water_plant:
+    tech_tier: 0
+    money_cost: 350
+    build_cycles: 4
+    workers: 2
+    money_per_worker_per_cycle: 2
+    water_production_per_cycle: 35
+    water_cap_add: 120
+    power_use_per_cycle: 4
+    upkeep_per_cycle: 4
+
+  school:
+    tech_tier: 0
+    money_cost: 300
+    build_cycles: 3
+    workers: 2
+    money_per_worker_per_cycle: 1
+    tech_production_per_cycle: 4
+    power_use_per_cycle: 3
+    water_use_per_cycle: 2
+    upkeep_per_cycle: 3
+    education_coverage_add: 0.35
+
+  park:
+    tech_tier: 0
+    money_cost: 120
+    build_cycles: 1
+    workers: 0
+    water_use_per_cycle: 1
+    upkeep_per_cycle: 1
+    recreation_coverage_add: 0.35
+
+  guard_post:
+    tech_tier: 0
+    money_cost: 250
+    build_cycles: 2
+    workers: 2
+    power_use_per_cycle: 2
+    water_use_per_cycle: 1
+    upkeep_per_cycle: 4
+    safety_add: 0.35
+    combat_spawn:
+      guard: 2
+
+  varum_mine:
+    tech_tier: 1
+    money_cost: 500
+    build_cycles: 5
+    workers: 2
+    money_per_worker_per_cycle: 2
+    varum_production_per_cycle: 3
+    varum_cap_add: 30
+    power_use_per_cycle: 6
+    water_use_per_cycle: 2
+    upkeep_per_cycle: 5
+
+  watchtower:
+    tech_tier: 1
+    money_cost: 400
+    build_cycles: 3
+    workers: 0
+    power_use_per_cycle: 2
+    upkeep_per_cycle: 4
+    safety_add: 0.20
+    combat_spawn:
+      watchtower: 1
+
+  radar:
+    tech_tier: 2
+    money_cost: 800
+    build_cycles: 6
+    workers: 1
+    power_use_per_cycle: 6
+    water_use_per_cycle: 1
+    upkeep_per_cycle: 6
+    safety_add: 0.15
+    warning_lead_bonus: 0.25
+
+  vehicle_factory:
+    tech_tier: 2
+    money_cost: 1200
+    build_cycles: 8
+    workers: 4
+    money_per_worker_per_cycle: 2
+    power_use_per_cycle: 10
+    water_use_per_cycle: 3
+    upkeep_per_cycle: 8
+
+  airfield:
+    tech_tier: 4
+    money_cost: 2200
+    varum_cost: 20
+    build_cycles: 12
+    workers: 3
+    power_use_per_cycle: 12
+    water_use_per_cycle: 4
+    upkeep_per_cycle: 12
+
+  anti_air:
+    tech_tier: 4
+    money_cost: 900
+    varum_cost: 15
+    build_cycles: 5
+    workers: 0
+    power_use_per_cycle: 4
+    upkeep_per_cycle: 6
+    combat_spawn:
+      anti_air: 1
+
+  varum_shield:
+    tech_tier: 5
+    money_cost: 3000
+    varum_cost: 80
+    build_cycles: 15
+    workers: 0
+    power_use_per_cycle: 20
+    upkeep_per_cycle: 20
+    structure_damage_reduction: 0.40
+    varum_per_activation: 4
