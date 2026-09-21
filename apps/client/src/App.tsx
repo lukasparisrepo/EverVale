@@ -200,7 +200,7 @@ export default function App() {
           </small>
         </div>
         {w.blockers.length > 0 && (
-          <div className="blocker-list">
+          <div className="blocker-list" data-testid="blocker-list">
             <strong>Expansion blockers</strong>
             {w.blockers.map((blocker) => {
               const meta = view.blockerCatalog.find((item) => item.id === blocker.definitionId);
