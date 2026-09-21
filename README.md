@@ -114,3 +114,16 @@ No gameplay runtime should be built until the canon, stack boundaries and MVP ac
 
 Current decision: **GREENLIGHT M0/M1 vertical slice.**
 Full-content production remains gated behind M1 proof.
+
+
+## Pre-engineering design lock
+
+- [Pre-engineering design lock](docs/66_PRE_ENGINEERING_DESIGN_LOCK.md)
+- [Long-run simulation contract](docs/60_LONG_RUN_SIMULATION_CONTRACT.md)
+- [Spatial combat simulation contract](docs/61_SPATIAL_COMBAT_SIMULATION_CONTRACT.md)
+- [Worldgen validation contract](docs/62_WORLDGEN_VALIDATION_CONTRACT.md)
+- [Content validation](docs/63_CONTENT_SCHEMA_VALIDATION.md)
+- [Persistence DB contract](docs/64_PERSISTENCE_DATABASE_CONTRACT.md)
+- [Performance budgets](docs/65_PERFORMANCE_BUDGETS.md)
+
+Current decision: **design/data locked; M0 engineering approved.**
