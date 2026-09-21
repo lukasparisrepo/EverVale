@@ -1,4 +1,6 @@
 version: "0.1"
+status: DO_NOT_USE
+superseded_by: "data/content/v0.2/props.yaml"
 
 decor_groups:
   vegetation:
