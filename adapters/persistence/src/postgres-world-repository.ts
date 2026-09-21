@@ -55,7 +55,7 @@ export class PostgresWorldRepository implements WorldRepository {
       user_id: string;
       expected_revision: string | number | null;
       command_type: string;
-      result: { world?: WorldState };
+      result: { world?: WorldState; fingerprint?: string };
     }>(
       `SELECT command_id, world_id, user_id, expected_revision, command_type, result
        FROM world_commands
@@ -72,6 +72,7 @@ export class PostgresWorldRepository implements WorldRepository {
       ownerId: row.user_id,
       expectedRevision: Number(row.expected_revision ?? 0),
       commandType: row.command_type,
+      fingerprint: row.result.fingerprint ?? "",
       world,
     };
   }
@@ -134,7 +135,7 @@ export class PostgresWorldRepository implements WorldRepository {
             acceptedCommand.ownerId,
             acceptedCommand.expectedRevision,
             acceptedCommand.commandType,
-            JSON.stringify({ world }),
+            JSON.stringify({ world, fingerprint: acceptedCommand.fingerprint }),
           ],
         );
       }
