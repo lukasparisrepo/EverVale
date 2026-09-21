@@ -54,6 +54,7 @@ function mapBuilding(id: string, raw: Record<string, unknown>): BuildingDefiniti
     priority: numberValue(raw.priority),
     ...(typeof raw.job_category === "string" ? { jobCategory: raw.job_category } : {}),
     moneyPerWorker: numberValue(raw.money_per_worker),
+    moneyCapAdd: numberValue(raw.money_cap_add),
     powerProduction: numberValue(raw.power_production),
     powerCapAdd: numberValue(raw.power_cap_add),
     powerUse: numberValue(raw.power_use),
