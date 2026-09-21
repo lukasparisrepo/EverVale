@@ -16,144 +16,104 @@ Reason:
 
 Pin versions in the lockfile. Upgrade deliberately.
 
+## Runtime baseline
+
+Server Node.js: **22.12+**
+
 ## Production dependencies
 
 ### Three.js — `mrdoob/three.js`
-Role: renderer, scene graph, loaders, animation mixer, materials, instancing.
+Renderer, scene graph, loaders, animation, materials and instancing.
 
 ### three-mesh-bvh — `gkjohnson/three-mesh-bvh`
-Role:
-- accelerated raycasting
-- placement picking
-- terrain/building intersection queries
-- spatial tooling
+Fast mesh raycast/intersection for placement and scene queries.
 
-Do not use naive full-scene raycasts when BVH can solve the hot path.
+### Recast Navigation JS — `isaac-mason/recast-navigation-js`
+Local navmesh generation, walkability and crowd/path helpers.
 
-### recast-navigation-js — `isaac-mason/recast-navigation-js`
-Role:
-- navmesh generation
-- walkable navigation
-- pathfinding
-- crowd/Detour capabilities where appropriate
+It is not the authoritative economic road graph.
 
-Default navigation choice.
+### Graphology + graphology-shortest-path — `graphology/graphology`
+Approved server mobility graph candidate.
+
+Use for:
+- weighted road graph
+- Dijkstra/A*
+- service travel
+- commute cost
+- logistics/defense routing
 
 ### postprocessing — `pmndrs/postprocessing`
-Role:
-- restrained SSAO/bloom/color effects
-- final visual polish
-
-Effects are optional per quality tier.
+Restrained SSAO/bloom/color polish by quality tier.
 
 ### Colyseus — `colyseus/colyseus`
-Role:
-- realtime rooms
-- schema/state synchronization
-- future multiplayer session transport
+Realtime room/session transport and schema synchronization.
 
-Game simulation remains EverVale code, not framework-owned logic.
+Simulation rules remain EverVale code.
 
 ### Zustand — `pmndrs/zustand`
-Role:
-- client HUD/editor state
-- selection
-- panels
-- transient UI state
+Local HUD/editor state only.
 
-Never use it as authoritative world storage.
+### Better Auth — `better-auth/better-auth`
+Approved authentication candidate for account/login/session flows.
+
+World authorization remains EverVale domain logic.
 
 ### Drizzle ORM — `drizzle-team/drizzle-orm`
-Role: typed PostgreSQL persistence.
+Typed PostgreSQL access.
 
 ### pg-boss — `timgit/pg-boss`
-Role:
-- background world jobs
-- offline progression scheduling
-- durable server jobs using PostgreSQL
+Durable background jobs and offline catch-up scheduling.
 
 ### RBush — `mourner/rbush`
-Role:
-- cheap 2D spatial index for footprints, roads, districts, placement, and nearby queries where 3D BVH is unnecessary.
+Cheap 2D spatial index for footprints and nearby placement queries.
 
-## Art / procedural dependency
+## Procedural art
 
 ### three-low-poly — `jasonsturges/three-low-poly`
 
-Classification: **approved, selective use**.
-
-Good for:
-- procedural BufferGeometry
-- repeated props
+Selective production use for:
+- procedural props
 - rocks/vegetation
+- geometry helpers
 - batching/instancing patterns
-- atmospheric lightweight effects
 
-It explicitly favors merged geometry, material groups, and instancing. Use it where its art language fits EverVale; do not let library aesthetics dictate the whole game.
+Do not let its aesthetic define EverVale.
 
-## Reference-only projects
+## Reference-only
 
-### ShoreBreak — `cryptomanavan/ShoreBreak`
+### ShoreBreak
+Study rendering, water, particles, quality scaling and capture discipline.
 
-Classification: **REFERENCE / TECHNIQUE LAB**.
+### Yuka
+Study steering/game-AI patterns. Not the primary server mobility graph.
 
-Study:
-- Three.js r186 structure
-- adaptive quality
-- shader organization
-- water/wetness
-- particles
-- deterministic captures
-- build/test discipline
-
-Do not import its heavy ocean stack unless EverVale actually needs that subsystem.
-
-### Yuka — `Mugen87/yuka`
-
-Classification: **REFERENCE / OPTIONAL AI TOOLKIT**.
-
-Study steering and game-AI patterns. Do not run Yuka and Recast as competing primary navigation systems without an ADR.
-
-### three-pathfinding — `donmccurdy/three-pathfinding`
-
-Classification: **REFERENCE / FALLBACK**.
-
-Useful for simpler navmesh patterns. Recast remains default.
+### three-pathfinding
+Fallback/reference only; do not compete with Recast/Graphology responsibilities.
 
 ## Physics
 
-Do **not** add a full rigid-body engine by default.
+No general rigid-body engine in MVP unless a concrete feature proves it is needed.
 
-EverVale primarily needs spatial queries, pathfinding, placement, simple projectile/vehicle logic, and authored destruction.
+Prefer:
+- weighted graph
+- navmesh
+- BVH
+- simple colliders
+- analytic projectiles
 
-The legacy `dimforge/rapier.js` repository is archived; do not adopt it blindly as current infrastructure. Re-evaluate a maintained physics package only when a concrete gameplay feature requires it.
+## One job, one default
 
-## Rendering rules
-
-Use:
-- InstancedMesh for repeated props
-- LOD/culling
-- capped DPR
-- quality tiers
-- limited shadow casters
-- compressed GLB where pipeline supports it
-- material sharing
-
-Avoid:
-- one draw call per grass tuft
-- unique material per building
-- giant transparent layers
-- unnecessary realtime reflections
-
-## “One job, one default” rule
-
-Navigation: Recast.
-Mesh raycast: three-mesh-bvh.
-2D spatial index: RBush.
-Post FX: postprocessing.
-Realtime: Colyseus.
-UI state: Zustand.
-Database: Drizzle/PostgreSQL.
-Jobs: pg-boss.
+Renderer: Three.js  
+Road/economy graph: Graphology  
+Local navmesh: Recast  
+Mesh queries: three-mesh-bvh  
+2D index: RBush  
+Post FX: postprocessing  
+Realtime: Colyseus  
+Auth: Better Auth candidate  
+UI state: Zustand  
+Database: PostgreSQL + Drizzle  
+Jobs: pg-boss
 
 Adding a competing core library requires an ADR.
