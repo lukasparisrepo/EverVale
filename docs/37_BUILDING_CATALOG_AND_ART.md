@@ -143,6 +143,13 @@ ID: `water_storage`
 Role: increases Water reserve.
 Art: elevated tank/cistern, stone base, gauges, water-level visual.
 
+### Cloudglass Weather House
+ID: `weather_station`
+Role: improves forecast horizon/confidence and severe-weather warning.
+Art: small stone/timber observatory, brass instruments, wind vane, rain gauge, compact mast.
+Visible life: observer checks instruments, roof vane rotates, warning lantern activates before severe weather.
+Incidents: equipment fault, storm damage.
+
 ## Education / Tech
 
 ### Willowbell School
