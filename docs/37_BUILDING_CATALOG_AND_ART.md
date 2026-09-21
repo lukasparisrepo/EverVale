@@ -15,6 +15,35 @@ Every buildable structure must have:
 
 No anonymous gray-box production buildings in production content.
 
+## Catalog scale and authority
+
+Machine-readable planned catalog:
+- `data/content/v0.1/building_catalog.yaml`
+- `data/content/v0.1/decor_catalog.yaml`
+
+Current planned functional/access buildables: **78**.
+
+Target for the first broad content set:
+- **70–85 functional buildables**
+- **80–150 decor definitions**
+- several visual variants for common homes/workplaces
+
+Important: dozens of buildables do **not** mean dozens of unrelated mechanics.
+
+Most definitions reuse a small mechanics kernel:
+- Housing
+- Money workplace
+- Power producer/storage
+- Water producer/storage
+- Tech/Education
+- Happiness/service
+- Varum
+- construction/maintenance
+- defense
+- access graph
+
+Variants and upgrades should reuse these systems instead of creating bespoke code.
+
 # Building families
 
 ## Civic / Core
