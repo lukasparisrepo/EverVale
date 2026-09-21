@@ -1,18 +1,44 @@
 # 06 — Buildings & Construction
 
+## Philosophy
+
+Buildings are both:
+1. simulation machines
+2. stages for visible autonomous life
+
+Every important building should have a clear mechanical purpose and an activity profile.
+
 ## Core building families
 
 ### Residential
-**House**
-- provides Population capacity
-- contributes to Growth when Happiness is high
 
-### Money
-**Workshop / Business**
-- employs citizens
-- primary early Money generator
+**House**
+- +Housing capacity
+- enables Population Growth when Happiness is sufficient
+- creates home routines and pets
+
+### Income
+
+**Workshop**
+- strongest compact early Money workplace
+
+**Market**
+- Money workplace
+- creates customer activity and street life
+
+**Farm**
+- Money workplace
+- creates rural visual identity
+- supports chickens, ducks, tractor/farm activity
+- does **not** create a Food resource in v0.1
+
+**Café** — T1
+- Money workplace
+- small recreation contribution
+- lunch/evening activity
 
 ### Utility
+
 **Power Plant**
 - produces Power
 
@@ -21,21 +47,26 @@
 - consumes some Power
 
 ### Education
+
 **School**
 - produces Tech Points
-- improves education coverage
+- provides Education coverage
+- generates child/school routines
 
 ### Happiness
+
 **Park**
-- raises recreation coverage
-- creates visible leisure activity
+- Recreation coverage
+- major leisure/animal activity stage
 
 ### Varum
+
 **Varum Mine**
 - produces Varum directly
-- unlocked at Tech T1
+- T1 unlock
 
 ### Defense
+
 - Guard Post
 - Watchtower
 - Radar
@@ -46,73 +77,118 @@
 
 ## Building definition contract
 
-Every building definition declares:
+Every definition may declare:
 - ID
-- Tech requirement
+- Tech Tier
 - footprint
 - Money cost
 - optional Varum cost
 - construction time
 - worker slots
+- job category
+- default job priority
+- staffing mode
 - Money yield per worker
-- Power production/consumption
-- Water production/consumption
+- Power production/use
+- Water production/use
 - Varum production
 - Tech production
 - upkeep
-- housing capacity
-- service effects
-- storage contribution
+- Housing
+- service effect
+- capacity additions
+- combat attachment
+- activity profile
 - visual variants
+
+Machine-readable baseline:
+`data/balance/v0.1/buildings.yaml`
+
+## Staffing modes
+
+### continuous
+Requests workers whenever operational.
+
+Examples:
+- Power Plant
+- School
+- Mine
+
+### production_order
+Requests workers only when it has an active production order.
+
+Example:
+- Vehicle Factory
+
+This prevents an idle advanced factory from consuming Workforce forever.
 
 ## Construction model
 
-MVP construction uses:
+v0.1 construction uses:
 - Money
-- optional Varum for advanced structures
-- construction time
+- optional Varum
+- time
 
-There is **no construction-goods commodity in v0.1**.
-
-This prevents bootstrap deadlocks and keeps the first economy legible.
+No construction-goods commodity.
 
 ## Construction stages
 
-Visually:
+Visual:
 1. footprint
 2. foundation
 3. frame
 4. shell
-5. finished
+5. completed
 
-The simulation may use fewer internal stages while the client interpolates visuals.
+These are visible presentation stages; domain state can remain compact.
 
 ## Construction capacity
 
-The settlement has limited concurrent construction capacity.
+Initial:
+- Town Center provides 1 active construction slot
 
-Initial target:
-- 1 active construction slot
-- later Town/Builder upgrades can add slots
-
-This creates pacing without adding a material chain.
+Later upgrades may increase slots.
 
 ## Placement
 
 Server validates:
 - terrain
-- overlap
-- road reachability
+- footprint collision
+- road access
 - Money
 - Varum
 - Tech
-- construction capacity
+- construction slot
+
+Client only previews.
+
+## Activity anchors
+
+Gameplay-ready assets should expose semantic anchors such as:
+- front door
+- worker entrance
+- schoolyard
+- field work
+- bench
+- loading area
+- guard spawn
+- runway
+
+See `docs/28_ACTIVITY_ANCHORS_AND_SCHEDULES.md`.
 
 ## Upgrades
 
-Upgrades should visibly change the building or attach modules where practical.
+Upgrades should alter:
+- visible modules
+- capacity
+- output
+- activity
 
-## Damage
+where practical.
+
+Avoid invisible “Level 5” stat inflation with no world change.
+
+## Damage / repair
 
 States:
 - healthy
@@ -120,4 +196,12 @@ States:
 - disabled
 - repairing
 
-MVP offline attacks can disable buildings but do not permanently delete critical infrastructure.
+Damage remains visible.
+
+Repair consumes:
+- Money
+- time
+
+Advanced repair may later consume Varum.
+
+Offline attacks cannot permanently delete critical MVP infrastructure.
