@@ -6,6 +6,7 @@ import type {
   BuildingDefinition,
   BlockerDefinition,
   CombatActorDefinition,
+  PropDefinition,
   SimulationDefinitions,
 } from "@evervale/domain/world.types";
 
@@ -46,6 +47,10 @@ type RawProps = {
     group: string;
     size_x_m: number;
     size_z_m: number;
+    money_cost: number;
+    decor_class: "visual" | "beauty" | "activity_anchor";
+    beauty?: number;
+    activity_anchor?: string;
   }>;
 };
 
@@ -113,6 +118,24 @@ function mapBlocker(id: string, raw: Record<string, unknown>): BlockerDefinition
   };
 }
 
+function mapProp(
+  id: string,
+  raw: RawProps["props"][string],
+  snapMeters: number,
+): PropDefinition {
+  return {
+    id,
+    group: raw.group,
+    sizeXMeters: raw.size_x_m,
+    sizeZMeters: raw.size_z_m,
+    snapMeters,
+    moneyCost: raw.money_cost,
+    decorClass: raw.decor_class,
+    beauty: raw.beauty ?? 0,
+    ...(raw.activity_anchor ? { activityAnchor: raw.activity_anchor } : {}),
+  };
+}
+
 function mapActor(
   id: string,
   raw: Record<string, unknown>,
@@ -147,6 +170,10 @@ export interface BuildCatalogEntry {
   footprintCellsZ: number;
   gridCellMeters: number;
   sizeTitle: string;
+  moneyCost: number;
+  decorClass: "visual" | "beauty" | "activity_anchor";
+  beauty: number;
+  activityAnchor: string | null;
 }
 
 export interface BlockerCatalogEntry {
@@ -203,6 +230,12 @@ export function loadGameData(): LoadedGameData {
     blockers: Object.fromEntries(
       Object.entries(blockers).map(([id, raw]) => [id, mapBlocker(id, raw)]),
     ),
+    props: Object.fromEntries(
+      Object.entries(propData.props).map(([id, raw]) => [
+        id,
+        mapProp(id, raw, propData.default_snap_meters),
+      ]),
+    ),
     gridCellMeters: footprintData.grid_cell_meters,
   };
 
@@ -258,6 +291,10 @@ export function loadGameData(): LoadedGameData {
       sizeXMeters: item.size_x_m,
       sizeZMeters: item.size_z_m,
       snapMeters: propData.default_snap_meters,
+      moneyCost: item.money_cost,
+      decorClass: item.decor_class,
+      beauty: item.beauty ?? 0,
+      activityAnchor: item.activity_anchor ?? null,
       sizeTitle: `${item.size_x_m}×${item.size_z_m}m`,
     }))
     .sort((a, b) => a.group.localeCompare(b.group) || a.title.localeCompare(b.title));
