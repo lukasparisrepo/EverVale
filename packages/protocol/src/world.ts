@@ -11,6 +11,10 @@ export interface BuildCatalogEntryDto {
   footprintCellsZ: number;
   gridCellMeters: number;
   sizeTitle: string;
+  moneyCost: number;
+  decorClass: "visual" | "beauty" | "activity_anchor";
+  beauty: number;
+  activityAnchor: string | null;
 }
 
 export interface PropCatalogEntryDto {
@@ -45,6 +49,30 @@ export type WorldCommand =
       commandId: string;
       expectedRevision: number;
       payload: { definitionId: string; x: number; z: number; rotationY?: number };
+    }
+  | {
+      type: "PLACE_PROP";
+      commandId: string;
+      expectedRevision: number;
+      payload: { definitionId: string; x: number; z: number; rotationY?: number };
+    }
+  | {
+      type: "MOVE_PROP";
+      commandId: string;
+      expectedRevision: number;
+      payload: { propId: string; x: number; z: number };
+    }
+  | {
+      type: "ROTATE_PROP";
+      commandId: string;
+      expectedRevision: number;
+      payload: { propId: string; rotationY: number };
+    }
+  | {
+      type: "DELETE_PROP";
+      commandId: string;
+      expectedRevision: number;
+      payload: { propId: string };
     }
   | {
       type: "DRAW_ROAD";
