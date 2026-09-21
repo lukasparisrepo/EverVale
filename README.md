@@ -59,6 +59,21 @@ See [docs/00_CANON.md](docs/00_CANON.md) before implementing anything.
 - [Runtime asset standards](docs/19_ASSET_STANDARDS.md)
 - [Core data contracts](docs/20_DATA_CONTRACTS.md)
 - [World events](docs/21_WORLD_EVENTS.md)
+- [Systems audit](docs/22_SYSTEMS_AUDIT_2026-09-21.md)
+- [Balance model](docs/23_BALANCE_MODEL_V0_1.md)
+- [Simulation results](docs/24_SIMULATION_RESULTS_V0_1.md)
+- [Ambient life](docs/25_AMBIENT_LIFE_SIMULATION.md)
+- [Daily schedules](docs/26_DAILY_SCHEDULES.md)
+- [Traffic & transport](docs/27_TRAFFIC_AND_TRANSPORT.md)
+- [Parks & social life](docs/28_PARKS_AND_SOCIAL_LIFE.md)
+- [Animals, farms & pets](docs/29_ANIMALS_FARMS_PETS.md)
+- [World Activity Director](docs/30_WORLD_ACTIVITY_DIRECTOR.md)
+- [Visual state contracts](docs/31_VISUAL_STATE_CONTRACTS.md)
+- [Automatic workforce](docs/32_AUTOMATIC_WORKFORCE.md)
+- [Automation constitution](docs/33_AUTOMATION_DESIGN.md)
+- [Threat cadence](docs/34_THREAT_CADENCE.md)
+- [Layered architecture](docs/35_LAYERED_ARCHITECTURE.md)
+- [Whistlevale reference audit](docs/36_WHISTLEVALE_REFERENCE_AUDIT.md)
 - [Agent rules](AGENTS.md)
 
 ## Key external references
@@ -68,6 +83,7 @@ See [docs/00_CANON.md](docs/00_CANON.md) before implementing anything.
 - [dream-loop](https://github.com/achimala/dream-loop)
 - [MCP for Blender](https://github.com/ahujasid/mcp-for-blender)
 - [MCP for Blender — asset creation workflow](https://mcp-for-blender.com/use-cases/asset-creation)
+- [Whistlevale](https://github.com/nickfromlater/whistlevale)
 
 These references have specific classifications in the library matrix. A reference repo is not automatically a runtime dependency.
 
