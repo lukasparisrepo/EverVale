@@ -1,0 +1,59 @@
+version: "0.2"
+default_snap_meters: 1
+
+props:
+  tree_oak: { title: "Oak Tree", group: vegetation, size_x_m: 3.5, size_z_m: 3.5 }
+  tree_pine: { title: "Pine Tree", group: vegetation, size_x_m: 3.0, size_z_m: 3.0 }
+  tree_birch: { title: "Birch Tree", group: vegetation, size_x_m: 2.5, size_z_m: 2.5 }
+  shrub: { title: "Garden Shrub", group: vegetation, size_x_m: 1.5, size_z_m: 1.5 }
+  hedge: { title: "Hedge Section", group: vegetation, size_x_m: 2.0, size_z_m: 0.6 }
+  flower_bed: { title: "Flower Bed", group: vegetation, size_x_m: 2.0, size_z_m: 1.0 }
+  planter: { title: "Street Planter", group: vegetation, size_x_m: 1.0, size_z_m: 1.0 }
+  grass_patch: { title: "Grass Patch", group: vegetation, size_x_m: 2.0, size_z_m: 2.0 }
+  reeds: { title: "Reed Cluster", group: vegetation, size_x_m: 1.5, size_z_m: 1.0 }
+
+  bench_wood: { title: "Wooden Bench", group: street, size_x_m: 2.0, size_z_m: 0.8 }
+  bench_metal: { title: "Metal Bench", group: street, size_x_m: 2.0, size_z_m: 0.8 }
+  lamp_post: { title: "Lamp Post", group: street, size_x_m: 0.6, size_z_m: 0.6 }
+  street_sign: { title: "Street Sign", group: street, size_x_m: 0.5, size_z_m: 0.5 }
+  bicycle_rack: { title: "Bicycle Rack", group: street, size_x_m: 2.0, size_z_m: 0.8 }
+  bollard: { title: "Bollard", group: street, size_x_m: 0.4, size_z_m: 0.4 }
+  banner: { title: "Town Banner", group: street, size_x_m: 0.6, size_z_m: 0.6 }
+  trash_bin: { title: "Trash Bin", group: street, size_x_m: 0.6, size_z_m: 0.6 }
+  bus_stop_prop: { title: "Bus Stop Shelter", group: street, size_x_m: 3.0, size_z_m: 1.5 }
+
+  fountain: { title: "Town Fountain", group: civic, size_x_m: 4.0, size_z_m: 4.0 }
+  statue: { title: "Civic Statue", group: civic, size_x_m: 2.0, size_z_m: 2.0 }
+  gazebo: { title: "Garden Gazebo", group: civic, size_x_m: 4.0, size_z_m: 4.0 }
+  pergola: { title: "Pergola", group: civic, size_x_m: 4.0, size_z_m: 2.0 }
+  picnic_table: { title: "Picnic Table", group: civic, size_x_m: 2.5, size_z_m: 2.0 }
+  notice_board: { title: "Notice Board", group: civic, size_x_m: 1.5, size_z_m: 0.6 }
+  playground_slide: { title: "Playground Slide", group: civic, size_x_m: 3.0, size_z_m: 2.0 }
+  playground_swing: { title: "Playground Swing", group: civic, size_x_m: 3.0, size_z_m: 2.5 }
+
+  farm_fence: { title: "Farm Fence", group: rural, size_x_m: 2.0, size_z_m: 0.25 }
+  hay_bale: { title: "Hay Bale", group: rural, size_x_m: 1.2, size_z_m: 1.0 }
+  scarecrow: { title: "Scarecrow", group: rural, size_x_m: 0.8, size_z_m: 0.8 }
+  crate_stack: { title: "Crate Stack", group: rural, size_x_m: 1.5, size_z_m: 1.2 }
+  barrel_stack: { title: "Barrel Stack", group: rural, size_x_m: 1.5, size_z_m: 1.2 }
+  water_trough: { title: "Water Trough", group: rural, size_x_m: 2.5, size_z_m: 1.0 }
+  wagon_prop: { title: "Farm Wagon", group: rural, size_x_m: 3.5, size_z_m: 1.8 }
+
+  pond_reeds: { title: "Pond Reeds", group: water, size_x_m: 2.0, size_z_m: 1.5 }
+  stepping_stone: { title: "Stepping Stone", group: water, size_x_m: 1.0, size_z_m: 1.0 }
+  dock_small: { title: "Small Dock", group: water, size_x_m: 4.0, size_z_m: 2.0 }
+  lily_pad: { title: "Lily Pad Cluster", group: water, size_x_m: 1.5, size_z_m: 1.5 }
+  duck_house: { title: "Duck House", group: water, size_x_m: 1.5, size_z_m: 1.5 }
+
+  spring_banner: { title: "Spring Banner", group: seasonal, size_x_m: 1.0, size_z_m: 0.5 }
+  summer_pennant: { title: "Summer Pennant", group: seasonal, size_x_m: 2.0, size_z_m: 0.5 }
+  autumn_pumpkin: { title: "Pumpkin Cluster", group: seasonal, size_x_m: 1.5, size_z_m: 1.2 }
+  winter_lantern: { title: "Winter Lantern", group: seasonal, size_x_m: 0.8, size_z_m: 0.8 }
+  festival_table: { title: "Festival Table", group: seasonal, size_x_m: 2.5, size_z_m: 1.2 }
+  festival_lights: { title: "Festival Lights", group: seasonal, size_x_m: 4.0, size_z_m: 0.5 }
+
+rules:
+  title_required: true
+  size_required: true
+  prop_rotation_step_degrees: 45
+  economy_exploit_forbidden: true
