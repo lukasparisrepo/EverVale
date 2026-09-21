@@ -121,6 +121,9 @@ export default function App() {
       : "";
 
   const damaged = w.buildings.filter((b) => b.damageState !== "HEALTHY");
+  const worldMinute = Math.floor(w.simulationSeconds % 1440);
+  const worldHour = Math.floor(worldMinute / 60);
+  const worldClock = `${String(worldHour).padStart(2, "0")}:${String(worldMinute % 60).padStart(2, "0")}`;
 
   return (
     <div className="game-shell">
@@ -143,6 +146,7 @@ export default function App() {
           <b>👥 {w.society.population}/{w.society.housingCapacity}</b>
           <b>☺ {Math.round(w.society.happiness)}</b>
           <b>T{w.resources.techTier} · {Math.floor(w.resources.techPoints)}</b>
+          <b data-testid="world-clock">🕒 {worldClock}</b>
         </div>
         <div className="speed">
           {([0,1,2,4] as WorldSpeed[]).map((speed) => (
