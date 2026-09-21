@@ -1,4 +1,5 @@
 import { clamp, clamp01 } from "@evervale/shared-kernel/clamp";
+import { advanceBlockers } from "./blockers.js";
 import { advanceCombat } from "./combat.js";
 import { advanceConstruction } from "./construction.js";
 import { happinessTarget, smoothHappiness } from "./happiness.js";
@@ -17,7 +18,10 @@ export function advanceWorld(
   const deltaSeconds = realDeltaSeconds * input.speed;
   const cycleFraction = deltaSeconds / definitions.referenceCycleSeconds;
 
-  let world = advanceRepairs(advanceConstruction(input, deltaSeconds), deltaSeconds);
+  let world = advanceBlockers(
+    advanceRepairs(advanceConstruction(input, deltaSeconds), deltaSeconds),
+    deltaSeconds,
+  );
   const combatActive = world.combat?.status === "ACTIVE" || world.combat?.status === "WARNING";
   const workforce = allocateWorkforce(world.society.population, world.buildings, definitions.buildings, combatActive);
 
