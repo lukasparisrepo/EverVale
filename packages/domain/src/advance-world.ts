@@ -3,6 +3,7 @@ import { advanceCombat } from "./combat.js";
 import { advanceConstruction } from "./construction.js";
 import { happinessTarget, smoothHappiness } from "./happiness.js";
 import { advancePopulation } from "./population.js";
+import { advanceRepairs } from "./repair.js";
 import { allocateWorkforce, applyWorkforceToSociety } from "./workforce.js";
 import type { SimulationDefinitions, WorldState } from "./world.types.js";
 
@@ -16,7 +17,7 @@ export function advanceWorld(
   const deltaSeconds = realDeltaSeconds * input.speed;
   const cycleFraction = deltaSeconds / definitions.referenceCycleSeconds;
 
-  let world = advanceConstruction(input, deltaSeconds);
+  let world = advanceRepairs(advanceConstruction(input, deltaSeconds), deltaSeconds);
   const combatActive = world.combat?.status === "ACTIVE" || world.combat?.status === "WARNING";
   const workforce = allocateWorkforce(world.society.population, world.buildings, definitions.buildings, combatActive);
 
