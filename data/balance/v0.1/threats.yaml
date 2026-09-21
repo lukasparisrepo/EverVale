@@ -1,0 +1,32 @@
+version: "0.1"
+
+pressure:
+  per_cycle_formula: "0.50 + 0.02*population + 0.25*tech_tier + 0.30*active_varum_mines"
+  first_attack_threshold_min: 8
+  first_attack_threshold_max: 12
+  normal_threshold_min: 15
+  normal_threshold_max: 25
+  reset_after_major_attack: true
+  major_attack_cooldown_cycles: 6
+
+wave_budget:
+  formula: "20 + 1.2*population + 15*tech_tier + 8*active_varum_mines + seeded_variance"
+  seeded_variance_min: -10
+  seeded_variance_max: 10
+
+family_unlocks:
+  0: [critter, raider]
+  1: [critter, raider, brute]
+  2: [raider, brute, drone]
+  3: [raider, brute, drone, ufo_raider]
+  4: [brute, drone, ufo_raider]
+  5: [drone, ufo_raider, carrier]
+
+warning:
+  radar_improves_lead_time: true
+  exact_countdown_exposed: false
+
+offline:
+  major_attacks_per_24h_cap: 2
+  critical_building_min_hp_fraction: 0.30
+  total_disabled_building_fraction_cap: 0.20
