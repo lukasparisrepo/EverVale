@@ -30,6 +30,7 @@ The initial release is single-owner play, but the architecture is multiplayer-re
 - **Spatial picking:** three-mesh-bvh
 - **Post-processing:** pmndrs/postprocessing
 - **Asset authoring:** Blender CLI + MCP for Blender
+- **Visual iteration:** dream-loop style target → build → critic loop
 - **Procedural art:** three-low-poly where appropriate
 
 See [docs/00_CANON.md](docs/00_CANON.md) before implementing anything.
@@ -54,7 +55,21 @@ See [docs/00_CANON.md](docs/00_CANON.md) before implementing anything.
 - [HUD & camera](docs/15_HUD_CAMERA.md)
 - [MVP & roadmap](docs/16_MVP_ROADMAP.md)
 - [Acceptance tests](docs/17_ACCEPTANCE_TESTS.md)
+- [Library/reference matrix](docs/18_LIBRARY_REFERENCE_MATRIX.md)
+- [Runtime asset standards](docs/19_ASSET_STANDARDS.md)
+- [Core data contracts](docs/20_DATA_CONTRACTS.md)
+- [World events](docs/21_WORLD_EVENTS.md)
 - [Agent rules](AGENTS.md)
+
+## Key external references
+
+- [three-low-poly](https://github.com/jasonsturges/three-low-poly)
+- [ShoreBreak](https://github.com/cryptomanavan/ShoreBreak)
+- [dream-loop](https://github.com/achimala/dream-loop)
+- [MCP for Blender](https://github.com/ahujasid/mcp-for-blender)
+- [MCP for Blender — asset creation workflow](https://mcp-for-blender.com/use-cases/asset-creation)
+
+These references have specific classifications in the library matrix. A reference repo is not automatically a runtime dependency.
 
 ## Status
 
