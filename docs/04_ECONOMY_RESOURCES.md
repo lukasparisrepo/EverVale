@@ -1,8 +1,10 @@
 # 04 — Economy & Resources
 
-Status: **BALANCE MODEL v0.1**
+Status: **BALANCE MODEL v0.2 BASELINE**
 
-Detailed numbers live under `data/balance/v0.1/`.
+Canonical building numbers: `data/balance/v0.2/buildings.yaml`.
+
+Other simulation constants remain in versioned balance files under `data/balance/v0.1/` until individually promoted.
 
 ## Design rule
 
@@ -63,7 +65,7 @@ Water is consumed by:
 
 Varum is produced directly by Varum Mines.
 
-No refinement step in v0.1.
+No refinement step in the core model.
 
 Varum is consumed by:
 - armored vehicles
@@ -97,7 +99,7 @@ Reference rule:
 
 `Workforce = floor(Population × 0.75)`
 
-This is an aggregate demographic abstraction. The world may visually contain children and non-workers without simulating a full demographic model in v0.1.
+This is an aggregate demographic abstraction. The world may visually contain children and non-workers without simulating a full demographic model in the current baseline.
 
 Workers are auto-assigned by job priority. Player may change priorities.
 
