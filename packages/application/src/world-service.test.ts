@@ -446,3 +446,50 @@ test("concurrent first-load requests create only one world for an owner", async 
   assert.equal(a.ownerId, "owner-first-load");
   assert.equal(b.ownerId, "owner-first-load");
 });
+
+
+test("first-load create race recovers by loading the world committed by another process", async () => {
+  const now = new Date("2026-09-21T12:00:00.000Z");
+
+  class OwnerRaceRepo implements WorldRepository {
+    winner: WorldState | null = null;
+    createCalls = 0;
+
+    async findByOwner(ownerId: string): Promise<WorldState | null> {
+      return this.winner?.ownerId === ownerId ? this.winner : null;
+    }
+    async findById(worldId: string): Promise<WorldState | null> {
+      return this.winner?.worldId === worldId ? this.winner : null;
+    }
+    async findAcceptedCommand(): Promise<AcceptedCommandReceipt | null> {
+      return null;
+    }
+    async create(candidate: WorldState): Promise<void> {
+      this.createCalls += 1;
+      this.winner = {
+        ...candidate,
+        worldId:"winner-world-id",
+        revision:3,
+      };
+      throw new Error("WORLD_OWNER_EXISTS");
+    }
+    async save(): Promise<void> {
+      throw new Error("UNEXPECTED_SAVE");
+    }
+  }
+
+  const repo = new OwnerRaceRepo();
+  const service = new WorldService({
+    repository:repo,
+    definitions:defs,
+    ids:new Ids(),
+    clock:new FakeClock(now),
+  });
+
+  const result = await service.getOrCreate("owner-cross-process-race");
+
+  assert.equal(repo.createCalls, 1);
+  assert.equal(result.worldId, "winner-world-id");
+  assert.equal(result.ownerId, "owner-cross-process-race");
+  assert.equal(result.revision, 3);
+});
