@@ -7,6 +7,10 @@ export interface BuildCatalogEntryDto {
   moneyCost: number;
   varumCost: number;
   buildCycles: number;
+  footprintCellsX: number;
+  footprintCellsZ: number;
+  gridCellMeters: number;
+  sizeTitle: string;
 }
 
 export interface BlockerCatalogEntryDto {
