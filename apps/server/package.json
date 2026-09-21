@@ -1,0 +1,21 @@
+{
+  "name": "@evervale/server",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@evervale/application": "workspace:*",
+    "@evervale/balance-data": "workspace:*",
+    "@evervale/persistence": "workspace:*",
+    "@evervale/protocol": "workspace:*",
+    "@evervale/domain": "workspace:*"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.0"
+  }
+}
