@@ -139,6 +139,14 @@ buildings:
     art_tags: ["elevated_tank", "stone_base", "gauges"]
     incidents: ["leak", "contamination"]
 
+  weather_station:
+    name: "Cloudglass Weather House"
+    category: civic_tech
+    tech_tier: 1
+    function: ["forecast", "severe_weather_warning"]
+    art_tags: ["stone_observatory", "brass_instruments", "wind_vane", "small_mast"]
+    incidents: ["equipment_failure", "storm_damage"]
+
   school:
     name: "Willowbell School"
     category: education
