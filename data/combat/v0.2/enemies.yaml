@@ -1,4 +1,5 @@
 version: "0.2"
+model_revision: "0.3"
 
 enemies:
   nibbler:
@@ -7,6 +8,8 @@ enemies:
     hp: 45
     dps: 3
     armor: 0
+    range_m: 1.5
+    move_speed_mps: 3.2
     budget: 3
     behavior: swarm
 
@@ -16,6 +19,8 @@ enemies:
     hp: 70
     dps: 4
     armor: 0
+    range_m: 1.5
+    move_speed_mps: 2.5
     budget: 4
     behavior: wobble_swarm
 
@@ -25,6 +30,8 @@ enemies:
     hp: 85
     dps: 5
     armor: 2
+    range_m: 1.5
+    move_speed_mps: 3.0
     budget: 5
     behavior: outer_sector_burrow
 
@@ -34,6 +41,8 @@ enemies:
     hp: 180
     dps: 8
     armor: 18
+    range_m: 1.5
+    move_speed_mps: 2.4
     budget: 12
     behavior: armored_roll
 
@@ -43,6 +52,8 @@ enemies:
     hp: 140
     dps: 10
     armor: 5
+    range_m: 2
+    move_speed_mps: 3.2
     budget: 10
     behavior: building_harass
 
@@ -52,6 +63,8 @@ enemies:
     hp: 160
     dps: 12
     armor: 4
+    range_m: 2
+    move_speed_mps: 4.0
     budget: 12
     behavior: jump_small_obstacles
 
@@ -61,6 +74,8 @@ enemies:
     hp: 375
     dps: 18
     armor: 12
+    range_m: 2.5
+    move_speed_mps: 2.2
     budget: 30
     behavior: heavy
 
@@ -70,42 +85,52 @@ enemies:
     hp: 230
     dps: 20
     armor: 6
+    range_m: 14
+    move_speed_mps: 3.0
     budget: 20
     behavior: ranged
 
   scout_drone:
     bracket_min: 2
-    class: air
+    class: light_air
     hp: 220
     dps: 10
     armor: 5
+    range_m: 16
+    move_speed_mps: 10
     budget: 18
     behavior: air_scout
 
   ufo_scout:
     bracket_min: 3
-    class: air
+    class: light_air
     hp: 420
     dps: 18
     armor: 10
+    range_m: 18
+    move_speed_mps: 8
     budget: 32
     behavior: scan_and_attack
 
   ufo_raider:
     bracket_min: 4
-    class: air
+    class: heavy_air
     hp: 900
     dps: 35
     armor: 25
+    range_m: 24
+    move_speed_mps: 7
     budget: 70
     behavior: beam_assault
 
   drop_pod:
     bracket_min: 4
-    class: air_delivery
+    class: heavy_air_delivery
     hp: 360
     dps: 0
     armor: 12
+    range_m: 0
+    move_speed_mps: 6
     budget: 30
     behavior: deploy_ground_units
 
@@ -115,24 +140,30 @@ enemies:
     hp: 1100
     dps: 38
     armor: 30
+    range_m: 20
+    move_speed_mps: 2.5
     budget: 80
     behavior: siege_walk
 
   shield_drone:
     bracket_min: 4
-    class: air
+    class: light_air
     hp: 360
     dps: 6
     armor: 12
+    range_m: 10
+    move_speed_mps: 8
     budget: 35
     behavior: ally_shield
 
   command_saucer:
     bracket_min: 5
-    class: air
+    class: heavy_air
     hp: 1500
     dps: 45
     armor: 32
+    range_m: 30
+    move_speed_mps: 5
     budget: 120
     behavior: support_ufo
 
@@ -142,15 +173,19 @@ enemies:
     hp: 1700
     dps: 50
     armor: 28
+    range_m: 3
+    move_speed_mps: 2
     budget: 120
     behavior: siege
 
   carrier:
     bracket_min: 6
-    class: air
+    class: heavy_air
     hp: 3200
     dps: 75
     armor: 45
+    range_m: 30
+    move_speed_mps: 4
     budget: 220
     behavior: deploy_air_and_pods
 
@@ -160,5 +195,7 @@ enemies:
     hp: 3800
     dps: 85
     armor: 38
+    range_m: 10
+    move_speed_mps: 2
     budget: 240
     behavior: boss_like
