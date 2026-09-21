@@ -10,6 +10,8 @@ buildings:
     upkeep_per_cycle: 0
     money_cap_add: 5000
     construction_slots_add: 1
+    combat_spawn:
+      town_warden: 2
     activity_profile: town_center
 
   house:
