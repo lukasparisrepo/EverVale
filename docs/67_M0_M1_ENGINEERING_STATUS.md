@@ -1,6 +1,6 @@
 # 67 — M0/M1 Engineering Status
 
-Status: **M0 FOUNDATION PASS / M1 GRAYBOX PLAYABLE**
+Status: **M0 FOUNDATION PASS / M1 BROWSER RUNTIME PROOF PASS**
 
 ## What is implemented
 
@@ -104,3 +104,14 @@ Still intentionally deferred behind M1 playtest:
 - multiplayer
 
 The next gate is not more foundation design. It is to run/play the M1 loop, measure it, and fix runtime issues before M2.
+
+
+## Browser runtime proof
+
+See:
+`docs/68_M1_BROWSER_RUNTIME_PROOF.md`
+
+Playwright verifies the real client/server loop:
+login → road/build → reload → offline catch-up → combat → aftermath → repair.
+
+Latest Engineering and Preflight workflows are both PASS.
