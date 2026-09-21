@@ -14,7 +14,12 @@ export default defineConfig({
     video: "retain-on-failure",
     ...devices["Desktop Chrome"],
     launchOptions: {
-      args: ["--use-gl=swiftshader", "--enable-webgl", "--ignore-gpu-blocklist"],
+      args: [
+        "--use-gl=swiftshader",
+        "--enable-webgl",
+        "--ignore-gpu-blocklist",
+        "--enable-precise-memory-info",
+      ],
     },
   },
   webServer: [
