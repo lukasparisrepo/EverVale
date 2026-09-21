@@ -13,7 +13,7 @@ tiers:
     threshold: 0
     confirmation_required: false
     unlocks:
-      - house
+      - house_small
       - workshop
       - power_plant
       - water_plant
