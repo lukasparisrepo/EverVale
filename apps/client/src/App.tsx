@@ -44,6 +44,14 @@ function Login({ onLogin }: { onLogin(ownerId: string): void }) {
 }
 
 export default function App() {
+  const stressCitizens = useMemo(() => {
+    if (!import.meta.env.DEV) return null;
+    const raw = new URLSearchParams(window.location.search).get("stressCitizens");
+    if (!raw) return null;
+    const value = Number(raw);
+    return Number.isFinite(value) ? Math.max(1, Math.min(40, Math.floor(value))) : null;
+  }, []);
+
   const [ownerId, setOwnerId] = useState(() => localStorage.getItem("evervale.owner") ?? "");
   const [view, setView] = useState<WorldViewDto | null>(null);
   const [mode, setMode] = useState<Mode>("SELECT");
@@ -260,6 +268,7 @@ export default function App() {
         selectedPropId={selectedPropId}
         movingPropId={movingPropId}
         roadStart={roadStart}
+        visualPopulationOverride={stressCitizens}
         onGroundClick={groundClick}
         onRouting={(routed, disconnected) => setRoutingHealth({ routed, disconnected })}
         onPropSelect={(propId) => {
