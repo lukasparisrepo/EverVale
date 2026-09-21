@@ -16,6 +16,7 @@ interface Props {
   world: WorldState;
   mode: "SELECT" | "BUILD" | "ROAD";
   selectedBuild: BuildCatalogEntryDto | null;
+  buildCatalog: BuildCatalogEntryDto[];
   roadStart: { x: number; z: number } | null;
   onGroundClick(position: { x: number; z: number }): void;
   onMetrics: ((metrics: RuntimeMetrics) => void) | undefined;
@@ -35,13 +36,22 @@ const buildingColor: Record<string, number> = {
   builders_yard: 0x8b735b,
 };
 
-function makeBuilding(definitionId: string, building: WorldState["buildings"][number]): THREE.Object3D {
+function makeBuilding(
+  definitionId: string,
+  building: WorldState["buildings"][number],
+  meta?: BuildCatalogEntryDto,
+): THREE.Object3D {
   const group = new THREE.Group();
   const height = definitionId === "town_center" ? 5 : definitionId.includes("plant") ? 4 : 3;
-  const width = definitionId === "park" ? 6 : definitionId === "town_center" ? 7 : 5;
+  const width = meta
+    ? meta.footprintCellsX * meta.gridCellMeters
+    : definitionId === "town_center" ? 8 : 5;
+  const depth = meta
+    ? meta.footprintCellsZ * meta.gridCellMeters
+    : definitionId === "town_center" ? 8 : 4;
 
   const body = new THREE.Mesh(
-    new THREE.BoxGeometry(width, Math.max(0.4, height), width * 0.8),
+    new THREE.BoxGeometry(width, Math.max(0.4, height), depth),
     new THREE.MeshStandardMaterial({
       color: buildingColor[definitionId] ?? 0xb3aa95,
       transparent: building.constructionState === "BUILDING",
@@ -61,7 +71,11 @@ function makeBuilding(definitionId: string, building: WorldState["buildings"][nu
         new THREE.ConeGeometry(0.8, 2.5, 7),
         new THREE.MeshStandardMaterial({ color: 0x66865a }),
       );
-      tree.position.set(-2 + (i % 2) * 4, 1.25, -1 + Math.floor(i / 2) * 2);
+      tree.position.set(
+        -width * 0.25 + (i % 2) * width * 0.5,
+        1.25,
+        -depth * 0.2 + Math.floor(i / 2) * depth * 0.4,
+      );
       tree.castShadow = true;
       group.add(tree);
     }
@@ -258,6 +272,7 @@ export function WorldView({
   world,
   mode,
   selectedBuild,
+  buildCatalog,
   roadStart,
   onGroundClick,
   onMetrics,
@@ -268,6 +283,7 @@ export function WorldView({
   const metricsRef = useRef(onMetrics);
   const modeRef = useRef(mode);
   const selectedBuildRef = useRef(selectedBuild);
+  const buildCatalogRef = useRef(buildCatalog);
   const roadStartRef = useRef(roadStart);
   const dynamicRef = useRef<THREE.Group | null>(null);
   const citizensRef = useRef<THREE.Mesh[]>([]);
@@ -278,6 +294,7 @@ export function WorldView({
   useEffect(() => { metricsRef.current = onMetrics; }, [onMetrics]);
   useEffect(() => { modeRef.current = mode; }, [mode]);
   useEffect(() => { selectedBuildRef.current = selectedBuild; }, [selectedBuild]);
+  useEffect(() => { buildCatalogRef.current = buildCatalog; }, [buildCatalog]);
   useEffect(() => { roadStartRef.current = roadStart; }, [roadStart]);
 
   useEffect(() => {
@@ -463,7 +480,10 @@ export function WorldView({
       }
 
       (current.blockers ?? []).forEach((b) => dynamic.add(makeBlocker(b)));
-      current.buildings.forEach((b) => dynamic.add(makeBuilding(b.definitionId, b)));
+      current.buildings.forEach((b) => {
+        const meta = buildCatalogRef.current.find((item) => item.id === b.definitionId);
+        dynamic.add(makeBuilding(b.definitionId, b, meta));
+      });
 
       const homes = current.buildings.filter((b) => b.definitionId === "house_small" && b.constructionState === "COMPLETE");
       const jobs = current.buildings.filter((b) =>
@@ -547,6 +567,7 @@ export function WorldView({
     renderer.setAnimationLoop((time) => {
       const current = worldRef.current;
       buildGrid.visible = modeRef.current === "BUILD" || modeRef.current === "ROAD";
+      host.dataset.gridVisible = String(buildGrid.visible);
       if (current.revision !== lastRevision || frame % 120 === 0) {
         rebuild();
         lastRevision = current.revision;
