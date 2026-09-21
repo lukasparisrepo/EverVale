@@ -161,6 +161,19 @@ units:
     move_speed_mps: 30
     role: reconnaissance
 
+  fighter:
+    tier: 4
+    class: aircraft
+    target: air_and_ground
+    money_cost: 1800
+    varum_cost: 40
+    hp: 820
+    dps: 70
+    armor: 18
+    range_m: 34
+    move_speed_mps: 30
+    role: flexible_air_support
+
   interceptor:
     tier: 4
     class: aircraft
@@ -173,6 +186,19 @@ units:
     range_m: 40
     move_speed_mps: 34
     role: fast_air_defense
+
+  beam_tank:
+    tier: 5
+    class: heavy_vehicle
+    target: ground_and_light_air
+    money_cost: 2800
+    varum_cost: 70
+    hp: 1550
+    dps: 96
+    armor: 42
+    range_m: 28
+    move_speed_mps: 4.0
+    role: sustained_varum_beam
 
   heavy_defender:
     tier: 5
