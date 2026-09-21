@@ -1041,6 +1041,8 @@ export function WorldView({
       host.dataset.triangles = String(renderer.info.render.triangles);
       host.dataset.citizens = String(citizensRef.current.length);
       host.dataset.props = String(current.props?.length ?? 0);
+      host.dataset.geometries = String(renderer.info.memory.geometries);
+      host.dataset.textures = String(renderer.info.memory.textures);
 
       const now = performance.now();
       const frameMs = now - lastFrameTime;
