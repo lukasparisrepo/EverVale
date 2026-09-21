@@ -1,6 +1,13 @@
 version: "0.1"
 
 profiles:
+  town_center:
+    anchors:
+      required: [entrance]
+      optional: [bench, plaza_edge]
+    activities:
+      - { type: CIVIC_IDLE, actor: citizen, windows: [midday, evening_leisure], weight: 0.30 }
+
   house:
     anchors:
       required: [front_door]
@@ -20,6 +27,32 @@ profiles:
       - { type: WORK_LOOP, actor: worker, windows: [morning_core, afternoon_core], weight: 1.0 }
       - { type: BREAK_IDLE, actor: worker, windows: [midday], weight: 0.55 }
       - { type: WORKER_DEPARTURE, actor: worker, windows: [evening_commute], weight: 1.0 }
+
+  market:
+    anchors:
+      required: [worker_entrance, customer_entry]
+      optional: [stall, loading_area, bicycle_rack]
+    activities:
+      - { type: SHOPKEEPER_ARRIVAL, actor: worker, windows: [early_morning, morning_commute], weight: 1.0 }
+      - { type: MARKET_BROWSE, actor: citizen, windows: [midday, evening_leisure], weight: 0.80 }
+      - { type: MARKET_LOADING, actor: ambient_vehicle, windows: [early_morning], weight: 0.35 }
+
+  cafe:
+    anchors:
+      required: [worker_entrance, customer_entry]
+      optional: [cafe_table, bench, bicycle_rack]
+    activities:
+      - { type: CAFE_STAFF, actor: worker, windows: [morning_core, midday, evening_leisure], weight: 1.0 }
+      - { type: CAFE_SIT, actor: citizen, windows: [midday, evening_leisure], weight: 0.75 }
+      - { type: CAFE_PASSERBY, actor: citizen, windows: [morning_commute, evening_commute], weight: 0.20 }
+
+  utility_plant:
+    anchors:
+      required: [worker_entrance]
+      optional: [equipment, service_vehicle]
+    activities:
+      - { type: UTILITY_SHIFT, actor: worker, windows: [morning_commute, morning_core, afternoon_core], weight: 1.0 }
+      - { type: EQUIPMENT_CHECK, actor: worker, windows: [morning_core, afternoon_core], weight: 0.45 }
 
   school:
     anchors:
@@ -72,3 +105,43 @@ profiles:
       - { type: MINE_SHIFT_ARRIVAL, actor: worker, windows: [morning_commute], weight: 1.0 }
       - { type: MINE_WORK, actor: worker, windows: [morning_core, afternoon_core], weight: 1.0 }
       - { type: MINE_EQUIPMENT, actor: ambient_machine, windows: [morning_core, afternoon_core], weight: 0.75 }
+
+  defense_static:
+    anchors:
+      required: [weapon_station]
+      optional: [maintenance]
+    activities:
+      - { type: DEFENSE_READY_IDLE, actor: ambient_machine, windows: [morning_core, afternoon_core, night], weight: 0.30 }
+      - { type: DEFENSE_ACTIVE, actor: military_actor, trigger: active_threat, weight: 1.0 }
+
+  radar:
+    anchors:
+      required: [worker_entrance, console]
+      optional: [maintenance]
+    activities:
+      - { type: RADAR_OPERATOR, actor: worker, windows: [morning_core, afternoon_core, night], weight: 0.80 }
+      - { type: RADAR_ALERT, actor: worker, trigger: threat_warning, weight: 1.0 }
+
+  vehicle_factory:
+    anchors:
+      required: [worker_entrance, production_bay]
+      optional: [loading_area, test_pad]
+    activities:
+      - { type: FACTORY_PRODUCTION, actor: worker, trigger: active_production_order, weight: 1.0 }
+      - { type: VEHICLE_TEST, actor: military_vehicle, trigger: production_completion, weight: 1.0 }
+
+  airfield:
+    anchors:
+      required: [worker_entrance, hangar, runway_start]
+      optional: [maintenance, apron]
+    activities:
+      - { type: AIRFIELD_CREW, actor: worker, windows: [morning_core, afternoon_core], weight: 0.70 }
+      - { type: AIRCRAFT_SCRAMBLE, actor: aircraft, trigger: active_air_threat, weight: 1.0 }
+
+  varum_shield:
+    anchors:
+      required: [core]
+      optional: [maintenance]
+    activities:
+      - { type: SHIELD_IDLE, actor: ambient_machine, windows: [morning_core, afternoon_core, night], weight: 0.20 }
+      - { type: SHIELD_ACTIVE, actor: ambient_machine, trigger: shield_active, weight: 1.0 }
