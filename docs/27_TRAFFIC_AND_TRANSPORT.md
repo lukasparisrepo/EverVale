@@ -69,3 +69,22 @@ Congestion can increase commute cost and therefore affect Happiness indirectly.
 Detailed parking simulation is deferred.
 
 Vehicles can use authored parking/access anchors or despawn after entering a destination access zone.
+
+
+## M1.2 runtime status
+
+Citizen presentation now follows the actual road graph.
+
+Runtime authority:
+`docs/73_M1_2_ROAD_ROUTING.md`
+
+Implemented:
+- road intersection splitting
+- shortest path
+- arbitrary road access projection
+- disconnected-island rejection
+- Home/Work/School/Leisure/Shelter routes
+- actor facing along movement
+- route-health telemetry
+
+Vehicles and congestion remain deferred.
