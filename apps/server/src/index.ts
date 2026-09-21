@@ -96,6 +96,7 @@ const server = createServer(async (req, res) => {
       json(res, 200, {
         world,
         buildCatalog: gameData.buildCatalog,
+        blockerCatalog: gameData.blockerCatalog,
         serverNow: new Date().toISOString(),
       });
       return;
@@ -114,7 +115,7 @@ const server = createServer(async (req, res) => {
     const status =
       message === "UNAUTHORIZED" ? 401 :
       message === "REVISION_CONFLICT" ? 409 :
-      message.startsWith("NOT_ENOUGH") || message.startsWith("NO_") || message.startsWith("REPAIR_") || message.includes("LOCKED") || message.includes("COLLISION") ? 400 :
+      message.startsWith("NOT_ENOUGH") || message.startsWith("NO_") || message.startsWith("REPAIR_") || message.startsWith("BLOCKER_") || message.includes("LOCKED") || message.includes("COLLISION") ? 400 :
       500;
     console.error("[EverVale]", message);
     json(res, status, { accepted: false, error: message });
