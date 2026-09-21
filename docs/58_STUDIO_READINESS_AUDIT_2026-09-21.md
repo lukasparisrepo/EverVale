@@ -1,6 +1,6 @@
 # 58 — Studio Readiness Audit — 2026-09-21
 
-Status: **PASS FOR VERTICAL SLICE / NOT YET FULL-PRODUCTION LOCK**
+Status: **PASS FOR M0/M1 — DESIGN/DATA GAPS LOCKED**
 
 ## Executive verdict
 
@@ -208,8 +208,8 @@ and measuring:
 Three content scopes currently exist:
 
 - **78 planned buildable IDs**
-- **48 detailed named/art-directed buildings**
-- **~20 numerically balanced buildings**
+- **49 detailed named/art-directed buildings**
+- **49 numerically balanced building definitions in v0.2**
 
 This is not a contradiction if treated as:
 - planned catalogue
@@ -397,15 +397,18 @@ During this audit the following were corrected:
 ## P0 — before full production
 None that block starting the vertical slice.
 
-## P1 — must close during M0/M1
+## P1 design/data contracts — CLOSED
+The following now exist:
 - content/schema validator
-- concrete DB schema/migrations
-- integrated economy/offline simulator
-- spatial combat simulator
-- map-generator implementation/fairness test
-- performance baseline on target hardware
+- concrete DB migration
+- long-run simulation contract + harness
+- spatial combat contract + harness
+- worldgen fairness validator
+- performance budgets
 - unit/building production validation
 - special enemy numeric behavior contracts
+
+Runtime evidence still belongs to M0/M1 exit testing.
 
 ## P2 — before public release
 - full content balance
