@@ -61,6 +61,7 @@ function makeBuilding(
     new THREE.BoxGeometry(width, Math.max(0.4, height), depth),
     new THREE.MeshStandardMaterial({
       color: buildingColor[definitionId] ?? 0xb3aa95,
+      roughness: 0.88,
       transparent: building.constructionState === "BUILDING",
       opacity: building.constructionState === "BUILDING" ? 0.45 : 1,
     }),
@@ -76,7 +77,7 @@ function makeBuilding(
     for (let i = 0; i < 4; i += 1) {
       const tree = new THREE.Mesh(
         new THREE.ConeGeometry(0.8, 2.5, 7),
-        new THREE.MeshStandardMaterial({ color: 0x66865a }),
+        new THREE.MeshStandardMaterial({ color: 0x66865a, roughness: 1 }),
       );
       tree.position.set(
         -width * 0.25 + (i % 2) * width * 0.5,
@@ -155,7 +156,12 @@ function makeBlocker(blocker: WorldState["blockers"][number]): THREE.Object3D {
 }
 
 function pointSegmentDistance(
-  px: number, pz: number, ax: number, az: number, bx: number, bz: number,
+  px: number,
+  pz: number,
+  ax: number,
+  az: number,
+  bx: number,
+  bz: number,
 ): number {
   const vx = bx - ax;
   const vz = bz - az;
@@ -166,7 +172,7 @@ function pointSegmentDistance(
   return Math.hypot(px - (ax + t * vx), pz - (az + t * vz));
 }
 
-function approximatePlacementValid(
+function approximateBuildingPlacementValid(
   world: WorldState,
   selected: BuildCatalogEntryDto,
   x: number,
@@ -175,16 +181,10 @@ function approximatePlacementValid(
   const width = selected.footprintCellsX * selected.gridCellMeters;
   const depth = selected.footprintCellsZ * selected.gridCellMeters;
 
-  const collision = world.buildings.some((b) => {
-    // Existing starter/save buildings may predate footprint metadata in state,
-    // so use the visual graybox default only for client preview. Server remains authoritative.
-    const existingWidth = 6;
-    const existingDepth = 5;
-    return (
-      Math.abs(b.position.x - x) < (existingWidth + width) / 2 &&
-      Math.abs(b.position.z - z) < (existingDepth + depth) / 2
-    );
-  });
+  const collision = world.buildings.some((b) => (
+    Math.abs(b.position.x - x) < (6 + width) / 2 &&
+    Math.abs(b.position.z - z) < (5 + depth) / 2
+  ));
   if (collision) return false;
 
   const blocked = world.blockers.some((b) => {
@@ -195,7 +195,7 @@ function approximatePlacementValid(
   if (blocked) return false;
 
   return world.roads.some((road) =>
-    pointSegmentDistance(x, z, road.from.x, road.from.z, road.to.x, road.to.z) <= 10,
+    pointSegmentDistance(x, z, road.from.x, road.from.z, road.to.x, road.to.z) <= 10
   );
 }
 
@@ -213,14 +213,10 @@ function approximatePropPlacementValid(
   const width = selected.sizeXMeters * c + selected.sizeZMeters * s;
   const depth = selected.sizeXMeters * s + selected.sizeZMeters * c;
 
-  const buildingCollision = world.buildings.some((building) => {
-    const halfW = 3;
-    const halfD = 2.5;
-    return (
-      Math.abs(building.position.x - x) < halfW + width / 2 &&
-      Math.abs(building.position.z - z) < halfD + depth / 2
-    );
-  });
+  const buildingCollision = world.buildings.some((building) => (
+    Math.abs(building.position.x - x) < 3 + width / 2 &&
+    Math.abs(building.position.z - z) < 2.5 + depth / 2
+  ));
   if (buildingCollision) return false;
 
   const propCollision = (world.props ?? []).some((prop) => {
@@ -245,7 +241,10 @@ function approximatePropPlacementValid(
   });
 }
 
-function nearestRoadPoint(world: WorldState, point: { x: number; z: number }): { x: number; z: number } {
+function nearestRoadPoint(
+  world: WorldState,
+  point: { x: number; z: number },
+): { x: number; z: number } {
   let best = { x: point.x, z: point.z };
   let bestDistance = Number.POSITIVE_INFINITY;
   for (const road of world.roads) {
@@ -260,7 +259,11 @@ function nearestRoadPoint(world: WorldState, point: { x: number; z: number }): {
   return best;
 }
 
-function lerpPoint(a: {x:number;z:number}, b: {x:number;z:number}, t: number): {x:number;z:number} {
+function lerpPoint(
+  a: {x:number;z:number},
+  b: {x:number;z:number},
+  t: number,
+): {x:number;z:number} {
   return { x: a.x + (b.x - a.x) * t, z: a.z + (b.z - a.z) * t };
 }
 
@@ -287,7 +290,10 @@ function schedulePosition(
   const hour = ((current.simulationSeconds % 1440) / 1440) * 24;
 
   if (current.combat && current.combat.status !== "RESOLVED") {
-    return { ...moveAlongRoute(home, {x:0,z:0}, roadPoint, Math.min(1, current.combat.elapsedSeconds / 5)), activity: "SHELTER" };
+    return {
+      ...moveAlongRoute(home, {x:0,z:0}, roadPoint, Math.min(1, current.combat.elapsedSeconds / 5)),
+      activity: "SHELTER",
+    };
   }
 
   const commute = (
@@ -298,15 +304,14 @@ function schedulePosition(
     activity: string,
   ) => {
     const t = Math.max(0, Math.min(1, (hour - start) / Math.max(0.01, end - start)));
-    const p = moveAlongRoute(from, to, roadPoint, t);
-    return { ...p, activity };
+    return { ...moveAlongRoute(from, to, roadPoint, t), activity };
   };
 
   if (child) {
     if (hour < 7.5) return { ...home, activity: "HOME" };
     if (hour < 8.5) return commute(7.5, 8.5, home, work, "TO_SCHOOL");
     if (hour < 15) return { ...work, activity: "SCHOOL" };
-    if (hour < 16) return commute(15, 16, work, leisure, "TO_PARK");
+    if (hour < 16) return commute(15, 16, work, leisure, "TO_PLAY");
     if (hour < 18.5) return { ...leisure, activity: "PLAY" };
     if (hour < 19.5) return commute(18.5, 19.5, leisure, home, "HOMEWARD");
     return { ...home, activity: "HOME" };
@@ -350,7 +355,6 @@ export function WorldView({
   const movingPropIdRef = useRef(movingPropId);
   const propSelectRef = useRef(onPropSelect);
   const roadStartRef = useRef(roadStart);
-  const dynamicRef = useRef<THREE.Group | null>(null);
   const citizensRef = useRef<THREE.Mesh[]>([]);
   const animalsRef = useRef<THREE.Group[]>([]);
   const propWaterRef = useRef<THREE.Mesh[]>([]);
@@ -418,10 +422,14 @@ export function WorldView({
     buildGrid.position.y = 0.035;
     buildGrid.material.transparent = true;
     buildGrid.material.opacity = 0.38;
-    buildGrid.visible = false;
     scene.add(buildGrid);
 
-    // First terrain-readability pass: raised perimeter ridges, leaving the central starter plateau open.
+    const decorGrid = new THREE.GridHelper(110, 110, 0x77896f, 0x81967a);
+    decorGrid.position.y = 0.04;
+    decorGrid.material.transparent = true;
+    decorGrid.material.opacity = 0.22;
+    scene.add(decorGrid);
+
     const ridgeMaterial = new THREE.MeshStandardMaterial({ color: 0x71856a, roughness: 1 });
     for (const [x, z, sx, sz, height] of [
       [-48, 0, 12, 100, 7],
@@ -437,7 +445,6 @@ export function WorldView({
 
     const dynamic = new THREE.Group();
     scene.add(dynamic);
-    dynamicRef.current = dynamic;
 
     const preview = new THREE.Group();
     scene.add(preview);
@@ -448,76 +455,184 @@ export function WorldView({
       opacity: 0.45,
       depthWrite: false,
     });
-    const ghost = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), ghostMaterial);
-    ghost.position.y = 0.18;
-    ghost.visible = false;
-    preview.add(ghost);
+    const buildGhost = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), ghostMaterial);
+    buildGhost.position.y = 0.18;
+    preview.add(buildGhost);
 
-    const roadPreviewMaterial = new THREE.MeshBasicMaterial({ color: 0x75b76e, transparent: true, opacity: 0.65 });
+    const roadPreviewMaterial = new THREE.MeshBasicMaterial({
+      color: 0x75b76e,
+      transparent: true,
+      opacity: 0.65,
+    });
     const roadPreview = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.12, 1), roadPreviewMaterial);
-    roadPreview.visible = false;
     preview.add(roadPreview);
+
+    const propPreview = new THREE.Group();
+    preview.add(propPreview);
+    const propFootprintMaterial = new THREE.MeshBasicMaterial({
+      color: 0x75b76e,
+      transparent: true,
+      opacity: 0.32,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+    const propFootprint = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), propFootprintMaterial);
+    propFootprint.rotation.x = -Math.PI / 2;
+    propFootprint.position.y = 0.055;
+    propPreview.add(propFootprint);
+
+    let previewPropId = "";
+    const rebuildPropPreview = (meta: PropCatalogEntryDto) => {
+      if (previewPropId === meta.id) return;
+      while (propPreview.children.length > 1) {
+        propPreview.remove(propPreview.children[propPreview.children.length - 1]!);
+      }
+      const visual = createPropObject(meta, `preview:${meta.id}`);
+      visual.traverse((object) => {
+        const mesh = object as THREE.Mesh;
+        if (mesh.isMesh) {
+          mesh.castShadow = false;
+          mesh.receiveShadow = false;
+        }
+      });
+      propPreview.add(visual);
+      previewPropId = meta.id;
+    };
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
-    const groundPoint = (event: PointerEvent): THREE.Vector3 | null => {
+    const setMouse = (event: PointerEvent) => {
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(mouse, camera);
+    };
+
+    const groundPoint = (event: PointerEvent): THREE.Vector3 | null => {
+      setMouse(event);
       return raycaster.intersectObject(ground)[0]?.point ?? null;
+    };
+
+    const pickProp = (event: PointerEvent): string | null => {
+      setMouse(event);
+      const hits = raycaster.intersectObjects(dynamic.children, true);
+      for (const hit of hits) {
+        let object: THREE.Object3D | null = hit.object;
+        while (object && object !== dynamic) {
+          const propId = object.userData.propId;
+          if (typeof propId === "string") return propId;
+          object = object.parent;
+        }
+      }
+      return null;
+    };
+
+    const hidePreviews = () => {
+      buildGhost.visible = false;
+      roadPreview.visible = false;
+      propPreview.visible = false;
+      delete host.dataset.placementValid;
+      delete host.dataset.placementSize;
+      delete host.dataset.decorValid;
+      delete host.dataset.decorSize;
     };
 
     const onMove = (event: PointerEvent) => {
       const hit = groundPoint(event);
       if (!hit) return;
-      const gridMeters = selectedBuildRef.current?.gridCellMeters ?? 2;
-      const x = Math.round(hit.x / gridMeters) * gridMeters;
-      const z = Math.round(hit.z / gridMeters) * gridMeters;
+      hidePreviews();
 
-      ghost.visible = modeRef.current === "BUILD" && !!selectedBuildRef.current;
-      roadPreview.visible = modeRef.current === "ROAD" && !!roadStartRef.current;
-
-      if (ghost.visible && selectedBuildRef.current) {
+      if (modeRef.current === "BUILD" && selectedBuildRef.current) {
         const selected = selectedBuildRef.current;
-        const width = selected.footprintCellsX * selected.gridCellMeters;
-        const depth = selected.footprintCellsZ * selected.gridCellMeters;
-        const valid = approximatePlacementValid(worldRef.current, selected, x, z);
+        const grid = selected.gridCellMeters;
+        const x = Math.round(hit.x / grid) * grid;
+        const z = Math.round(hit.z / grid) * grid;
+        const width = selected.footprintCellsX * grid;
+        const depth = selected.footprintCellsZ * grid;
+        const valid = approximateBuildingPlacementValid(worldRef.current, selected, x, z);
+        buildGhost.visible = true;
+        buildGhost.scale.set(width, 0.32, depth);
+        buildGhost.position.set(x, 0.18, z);
+        ghostMaterial.color.setHex(valid ? 0x75b76e : 0xd46d61);
         host.dataset.placementValid = String(valid);
         host.dataset.placementSize = selected.sizeTitle;
-        ghost.scale.set(width, 0.32, depth);
-        ghost.position.set(x, 0.18, z);
-        ghostMaterial.color.setHex(valid ? 0x75b76e : 0xd46d61);
-      } else {
-        delete host.dataset.placementValid;
-        delete host.dataset.placementSize;
+        return;
       }
 
-      if (roadPreview.visible && roadStartRef.current) {
+      if (modeRef.current === "ROAD" && roadStartRef.current) {
+        const x = Math.round(hit.x / 2) * 2;
+        const z = Math.round(hit.z / 2) * 2;
         const start = roadStartRef.current;
         const dx = x - start.x;
         const dz = z - start.z;
         const length = Math.hypot(dx, dz);
         const valid = length >= 2 && length <= 45;
+        roadPreview.visible = true;
         roadPreview.scale.z = Math.max(0.1, length);
         roadPreview.position.set((start.x + x) / 2, 0.1, (start.z + z) / 2);
         roadPreview.rotation.y = Math.atan2(dx, dz);
         roadPreviewMaterial.color.setHex(valid ? 0x75b76e : 0xd46d61);
+        return;
+      }
+
+      if (
+        (modeRef.current === "DECOR" || modeRef.current === "MOVE_PROP") &&
+        selectedPropRef.current
+      ) {
+        const selected = selectedPropRef.current;
+        const snap = selected.snapMeters;
+        const x = Math.round(hit.x / snap) * snap;
+        const z = Math.round(hit.z / snap) * snap;
+        const rotation = propRotationRef.current;
+        const valid = approximatePropPlacementValid(
+          worldRef.current,
+          propCatalogRef.current,
+          selected,
+          x,
+          z,
+          rotation,
+          movingPropIdRef.current,
+        );
+        rebuildPropPreview(selected);
+        propPreview.visible = true;
+        propPreview.position.set(x, 0, z);
+        propPreview.rotation.y = rotation;
+        propFootprint.scale.set(selected.sizeXMeters, selected.sizeZMeters, 1);
+        propFootprintMaterial.color.setHex(valid ? 0x75b76e : 0xd46d61);
+        host.dataset.decorValid = String(valid);
+        host.dataset.decorSize = selected.sizeTitle;
       }
     };
 
     const onPointer = (event: PointerEvent) => {
-      if (modeRef.current === "SELECT") return;
-      const hit = groundPoint(event);
-      if (hit) {
-        const gridMeters = selectedBuildRef.current?.gridCellMeters ?? 2;
-        clickRef.current({
-          x: Math.round(hit.x / gridMeters) * gridMeters,
-          z: Math.round(hit.z / gridMeters) * gridMeters,
-        });
+      if (modeRef.current === "SELECT") {
+        propSelectRef.current(pickProp(event));
+        return;
       }
+
+      const hit = groundPoint(event);
+      if (!hit) return;
+
+      if (
+        (modeRef.current === "DECOR" || modeRef.current === "MOVE_PROP") &&
+        selectedPropRef.current
+      ) {
+        const snap = selectedPropRef.current.snapMeters;
+        clickRef.current({
+          x: Math.round(hit.x / snap) * snap,
+          z: Math.round(hit.z / snap) * snap,
+        });
+        return;
+      }
+
+      const grid = selectedBuildRef.current?.gridCellMeters ?? 2;
+      clickRef.current({
+        x: Math.round(hit.x / grid) * grid,
+        z: Math.round(hit.z / grid) * grid,
+      });
     };
+
     renderer.domElement.addEventListener("pointermove", onMove);
     renderer.domElement.addEventListener("pointerdown", onPointer);
 
@@ -536,6 +651,8 @@ export function WorldView({
       dynamic.clear();
       citizensRef.current = [];
       animalsRef.current = [];
+      propWaterRef.current = [];
+      propGlowRef.current = [];
       const current = worldRef.current;
 
       for (const road of current.roads ?? []) {
@@ -552,39 +669,79 @@ export function WorldView({
         dynamic.add(mesh);
       }
 
-      (current.blockers ?? []).forEach((b) => dynamic.add(makeBlocker(b)));
-      current.buildings.forEach((b) => {
-        const meta = buildCatalogRef.current.find((item) => item.id === b.definitionId);
-        dynamic.add(makeBuilding(b.definitionId, b, meta));
+      (current.blockers ?? []).forEach((blocker) => dynamic.add(makeBlocker(blocker)));
+
+      current.buildings.forEach((building) => {
+        const meta = buildCatalogRef.current.find((item) => item.id === building.definitionId);
+        dynamic.add(makeBuilding(building.definitionId, building, meta));
       });
 
-      const homes = current.buildings.filter((b) => b.definitionId === "house_small" && b.constructionState === "COMPLETE");
-      const jobs = current.buildings.filter((b) =>
-        ["workshop","power_plant","water_plant","school","guard_post"].includes(b.definitionId) &&
-        b.constructionState === "COMPLETE",
+      for (const prop of current.props ?? []) {
+        const meta = propCatalogRef.current.find((item) => item.id === prop.definitionId);
+        if (!meta) continue;
+        const object = createPropObject(meta, `${current.seed}:${prop.id}`);
+        object.position.set(prop.position.x, 0, prop.position.z);
+        object.rotation.y = prop.rotationY;
+        object.userData.propId = prop.id;
+        object.traverse((child) => {
+          child.userData.propId = prop.id;
+          const mesh = child as THREE.Mesh;
+          if (mesh.userData.propWater) propWaterRef.current.push(mesh);
+          if (mesh.userData.propGlow) propGlowRef.current.push(mesh);
+        });
+        if (prop.id === selectedPropIdRef.current) {
+          object.add(makeSelectionRing(meta.sizeXMeters, meta.sizeZMeters));
+        }
+        dynamic.add(object);
+      }
+
+      const homes = current.buildings.filter(
+        (b) => b.definitionId === "house_small" && b.constructionState === "COMPLETE",
       );
-      const school = current.buildings.find((b) => b.definitionId === "school" && b.constructionState === "COMPLETE");
-      const park = current.buildings.find((b) => b.definitionId === "park" && b.constructionState === "COMPLETE");
+      const jobs = current.buildings.filter(
+        (b) =>
+          ["workshop", "power_plant", "water_plant", "school", "guard_post"].includes(b.definitionId) &&
+          b.constructionState === "COMPLETE",
+      );
+      const school = current.buildings.find(
+        (b) => b.definitionId === "school" && b.constructionState === "COMPLETE",
+      );
+      const park = current.buildings.find(
+        (b) => b.definitionId === "park" && b.constructionState === "COMPLETE",
+      );
+
+      const anchorProps = (current.props ?? []).flatMap((prop) => {
+        const meta = propCatalogRef.current.find((item) => item.id === prop.definitionId);
+        return meta?.activityAnchor ? [{ prop, meta }] : [];
+      });
+      const childAnchor = anchorProps.find(({ meta }) => meta.activityAnchor === "child_play")?.prop;
+      const adultAnchor = anchorProps.find(({ meta }) =>
+        ["sit", "social", "picnic", "read", "gather"].includes(meta.activityAnchor ?? "")
+      )?.prop;
+
       const fallbackLeisure = park?.position ?? { x: 0, y: 0, z: 0 };
 
       for (let i = 0; i < Math.min(40, current.society.population); i += 1) {
         const child = i % 5 === 0;
         const citizen = new THREE.Mesh(
           new THREE.CapsuleGeometry(child ? 0.25 : 0.32, child ? 0.55 : 0.8, 4, 8),
-          new THREE.MeshStandardMaterial({ color: child ? 0xd7a86e : 0x6f7f8d }),
+          new THREE.MeshStandardMaterial({ color: child ? 0xd7a86e : 0x6f7f8d, roughness: 0.92 }),
         );
         citizen.castShadow = i < 18;
         citizen.userData.index = i;
         citizen.userData.child = child;
         const home = homes[i % Math.max(1, homes.length)]?.position ?? { x: 0, y: 0, z: 0 };
         const adultJob = jobs[i % Math.max(1, jobs.length)]?.position ?? home;
-        const work = child
-          ? (school?.position ?? home)
-          : adultJob;
+        const work = child ? (school?.position ?? home) : adultJob;
+        const leisure = child
+          ? (childAnchor?.position ?? fallbackLeisure)
+          : (adultAnchor?.position ?? fallbackLeisure);
+
         citizen.userData.home = { x: home.x, z: home.z };
         citizen.userData.work = { x: work.x, z: work.z };
-        citizen.userData.leisure = { x: fallbackLeisure.x, z: fallbackLeisure.z };
+        citizen.userData.leisure = { x: leisure.x, z: leisure.z };
         citizen.userData.roadPoint = nearestRoadPoint(current, { x: home.x, z: home.z });
+
         const angle = (i * 2.399963229728653) % (Math.PI * 2);
         const radius = 0.35 + (i % 4) * 0.12;
         citizen.userData.offsetX = Math.cos(angle) * radius;
@@ -614,24 +771,26 @@ export function WorldView({
         animalsRef.current.push(dog);
       }
 
-      current.combat?.actors.forEach((a) => {
-        if (a.hp <= 0) return;
-        const hostile = a.side === "ENEMY";
+      current.combat?.actors.forEach((actor) => {
+        if (actor.hp <= 0) return;
+        const hostile = actor.side === "ENEMY";
         const mesh = new THREE.Mesh(
-          hostile ? new THREE.SphereGeometry(0.65, 12, 8) : new THREE.CapsuleGeometry(0.35, 0.9, 4, 8),
+          hostile
+            ? new THREE.SphereGeometry(0.65, 12, 8)
+            : new THREE.CapsuleGeometry(0.35, 0.9, 4, 8),
           new THREE.MeshStandardMaterial({
             color: hostile ? 0xa65c83 : 0x566d55,
             emissive: hostile ? 0x2b0e20 : 0x081208,
           }),
         );
-        mesh.position.set(a.position.x, hostile ? 0.7 : 0.8, a.position.z);
+        mesh.position.set(actor.position.x, hostile ? 0.7 : 0.8, actor.position.z);
         mesh.castShadow = true;
         mesh.userData.combatBob = hostile;
         dynamic.add(mesh);
       });
     };
 
-    let lastRevision = -1;
+    let lastPresentationKey = "";
     let frame = 0;
     let lastFrameTime = performance.now();
     let lastMetricEmit = lastFrameTime;
@@ -639,11 +798,17 @@ export function WorldView({
 
     renderer.setAnimationLoop((time) => {
       const current = worldRef.current;
+
       buildGrid.visible = modeRef.current === "BUILD" || modeRef.current === "ROAD";
-      host.dataset.gridVisible = String(buildGrid.visible);
-      if (current.revision !== lastRevision || frame % 120 === 0) {
+      decorGrid.visible = modeRef.current === "DECOR" || modeRef.current === "MOVE_PROP";
+      host.dataset.gridVisible = String(buildGrid.visible || decorGrid.visible);
+      host.dataset.gridSize =
+        modeRef.current === "DECOR" || modeRef.current === "MOVE_PROP" ? "1" : "2";
+
+      const presentationKey = `${current.revision}:${selectedPropIdRef.current ?? ""}`;
+      if (presentationKey !== lastPresentationKey || frame % 120 === 0) {
         rebuild();
-        lastRevision = current.revision;
+        lastPresentationKey = presentationKey;
       }
 
       citizensRef.current.forEach((mesh) => {
@@ -657,8 +822,10 @@ export function WorldView({
         mesh.userData.activity = scheduled.activity;
       });
 
-      dynamic.children.forEach((obj, i) => {
-        if (obj.userData.combatBob) obj.position.y = 0.7 + Math.sin(time / 130 + i) * 0.12;
+      dynamic.children.forEach((object, i) => {
+        if (object.userData.combatBob) {
+          object.position.y = 0.7 + Math.sin(time / 130 + i) * 0.12;
+        }
       });
 
       animalsRef.current.forEach((dog, i) => {
@@ -668,19 +835,29 @@ export function WorldView({
         const radius = combatActive ? 1.2 : 4.0;
         dog.position.x = home.x + Math.cos(t) * radius;
         dog.position.z = home.z + Math.sin(t * 0.8) * radius;
-        dog.position.y = 0;
         dog.rotation.y = -t + Math.PI / 2;
+      });
+
+      propWaterRef.current.forEach((water, i) => {
+        water.rotation.y = Math.sin(time / 1500 + i) * 0.04;
       });
 
       const day = (current.simulationSeconds % (24 * 60)) / (24 * 60);
       sun.intensity = 0.7 + Math.max(0, Math.sin(day * Math.PI)) * 2.1;
+      const nightFactor = 1 - Math.max(0, Math.sin(day * Math.PI));
+      propGlowRef.current.forEach((glow) => {
+        const material = glow.material as THREE.MeshStandardMaterial;
+        material.emissiveIntensity = 0.6 + nightFactor * 1.8;
+      });
 
       controls.update();
       renderer.render(scene, camera);
+
       host.dataset.frameCount = String(frame + 1);
       host.dataset.drawCalls = String(renderer.info.render.calls);
       host.dataset.triangles = String(renderer.info.render.triangles);
       host.dataset.citizens = String(citizensRef.current.length);
+      host.dataset.props = String(current.props?.length ?? 0);
 
       const now = performance.now();
       const frameMs = now - lastFrameTime;
