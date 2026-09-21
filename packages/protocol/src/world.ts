@@ -13,6 +13,16 @@ export interface BuildCatalogEntryDto {
   sizeTitle: string;
 }
 
+export interface PropCatalogEntryDto {
+  id: string;
+  title: string;
+  group: string;
+  sizeXMeters: number;
+  sizeZMeters: number;
+  snapMeters: number;
+  sizeTitle: string;
+}
+
 export interface BlockerCatalogEntryDto {
   id: string;
   moneyCost: number;
@@ -25,6 +35,7 @@ export interface WorldViewDto {
   world: WorldState;
   buildCatalog: BuildCatalogEntryDto[];
   blockerCatalog: BlockerCatalogEntryDto[];
+  propCatalog: PropCatalogEntryDto[];
   serverNow: string;
 }
 
