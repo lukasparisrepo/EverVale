@@ -1,0 +1,45 @@
+version: "0.1"
+
+tiers:
+  0:
+    threshold: 0
+    unlocks:
+      - house
+      - workshop
+      - power_plant
+      - water_plant
+      - school
+      - park
+      - guard_post
+
+  1:
+    threshold: 40
+    unlocks:
+      - varum_mine
+      - watchtower
+
+  2:
+    threshold: 120
+    unlocks:
+      - radar
+      - vehicle_factory
+      - armored_car
+
+  3:
+    threshold: 300
+    unlocks:
+      - tank
+      - heavy_turret
+
+  4:
+    threshold: 600
+    unlocks:
+      - airfield
+      - fighter
+      - anti_air
+
+  5:
+    threshold: 1000
+    unlocks:
+      - varum_shield
+      - ufo_interceptor
