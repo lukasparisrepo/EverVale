@@ -34,6 +34,10 @@ const materials = {
   skin: new THREE.MeshStandardMaterial({ color: 0xc89a77, roughness: 0.95 }),
 };
 
+Object.values(materials).forEach((material) => {
+  material.userData.sharedMaterial = true;
+});
+
 function mesh(
   geometry: THREE.BufferGeometry,
   material: THREE.Material,
