@@ -27,7 +27,7 @@ defenders:
     armor: 10
     range_m: 24
     move_speed_mps: 0
-    target: ground
+    target: ground_and_light_air
 
   armored_car:
     tech_tier: 2
