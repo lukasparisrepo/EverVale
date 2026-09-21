@@ -1,0 +1,52 @@
+version: "0.1"
+reference_cycle_seconds: 600
+visual_day_seconds_at_1x: 1440
+
+time:
+  active_speeds: [0, 1, 2, 4]
+  offline_speed: 1
+  logout_forces_speed: 1
+
+starting_world:
+  population: 12
+  happiness: 80
+  money: 1200
+  money_cap: 5000
+  power: 60
+  water: 60
+  varum: 0
+  tech_points: 0
+  tech_tier: 0
+  construction_slots: 1
+  buildings:
+    town_center: 1
+    house: 3
+    power_plant: 1
+    water_plant: 1
+    workshop: 1
+
+society:
+  workforce_fraction: 0.75
+  citizen_power_per_cycle: 0.50
+  citizen_water_per_cycle: 0.75
+  happiness_growth_threshold: 65
+  happiness_smoothing_per_cycle: 0.25
+  growth_per_occupied_house_per_cycle: 0.08
+  growth_world_cap_per_cycle: 0.25
+
+happiness:
+  base: 20
+  power_weight: 20
+  water_weight: 20
+  employment_weight: 15
+  housing_weight: 10
+  education_weight: 5
+  recreation_weight: 5
+  safety_weight: 10
+  baseline_safety: 0.50
+
+offline:
+  exclusive_simulation_lease: true
+  storage_caps_apply: true
+  major_attacks_per_24h_cap: 2
+  critical_building_min_hp_fraction: 0.30
