@@ -10,6 +10,7 @@ buildings:
     upkeep_per_cycle: 0
     money_cap_add: 5000
     construction_slots_add: 1
+    activity_profile: town_center
 
   house:
     tech_tier: 0
@@ -18,49 +19,94 @@ buildings:
     workers: 0
     upkeep_per_cycle: 1
     housing_add: 4
+    activity_profile: house
 
   workshop:
     tech_tier: 0
     money_cost: 250
     build_cycles: 3
     workers: 4
+    job_category: income
+    default_job_priority: 80
+    staffing_mode: continuous
     money_per_worker_per_cycle: 8
     power_use_per_cycle: 4
     water_use_per_cycle: 1
     upkeep_per_cycle: 3
+    activity_profile: workshop
+
+  market:
+    tech_tier: 0
+    money_cost: 220
+    build_cycles: 2
+    workers: 3
+    job_category: income
+    default_job_priority: 78
+    staffing_mode: continuous
+    money_per_worker_per_cycle: 6
+    power_use_per_cycle: 2
+    water_use_per_cycle: 2
+    upkeep_per_cycle: 2
+    activity_profile: market
+
+  farm:
+    tech_tier: 0
+    money_cost: 300
+    build_cycles: 3
+    workers: 3
+    job_category: income
+    default_job_priority: 75
+    staffing_mode: continuous
+    money_per_worker_per_cycle: 6
+    power_use_per_cycle: 1
+    water_use_per_cycle: 4
+    upkeep_per_cycle: 3
+    activity_profile: farm
 
   power_plant:
     tech_tier: 0
     money_cost: 350
     build_cycles: 4
     workers: 2
+    job_category: utility_power
+    default_job_priority: 100
+    staffing_mode: continuous
     money_per_worker_per_cycle: 2
     power_production_per_cycle: 40
     power_cap_add: 120
     upkeep_per_cycle: 4
+    activity_profile: utility_plant
 
   water_plant:
     tech_tier: 0
     money_cost: 350
     build_cycles: 4
     workers: 2
+    job_category: utility_water
+    default_job_priority: 95
+    staffing_mode: continuous
     money_per_worker_per_cycle: 2
     water_production_per_cycle: 35
     water_cap_add: 120
     power_use_per_cycle: 4
     upkeep_per_cycle: 4
+    activity_profile: utility_plant
 
   school:
     tech_tier: 0
     money_cost: 300
     build_cycles: 3
     workers: 2
+    job_category: education
+    default_job_priority: 60
+    staffing_mode: continuous
     money_per_worker_per_cycle: 1
     tech_production_per_cycle: 4
     power_use_per_cycle: 3
     water_use_per_cycle: 2
     upkeep_per_cycle: 3
     education_coverage_add: 0.35
+    activity_profile: school
 
   park:
     tech_tier: 0
@@ -70,30 +116,54 @@ buildings:
     water_use_per_cycle: 1
     upkeep_per_cycle: 1
     recreation_coverage_add: 0.35
+    activity_profile: park
 
   guard_post:
     tech_tier: 0
     money_cost: 250
     build_cycles: 2
     workers: 2
+    job_category: defense_ready
+    default_job_priority: 65
+    staffing_mode: continuous
     power_use_per_cycle: 2
     water_use_per_cycle: 1
     upkeep_per_cycle: 4
     safety_add: 0.35
     combat_spawn:
       guard: 2
+    activity_profile: guard_post
 
   varum_mine:
     tech_tier: 1
     money_cost: 500
     build_cycles: 5
     workers: 2
+    job_category: varum
+    default_job_priority: 50
+    staffing_mode: continuous
     money_per_worker_per_cycle: 2
     varum_production_per_cycle: 3
     varum_cap_add: 30
     power_use_per_cycle: 6
     water_use_per_cycle: 2
     upkeep_per_cycle: 5
+    activity_profile: varum_mine
+
+  cafe:
+    tech_tier: 1
+    money_cost: 320
+    build_cycles: 3
+    workers: 3
+    job_category: income
+    default_job_priority: 76
+    staffing_mode: continuous
+    money_per_worker_per_cycle: 7
+    power_use_per_cycle: 3
+    water_use_per_cycle: 3
+    upkeep_per_cycle: 3
+    recreation_coverage_add: 0.08
+    activity_profile: cafe
 
   watchtower:
     tech_tier: 1
@@ -105,27 +175,36 @@ buildings:
     safety_add: 0.20
     combat_spawn:
       watchtower: 1
+    activity_profile: defense_static
 
   radar:
     tech_tier: 2
     money_cost: 800
     build_cycles: 6
     workers: 1
+    job_category: defense_ready
+    default_job_priority: 65
+    staffing_mode: continuous
     power_use_per_cycle: 6
     water_use_per_cycle: 1
     upkeep_per_cycle: 6
     safety_add: 0.15
     warning_lead_bonus: 0.25
+    activity_profile: radar
 
   vehicle_factory:
     tech_tier: 2
     money_cost: 1200
     build_cycles: 8
     workers: 4
+    job_category: advanced_industry
+    default_job_priority: 40
+    staffing_mode: production_order
     money_per_worker_per_cycle: 2
     power_use_per_cycle: 10
     water_use_per_cycle: 3
     upkeep_per_cycle: 8
+    activity_profile: vehicle_factory
 
   airfield:
     tech_tier: 4
@@ -133,9 +212,13 @@ buildings:
     varum_cost: 20
     build_cycles: 12
     workers: 3
+    job_category: defense_ready
+    default_job_priority: 70
+    staffing_mode: continuous
     power_use_per_cycle: 12
     water_use_per_cycle: 4
     upkeep_per_cycle: 12
+    activity_profile: airfield
 
   anti_air:
     tech_tier: 4
@@ -147,6 +230,7 @@ buildings:
     upkeep_per_cycle: 6
     combat_spawn:
       anti_air: 1
+    activity_profile: defense_static
 
   varum_shield:
     tech_tier: 5
@@ -158,3 +242,4 @@ buildings:
     upkeep_per_cycle: 20
     structure_damage_reduction: 0.40
     varum_per_activation: 4
+    activity_profile: varum_shield
