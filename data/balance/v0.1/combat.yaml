@@ -1,0 +1,104 @@
+version: "0.1"
+
+rules:
+  armor_formula: "effective_dps = raw_dps * 100 / (100 + armor)"
+  active_step_seconds: 0.25
+  offline_step_seconds: 1.0
+  defenders_auto_target: true
+  permanent_citizen_death_in_mvp: false
+  disabled_vehicle_repairable: true
+
+defenders:
+  guard:
+    hp: 150
+    dps: 10
+    armor: 5
+    target: ground
+
+  watchtower:
+    hp: 360
+    dps: 18
+    armor: 10
+    target: ground
+
+  armored_car:
+    tech_tier: 2
+    money_cost: 600
+    varum_cost: 10
+    build_cycles: 4
+    upkeep_per_cycle: 4
+    hp: 675
+    dps: 28
+    armor: 20
+    target: ground
+
+  tank:
+    tech_tier: 3
+    money_cost: 1600
+    varum_cost: 30
+    build_cycles: 6
+    upkeep_per_cycle: 8
+    hp: 1350
+    dps: 55
+    armor: 45
+    target: ground
+
+  anti_air:
+    hp: 525
+    dps: 65
+    armor: 20
+    target: air
+
+  fighter:
+    tech_tier: 4
+    money_cost: 1800
+    varum_cost: 40
+    build_cycles: 8
+    upkeep_per_cycle: 10
+    hp: 750
+    dps: 70
+    armor: 20
+    target: air_and_ground
+
+enemies:
+  critter:
+    hp: 60
+    dps: 5
+    armor: 0
+    budget_cost: 5
+    class: ground
+
+  raider:
+    hp: 120
+    dps: 8
+    armor: 5
+    budget_cost: 10
+    class: ground
+
+  brute:
+    hp: 375
+    dps: 18
+    armor: 12
+    budget_cost: 30
+    class: ground
+
+  drone:
+    hp: 330
+    dps: 16
+    armor: 10
+    budget_cost: 25
+    class: air
+
+  ufo_raider:
+    hp: 900
+    dps: 35
+    armor: 25
+    budget_cost: 70
+    class: air
+
+  carrier:
+    hp: 2400
+    dps: 65
+    armor: 40
+    budget_cost: 180
+    class: air
