@@ -115,3 +115,22 @@ Playwright verifies the real client/server loop:
 login → road/build → reload → offline catch-up → combat → aftermath → repair.
 
 Latest Engineering and Preflight workflows are both PASS.
+
+
+## Runtime-quality baseline
+
+See:
+`docs/69_M1_RUNTIME_QUALITY_AUDIT.md`
+
+Current M1 runtime-quality baseline includes:
+- placement ghost feedback
+- authoritative terrain blockers
+- blocker clearing
+- readable citizen schedules
+- ambient dog
+- world clock
+- Three.js renderer telemetry
+- browser performance budgets
+- Playwright page-error detection
+
+Latest Engineering and Preflight workflows are PASS.
