@@ -32,6 +32,7 @@ interface Props {
   selectedPropId: string | null;
   movingPropId: string | null;
   roadStart: { x: number; z: number } | null;
+  visualPopulationOverride: number | null;
   onGroundClick(position: { x: number; z: number }): void;
   onPropSelect(propId: string | null): void;
   onRouting?(routedCitizens: number, disconnectedRoutes: number): void;
@@ -333,6 +334,7 @@ export function WorldView({
   selectedPropId,
   movingPropId,
   roadStart,
+  visualPopulationOverride,
   onGroundClick,
   onPropSelect,
   onRouting,
@@ -353,6 +355,7 @@ export function WorldView({
   const propSelectRef = useRef(onPropSelect);
   const routingRef = useRef(onRouting);
   const roadStartRef = useRef(roadStart);
+  const visualPopulationRef = useRef(visualPopulationOverride);
   const citizensRef = useRef<THREE.Mesh[]>([]);
   const animalsRef = useRef<THREE.Group[]>([]);
   const propWaterRef = useRef<THREE.Mesh[]>([]);
@@ -378,6 +381,7 @@ export function WorldView({
   useEffect(() => { propSelectRef.current = onPropSelect; }, [onPropSelect]);
   useEffect(() => { routingRef.current = onRouting; }, [onRouting]);
   useEffect(() => { roadStartRef.current = roadStart; }, [roadStart]);
+  useEffect(() => { visualPopulationRef.current = visualPopulationOverride; }, [visualPopulationOverride]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -773,7 +777,11 @@ export function WorldView({
 
       const fallbackLeisure = park?.position ?? { x: 0, y: 0, z: 0 };
 
-      for (let i = 0; i < Math.min(40, current.society.population); i += 1) {
+      const presentedPopulation = Math.min(
+        40,
+        visualPopulationRef.current ?? current.society.population,
+      );
+      for (let i = 0; i < presentedPopulation; i += 1) {
         const child = i % 5 === 0;
         const citizen = new THREE.Mesh(
           new THREE.CapsuleGeometry(child ? 0.25 : 0.32, child ? 0.55 : 0.8, 4, 8),
