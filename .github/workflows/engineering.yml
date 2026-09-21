@@ -18,3 +18,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: M1 browser runtime proof
+        run: pnpm test:e2e
