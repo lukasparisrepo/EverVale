@@ -247,6 +247,7 @@ export function WorldView({
   const roadStartRef = useRef(roadStart);
   const dynamicRef = useRef<THREE.Group | null>(null);
   const citizensRef = useRef<THREE.Mesh[]>([]);
+  const animalsRef = useRef<THREE.Group[]>([]);
 
   useEffect(() => { worldRef.current = world; }, [world]);
   useEffect(() => { clickRef.current = onGroundClick; }, [onGroundClick]);
@@ -400,6 +401,7 @@ export function WorldView({
     const rebuild = () => {
       dynamic.clear();
       citizensRef.current = [];
+      animalsRef.current = [];
       const current = worldRef.current;
 
       for (const road of current.roads ?? []) {
@@ -446,9 +448,33 @@ export function WorldView({
         citizen.userData.work = { x: work.x, z: work.z };
         citizen.userData.leisure = { x: fallbackLeisure.x, z: fallbackLeisure.z };
         citizen.userData.roadPoint = nearestRoadPoint(current, { x: home.x, z: home.z });
+        const angle = (i * 2.399963229728653) % (Math.PI * 2);
+        const radius = 0.35 + (i % 4) * 0.12;
+        citizen.userData.offsetX = Math.cos(angle) * radius;
+        citizen.userData.offsetZ = Math.sin(angle) * radius;
         citizen.userData.activity = "HOME";
         dynamic.add(citizen);
         citizensRef.current.push(citizen);
+      }
+
+      if (homes.length > 0) {
+        const dog = new THREE.Group();
+        const fur = new THREE.MeshStandardMaterial({ color: 0x9a6a45, roughness: 1 });
+        const body = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.45, 0.42), fur);
+        body.position.y = 0.45;
+        body.castShadow = true;
+        dog.add(body);
+        const head = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.38, 0.38), fur);
+        head.position.set(0.55, 0.55, 0);
+        head.castShadow = true;
+        dog.add(head);
+        const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.55, 6), fur);
+        tail.rotation.z = Math.PI / 3;
+        tail.position.set(-0.55, 0.62, 0);
+        dog.add(tail);
+        dog.userData.home = homes[0]?.position ?? { x: 0, y: 0, z: 0 };
+        dynamic.add(dog);
+        animalsRef.current.push(dog);
       }
 
       current.combat?.actors.forEach((a) => {
@@ -484,14 +510,27 @@ export function WorldView({
       citizensRef.current.forEach((mesh) => {
         const scheduled = schedulePosition(current, mesh);
         const i = Number(mesh.userData.index);
-        mesh.position.x += (scheduled.x - mesh.position.x) * 0.12;
-        mesh.position.z += (scheduled.z - mesh.position.z) * 0.12;
+        const offsetX = Number(mesh.userData.offsetX ?? 0);
+        const offsetZ = Number(mesh.userData.offsetZ ?? 0);
+        mesh.position.x += (scheduled.x + offsetX - mesh.position.x) * 0.12;
+        mesh.position.z += (scheduled.z + offsetZ - mesh.position.z) * 0.12;
         mesh.position.y = 0.65 + Math.sin(time / 220 + i) * 0.035;
         mesh.userData.activity = scheduled.activity;
       });
 
       dynamic.children.forEach((obj, i) => {
         if (obj.userData.combatBob) obj.position.y = 0.7 + Math.sin(time / 130 + i) * 0.12;
+      });
+
+      animalsRef.current.forEach((dog, i) => {
+        const home = dog.userData.home as {x:number;z:number};
+        const t = current.simulationSeconds / 18 + i * 1.7;
+        const combatActive = current.combat && current.combat.status !== "RESOLVED";
+        const radius = combatActive ? 1.2 : 4.0;
+        dog.position.x = home.x + Math.cos(t) * radius;
+        dog.position.z = home.z + Math.sin(t * 0.8) * radius;
+        dog.position.y = 0;
+        dog.rotation.y = -t + Math.PI / 2;
       });
 
       const day = (current.simulationSeconds % (24 * 60)) / (24 * 60);
