@@ -149,7 +149,7 @@ export default function App() {
         </div>
       </header>
 
-      {combatLabel && <div className="combat-banner">{combatLabel}</div>}
+      {combatLabel && <div className="combat-banner" data-testid="combat-status">{combatLabel}</div>}
 
       <aside className="build-panel">
         <h3>Build</h3>
@@ -169,6 +169,8 @@ export default function App() {
       </aside>
 
       <aside className="status-panel">
+        <div data-testid="building-count"><strong>Buildings</strong> {w.buildings.length}</div>
+        <div data-testid="simulation-seconds"><strong>Sim</strong> {Math.floor(w.simulationSeconds)}s</div>
         <div><strong>Workforce</strong> {w.society.assignedWorkers}/{w.society.workforce}</div>
         <div><strong>Education</strong> {Math.round(w.society.educationCoverage * 100)}%</div>
         <div><strong>Recreation</strong> {Math.round(w.society.recreationCoverage * 100)}%</div>
@@ -193,7 +195,7 @@ export default function App() {
         {w.events.length > 0 && (
           <div className="event-log">
             <strong>Last event</strong>
-            <small>{w.events[w.events.length - 1]?.summary}</small>
+            <small data-testid="event-summary">{w.events[w.events.length - 1]?.summary}</small>
           </div>
         )}
         <button
