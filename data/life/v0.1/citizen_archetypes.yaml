@@ -1,0 +1,97 @@
+version: "0.1"
+
+style:
+  miniature_proportions: true
+  shared_rig: true
+  job_outfit_switching: true
+  personal_names_required: false
+
+age_bands:
+  child:
+    archetypes:
+      - school_backpack
+      - school_bicycle
+      - playground_child
+      - farm_child
+
+  adult:
+    archetypes:
+      - casual_resident
+      - parent_caregiver
+      - dog_walker
+      - cyclist
+      - shopper
+      - cafe_visitor
+      - park_jogger
+      - civic_visitor
+      - workshop_worker
+      - market_vendor
+      - farmer
+      - cafe_worker
+      - shop_clerk
+      - office_worker
+      - builder
+      - mechanic
+      - power_worker
+      - water_worker
+      - maintenance_worker
+      - fire_crew
+      - clinic_worker
+      - service_worker
+      - teacher
+      - researcher
+      - weather_worker
+      - varum_miner
+      - varum_engineer
+      - town_guard
+      - shield_guard
+      - rocket_ranger
+      - vehicle_crew
+      - pilot
+      - radar_operator
+
+  senior:
+    archetypes:
+      - senior_resident
+      - senior_gardener
+      - senior_park_walker
+
+shared_animation_sets:
+  base:
+    - idle
+    - walk
+    - brisk_walk
+    - run
+    - sit
+    - carry
+    - talk
+    - look
+
+  work:
+    - hammer
+    - repair
+    - sweep
+    - farm
+    - teach
+    - mine
+    - inspect
+
+  defense:
+    - alert
+    - aim
+    - shield
+    - launcher
+    - shelter_run
+
+variation:
+  seeded:
+    - body_variant
+    - skin_tone
+    - hair_style
+    - hair_tone
+    - palette
+    - hat
+    - glasses
+    - carried_prop
+    - walk_speed_band
+    - idle_style
