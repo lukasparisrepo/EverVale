@@ -164,6 +164,44 @@ Logout disconnects a client; it does not freeze or destroy the world.
 
 Offline simulation continues at normal 1x world progression using coarse deterministic catch-up.
 
+Automation is bounded by:
+- storage caps
+- Housing capacity
+- Tech decision gates
+- maintenance/repair capacity
+- queued construction
+- incident pressure
+- bounded offline threats
+
+The world can progress while unattended, but it cannot make major strategic choices or auto-win for the player.
+
+## Player world identity
+
+Every world has a persistent procedural seed.
+
+The seed defines bounded variation in:
+- terrain terraces
+- water
+- rock/rubble blockers
+- forest patches
+- Varum deposits
+- expansion routes
+
+All seeds must pass fairness validation so one player is not materially advantaged by generation.
+
+## Buildings and art identity
+
+Every buildable structure has:
+- a stable gameplay ID
+- authored display name
+- art identity
+- function
+- visible activity
+- incident profile
+- upgrade hooks
+
+See `docs/37_BUILDING_CATALOG_AND_ART.md`.
+
 ## Multiplayer evolution
 
 Initial play is single-owner. Architecture must support future:
