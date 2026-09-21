@@ -40,6 +40,13 @@ When documents overlap, use the authority below.
 | Early combat levels 1–10 | `docs/55_EARLY_COMBAT_SIMULATION_01_10.md` |
 | 24h online wave cadence | `docs/56_ONLINE_24H_WAVE_SIMULATION.md` |
 | Ambient threat activity | `docs/57_AMBIENT_THREAT_ACTIVITY.md` |
+| Long-run integrated simulation | `docs/60_LONG_RUN_SIMULATION_CONTRACT.md` |
+| Spatial combat simulation | `docs/61_SPATIAL_COMBAT_SIMULATION_CONTRACT.md` |
+| Worldgen validation | `docs/62_WORLDGEN_VALIDATION_CONTRACT.md` |
+| Content/schema validation | `docs/63_CONTENT_SCHEMA_VALIDATION.md` |
+| Persistence DB contract | `docs/64_PERSISTENCE_DATABASE_CONTRACT.md` |
+| Performance budgets | `docs/65_PERFORMANCE_BUDGETS.md` |
+| Pre-engineering lock | `docs/66_PRE_ENGINEERING_DESIGN_LOCK.md` |
 | Studio readiness audit | `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md` |
 | Implementation start gate | `docs/59_IMPLEMENTATION_START_GATE.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
@@ -50,7 +57,7 @@ When documents overlap, use the authority below.
 
 When prose disagrees with machine-readable balance/content data, the versioned data wins unless an audit explicitly changes it.
 
-- Building balance: `data/balance/v0.1/buildings.yaml`
+- Building balance: `data/balance/v0.2/buildings.yaml`
 - Workforce: `data/balance/v0.1/workforce.yaml`
 - Tech: `data/balance/v0.1/tech.yaml`
 - Threat cadence: `data/balance/v0.1/threats.yaml`
@@ -60,9 +67,11 @@ When prose disagrees with machine-readable balance/content data, the versioned d
 - Combat control/outcomes: `data/combat/v0.2/control.yaml`
 - Combat production/readiness: `data/combat/v0.2/production.yaml`
 - Combat structure durability/objectives: `data/combat/v0.2/structures.yaml`
+- Combat special behaviors: `data/combat/v0.2/special_behaviors.yaml`
 - Ambient threat activity: `data/combat/v0.2/ambient_threats.yaml`
 - Early combat levels 1–10: `data/combat/v0.2/early_levels_01_10.yaml`
-- Legacy combat draft: `data/balance/v0.1/combat.yaml` is non-authoritative when it conflicts with v0.2
+- Legacy building draft: `data/balance/v0.1/buildings.yaml` is DEPRECATED
+- Legacy combat draft: `data/balance/v0.1/combat.yaml` is DEPRECATED
 - Simulation constants: `data/balance/v0.1/simulation.yaml`
 - Citizen visual archetypes: `data/life/v0.1/citizen_archetypes.yaml`
 - Activity profiles: `data/life/v0.1/activity_profiles.yaml`
