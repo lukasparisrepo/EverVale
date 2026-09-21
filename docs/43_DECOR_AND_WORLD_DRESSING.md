@@ -1,6 +1,6 @@
 # 43 — Decor & World Dressing
 
-Status: **CANONICAL CONTENT SUPPORT v0.1**
+Status: **CANONICAL DESIGN v0.2 — RUNTIME IMPLEMENTED IN M1.1**
 
 Decor is not one undifferentiated category.
 
@@ -170,3 +170,26 @@ Decor definitions should include:
 - Happiness effect if any
 - render budget class
 - seasonal variants
+
+
+## Runtime implementation authority
+
+Implemented M1.1 behavior is specified by:
+
+`docs/72_M1_1_DECOR_MODE.md`
+
+Machine-readable Prop authority:
+
+`data/content/v0.2/props.yaml`
+
+Canonical runtime rules now include:
+- 1m Prop snap
+- persistent place/move/rotate/delete
+- 45-degree rotation
+- title + physical size metadata
+- server-authoritative collision/cost
+- deterministic procedural visual variation
+- bounded Beauty contribution
+- activity anchors for visible citizen life
+
+The old ID-only file `data/content/v0.1/decor_catalog.yaml` is deprecated.
