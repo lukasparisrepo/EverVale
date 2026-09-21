@@ -16,7 +16,7 @@ When documents overlap, use the authority below.
 | Offline/anti-idle | `docs/09_OFFLINE_SIMULATION.md` + `docs/42_ANTI_IDLE_PROGRESSION.md` |
 | Client/server | `docs/10_CLIENT_SERVER_ARCHITECTURE.md` |
 | Living-world automation | `docs/25_AMBIENT_LIFE_SIMULATION.md` + `docs/26_DAILY_SCHEDULES.md` + `docs/30_WORLD_ACTIVITY_DIRECTOR.md` + `docs/47_CITIZEN_ACTOR_CATALOG.md` |
-| Traffic | `docs/27_TRAFFIC_AND_TRANSPORT.md` |
+| Traffic | `docs/27_TRAFFIC_AND_TRANSPORT.md` + `docs/73_M1_2_ROAD_ROUTING.md` |
 | Parks/social life | `docs/28_PARKS_AND_SOCIAL_LIFE.md` |
 | Animals/farms/pets | `docs/29_ANIMALS_FARMS_PETS.md` |
 | Visual actor contracts | `docs/31_VISUAL_STATE_CONTRACTS.md` |
@@ -51,6 +51,7 @@ When documents overlap, use the authority below.
 | Build grid / footprints / Props | `docs/70_BUILD_GRID_FOOTPRINT_PROP_CONTRACT.md` |
 | HUD/audio asset pipeline | `docs/71_HUD_AUDIO_ASSET_PIPELINE.md` |
 | M1.1 Decor runtime | `docs/72_M1_1_DECOR_MODE.md` |
+| M1.2 road routing | `docs/73_M1_2_ROAD_ROUTING.md` |
 | Studio readiness audit | `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md` |
 | Implementation start gate | `docs/59_IMPLEMENTATION_START_GATE.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
