@@ -130,7 +130,7 @@ export default function App() {
       <WorldView
         world={w}
         mode={mode}
-        selectedBuildId={selectedBuild?.id}
+        selectedBuild={selectedBuild}
         roadStart={roadStart}
         onGroundClick={groundClick}
         onMetrics={setMetrics}
@@ -174,7 +174,8 @@ export default function App() {
             className={mode === "BUILD" && selectedBuild?.id === item.id ? "active" : ""}
             onClick={() => { setMode("BUILD"); setSelectedBuild(item); setRoadStart(null); }}
           >
-            <span>{item.name}</span>
+            <span className="build-title">{item.name}</span>
+            <small>{item.sizeTitle}</small>
             <small>¤{item.moneyCost} · {item.buildCycles} cycles</small>
           </button>
         ))}
@@ -262,7 +263,9 @@ export default function App() {
       </aside>
 
       <footer className="bottom-hint">
-        {mode === "BUILD" && selectedBuild ? `Click near a road to place ${selectedBuild.name}.` :
+        {mode === "BUILD" && selectedBuild
+          ? `${selectedBuild.name} · ${selectedBuild.sizeTitle} · snap ${selectedBuild.gridCellMeters}m — click a green footprint near a road.`
+          :
          mode === "ROAD" ? (roadStart ? "Click road end point." : "Click an existing road end, then its destination.") :
          "Build, connect and watch the town live."}
         {message && <span className="error"> · {message}</span>}
