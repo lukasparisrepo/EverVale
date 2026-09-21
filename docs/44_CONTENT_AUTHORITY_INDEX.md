@@ -12,7 +12,7 @@ When documents overlap, use the authority below.
 | Infrastructure/access | `docs/05_INFRASTRUCTURE.md` + `docs/41_WORLD_CONNECTIVITY_AND_LEVELS.md` |
 | Construction | `docs/06_BUILDINGS_CONSTRUCTION.md` |
 | Citizens/workforce | `docs/07_CITIZENS_SOCIETY.md` + `docs/32_AUTOMATIC_WORKFORCE.md` |
-| Threat/combat cadence | `docs/08_THREATS_DEFENSE.md` + `docs/34_THREAT_CADENCE.md` |
+| Threat/combat cadence | `docs/08_THREATS_DEFENSE.md` + `docs/34_THREAT_CADENCE.md` + `docs/49_ENEMY_UFO_WAVE_PROGRESSION.md` |
 | Offline/anti-idle | `docs/09_OFFLINE_SIMULATION.md` + `docs/42_ANTI_IDLE_PROGRESSION.md` |
 | Client/server | `docs/10_CLIENT_SERVER_ARCHITECTURE.md` |
 | Living-world automation | `docs/25_AMBIENT_LIFE_SIMULATION.md` + `docs/26_DAILY_SCHEDULES.md` + `docs/30_WORLD_ACTIVITY_DIRECTOR.md` + `docs/47_CITIZEN_ACTOR_CATALOG.md` |
@@ -32,6 +32,11 @@ When documents overlap, use the authority below.
 | Three.js/dependencies | `docs/11_THREEJS_STACK.md` + `docs/18_LIBRARY_REFERENCE_MATRIX.md` |
 | Blender/assets | `docs/12_BLENDER_PIPELINE.md` + `docs/19_ASSET_STANDARDS.md` |
 | Whistlevale reference | `docs/36_WHISTLEVALE_REFERENCE_AUDIT.md` |
+| HUD / combat UI | `docs/50_HUD_COMBAT_UI.md` |
+| Settings / controls / accessibility | `docs/51_SETTINGS_ACCESSIBILITY_CONTROLS.md` |
+| Story / campaign | `docs/52_STORY_CAMPAIGN_AND_WORLD_LORE.md` |
+| Combat command / deployment / win-loss | `docs/53_COMBAT_COMMAND_DEPLOYMENT_WIN_LOSS.md` |
+| Animation / VFX state machines | `docs/54_ANIMATION_VFX_STATE_MACHINES.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
 | Military roster/art | `docs/47_MILITARY_ROSTER_AND_ART.md` |
 | Enemy/UFO roster & wave ladder | `docs/48_ENEMY_UFO_WAVE_LADDER.md` |
@@ -44,13 +49,18 @@ When prose disagrees with machine-readable balance/content data, the versioned d
 - Workforce: `data/balance/v0.1/workforce.yaml`
 - Tech: `data/balance/v0.1/tech.yaml`
 - Threat cadence: `data/balance/v0.1/threats.yaml`
-- Combat: `data/balance/v0.1/combat.yaml`
+- Combat units: `data/combat/v0.2/defense_units.yaml`
+- Combat enemies: `data/combat/v0.2/enemies.yaml`
+- Combat waves: `data/combat/v0.2/waves.yaml`
+- Combat control/outcomes: `data/combat/v0.2/control.yaml`
+- Legacy combat draft: `data/balance/v0.1/combat.yaml` is non-authoritative when it conflicts with v0.2
 - Simulation constants: `data/balance/v0.1/simulation.yaml`
 - Citizen visual archetypes: `data/life/v0.1/citizen_archetypes.yaml`
 - Activity profiles: `data/life/v0.1/activity_profiles.yaml`
 - Routine windows: `data/life/v0.1/routines.yaml`
 - Ambient life: `data/life/v0.1/ambient.yaml`
 - Activity anchors: `data/life/v0.1/anchor_types.yaml`
+- Campaign/story: `data/story/v0.1/campaign.yaml`
 - Map generation: `data/world/v0.1/map_generation.yaml`
 - Blockers: `data/world/v0.1/blockers.yaml`
 - Starter world: `data/world/v0.1/starter_world.yaml`
