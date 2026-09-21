@@ -118,6 +118,7 @@ def main():
                 fail(errors, f"tech tier {tier} unknown unlock: {unlock}")
 
     deprecated = [
+        "data/balance/v0.1/buildings.yaml",
         "data/balance/v0.1/combat.yaml",
         "data/balance/v0.1/waves.yaml",
         "data/worldgen/v0.1/generation.yaml",
