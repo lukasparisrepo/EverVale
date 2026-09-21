@@ -97,6 +97,7 @@ const server = createServer(async (req, res) => {
         world,
         buildCatalog: gameData.buildCatalog,
         blockerCatalog: gameData.blockerCatalog,
+        propCatalog: gameData.propCatalog,
         serverNow: new Date().toISOString(),
       });
       return;
