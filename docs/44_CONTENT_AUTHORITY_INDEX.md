@@ -53,6 +53,7 @@ When documents overlap, use the authority below.
 | M1.1 Decor runtime | `docs/72_M1_1_DECOR_MODE.md` |
 | M1.2 road routing | `docs/73_M1_2_ROAD_ROUTING.md` |
 | M1.3 construction presentation | `docs/74_M1_3_CONSTRUCTION_PRESENTATION.md` |
+| M1.4 stress / memory | `docs/75_M1_4_STRESS_MEMORY_AUDIT.md` |
 | Studio readiness audit | `docs/58_STUDIO_READINESS_AUDIT_2026-09-21.md` |
 | Implementation start gate | `docs/59_IMPLEMENTATION_START_GATE.md` |
 | Citizen visual roster | `docs/46_CITIZEN_VISUAL_ROSTER.md` |
