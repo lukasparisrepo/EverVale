@@ -1,5 +1,5 @@
 version: "0.1"
-model_revision: "0.2"
+model_revision: "0.3"
 
 pressure:
   per_cycle_formula: "0.35 + 0.01*population + 0.12*tech_tier + 0.15*active_varum_mines"
@@ -10,32 +10,42 @@ pressure:
   reset_after_major_attack: true
   major_attack_cooldown_cycles: 6
 
-wave_budget:
-  formula: "20 + 1.2*population + 15*tech_tier + 8*active_varum_mines + seeded_variance"
-  seeded_variance_min: -10
-  seeded_variance_max: 10
-
 frequency_design:
   growth_changes_intensity_more_than_frequency: true
   exact_countdown_exposed: false
 
+online_minor_combat:
+  enabled: true
+  first_window_hours_min: 1.5
+  first_window_hours_max: 3.0
+  interval_hours_min: 3.0
+  interval_hours_max: 4.5
+  suppress_within_hours_of_major_wave: 0.6
+  max_per_24h_online: 5
+  reset_major_pressure: false
+  examples:
+    - nibbler_rumpus
+    - wobble_slime_nuisance
+    - burrower_scout
+    - scrap_gobbler_probe
+    - scout_drone_flyby
+
 minor_incidents:
   reset_major_pressure: false
   examples:
-    - critter_incursion
-    - raider_scout
     - monster_tracks
     - radar_anomaly
     - ufo_flyover
     - damaged_fence
 
 family_unlocks:
-  0: [critter, raider]
-  1: [critter, raider, brute]
-  2: [raider, brute, drone]
-  3: [raider, brute, drone, ufo_raider]
-  4: [brute, drone, ufo_raider]
-  5: [drone, ufo_raider, carrier]
+  0: [nibbler, wobble_slime, burrower]
+  1: [shellback, scrap_gobbler]
+  2: [leaper, brute, scout_drone]
+  3: [spitter, ufo_scout]
+  4: [ufo_raider, drop_pod, alien_walker, shield_drone]
+  5: [command_saucer, siege_beast]
+  6: [carrier, anomaly_giant]
 
 warning:
   radar_improves_lead_time: true
@@ -43,5 +53,6 @@ warning:
 
 offline:
   major_attacks_per_24h_cap: 2
+  minor_combat_per_24h_cap: 2
   critical_building_min_hp_fraction: 0.30
   total_disabled_building_fraction_cap: 0.20
