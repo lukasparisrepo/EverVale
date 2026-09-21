@@ -2,102 +2,131 @@
 
 ## MVP question
 
-Can a small settlement genuinely feel alive, interconnected, persistent, and worth returning to?
+Can a small 3D town create a satisfying self-running loop from only:
+
+**Money + Power + Water + Varum + Population + Happiness + Tech?**
 
 ## MVP world
 
-Target:
 - one valley/map around 300×300m
-- 20–40 citizens
-- 14-ish building types
+- 12 starting Population
+- growth toward 30–40 Population
 - editable roads
-- simple terrain/water/vegetation
+- 3D citizens
 - day/night
+- persistent login world
 
-## MVP buildings
+## Core buildings
 
-Minimum:
-- house
-- farm
-- market
-- storage
-- builder/workshop
-- generator
-- water pump
-- reservoir
-- school
-- park
-- guard post
-- shelter
-- Varum mine
-- Varum refinery
+T0:
+- House
+- Workshop
+- Power Plant
+- Water Plant
+- School
+- Park
+- Guard Post
 
-## MVP resources
+T1:
+- Varum Mine
+- Watchtower
 
+T2:
+- Radar
+- Vehicle Factory
+- Armored Car
+
+MVP threat proof may stop here.
+
+## Core resources
+
+Exactly:
 - Money
-- Electricity
+- Power
 - Water
 - Varum
-- simple food commodity
 
-## MVP citizen loop
+Progress/state:
+- Tech
+- Population
+- Workforce
+- Happiness
 
-Citizen can:
-- get home
-- get job/school
-- walk routes
-- work/attend
-- visit recreation
-- return home
-- shelter during danger
+No Food.
+No Raw/Refined Varum split.
+No construction-goods commodity.
 
-## MVP threat
+## Required economic loop
 
-One monster/raider family.
+`House + Happiness → Population`
 
-Required:
-- hidden event timing
-- warning signal
-- autonomous defense
-- citizen shelter behavior
+`Population → Workforce`
+
+`Workforce at jobs → Money / Power / Water / Tech / Varum / Defense`
+
+`Tech + Money + Varum → stronger buildings and defense`
+
+## Required threat loop
+
+- hidden pressure
+- no exact countdown
+- warning
+- autonomous defenders
+- combat
 - damage
 - repair
-- after-action history
+- history
 
-## MVP persistence
+## Required persistence loop
 
-Required:
-`login → build → logout → world progresses → login from new session → catch-up → timeline → continue`
+`login → build → logout → economy/threats continue → login elsewhere → catch-up → history → continue`
 
-This is a release gate, not later polish.
+## Phase 0 — numerical proof
+- balance SSOT
+- economy simulation tests
+- combat simulation tests
+- offline determinism test
 
-## Phase 0 — Docs & spikes
-- canon
-- renderer baseline
-- Blender pipeline
-- navmesh spike
-- road spline spike
-- authoritative command spike
-- offline catch-up spike
+## Phase 1 — living block
+- road
+- houses
+- citizens
+- Workshop
+- Power/Water
+- Money
+- save/load
 
-## Phase 1 — Living block
-One road, homes, citizens, work, utility, save/load.
+## Phase 2 — growth and Tech
+- Happiness
+- population Growth
+- School
+- Tech tiers
+- Park
 
-## Phase 2 — Economy
-Production, logistics, Money, power, water, Varum chain.
+## Phase 3 — Varum
+- Mine
+- storage
+- T1/T2 unlocks
+- advanced build costs
 
-## Phase 3 — Society
-School, park, happiness, service coverage, richer schedules.
+## Phase 4 — threat
+- Guard
+- Watchtower
+- Radar
+- ground attack
+- damage/repair/report
 
-## Phase 4 — Threat
-Guard, shelter, raid, damage, repair, report.
+## Phase 5 — advanced military
+- vehicle factory
+- tank
+- airfield
+- fighter
+- anti-air
+- UFO attack
 
-## Phase 5 — Scale/polish
-More citizens, LOD, instancing, visual loop, mobile quality tiers.
-
-## Deferred
-- large aircraft combat
-- diplomatic neighboring state simulation
-- player-vs-player
-- hundreds of commodity types
-- deep individual genetics/personality
+## Phase 6 — scale/polish
+- LOD
+- instancing
+- richer citizens
+- visual critic loop
+- mobile quality profiles
