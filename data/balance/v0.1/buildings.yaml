@@ -249,6 +249,18 @@ buildings:
     upkeep_per_cycle: 8
     activity_profile: vehicle_factory
 
+  heavy_turret:
+    tech_tier: 3
+    money_cost: 1100
+    varum_cost: 18
+    build_cycles: 5
+    workers: 0
+    power_use_per_cycle: 4
+    upkeep_per_cycle: 7
+    combat_spawn:
+      heavy_turret: 1
+    activity_profile: defense_static
+
   airfield:
     tech_tier: 4
     money_cost: 2200
