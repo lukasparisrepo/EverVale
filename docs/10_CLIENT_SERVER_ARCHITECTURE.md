@@ -4,24 +4,29 @@
 
 ```
 Browser
-  ├─ Three.js renderer
+  ├─ Three.js world renderer
   ├─ React HUD
-  ├─ input / camera / VFX
+  ├─ local visual animation
   └─ network client
           │
           │ HTTPS + WebSocket
           ▼
-Authoritative Server
-  ├─ session/auth
+Authoritative Node.js Server
+  ├─ auth/session
   ├─ world commands
-  ├─ simulation
-  ├─ threat director
+  ├─ economy simulation
+  ├─ mobility graph
+  ├─ threat/combat
   ├─ persistence
-  └─ realtime state
+  └─ realtime replication
           │
           ├─ PostgreSQL
-          └─ background jobs
+          └─ pg-boss workers
 ```
+
+## Runtime baseline
+
+Node.js **22.12+** is the server baseline because approved realtime/background-job dependencies require modern Node 22.
 
 ## Monorepo target
 
@@ -33,53 +38,91 @@ packages/
   simulation/
   protocol/
   world-data/
+  balance-data/
   asset-manifest/
   shared/
 tools/
   blender/
   validation/
 docs/
+data/
+  balance/
 ```
+
+## Server truth
+
+Server owns:
+- Money
+- Power
+- Water
+- Varum
+- Tech
+- Population
+- Happiness
+- Workforce assignment
+- buildings
+- road graph
+- construction
+- combat
+- threat pressure
+- world time
+
+## Client truth
+
+Client owns only presentation:
+- mesh
+- animation
+- particles
+- camera
+- UI
+- placement preview
+- interpolation
 
 ## Command flow
 
-Client sends intent:
-- place building
-- draw road
-- demolish
-- set priority
-- purchase vehicle
+Client submits intent.
 
 Server:
 1. authenticates
-2. authorizes membership
-3. validates
-4. mutates canonical state
-5. persists/event-logs as needed
-6. publishes authoritative result
+2. authorizes
+3. checks world revision/lease
+4. validates resources/Tech/placement
+5. mutates canonical state
+6. persists
+7. broadcasts result
+
+## Mobility
+
+The server maintains a weighted road/access graph.
+
+Approved graph stack:
+- Graphology
+- graphology-shortest-path
+
+Three.js/Recast can create visual/local walking paths but cannot replace the server graph as the economy source of truth.
+
+## Exclusive world ownership
+
+An ACTIVE room or background worker must hold the simulation lease before advancing time.
+
+All writes use world revision checks / transactions.
 
 ## State replication
-
-Do not transmit entire world every frame.
 
 Use:
 - initial snapshot
 - compact patches/events
-- logical citizen movement
-- interpolation client-side
+- logical citizen destination/state
+- client interpolation
+
+Never replicate every citizen transform every render frame.
 
 ## Simulation package
 
-`packages/simulation` must not import Three.js, React, DOM, or browser-only APIs.
+`packages/simulation` imports no Three.js, React, DOM or browser API.
 
-## Protocol
-
-All cross-boundary payloads require:
-- schema
-- version
-- validation
-- stable IDs
-
-## Anti-cheat / future multiplayer
-
-Because the browser is untrusted, all valuable mutations are revalidated server-side from the first prototype.
+The same package must support:
+- online world ticks
+- offline catch-up
+- deterministic tests
+- future multiplayer
