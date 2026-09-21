@@ -92,6 +92,8 @@ export class PostgresWorldRepository implements WorldRepository {
         [world.worldId, world.ownerId],
       );
       await this.insertSnapshot(client, world);
+      await this.insertEvents(client, world);
+      await this.pruneSnapshots(client, world.worldId);
       await client.query("COMMIT");
     } catch (error) {
       await client.query("ROLLBACK");
@@ -131,6 +133,8 @@ export class PostgresWorldRepository implements WorldRepository {
       );
       if (updated.rowCount !== 1) throw new Error("REVISION_CONFLICT");
       await this.insertSnapshot(client, world);
+      await this.insertEvents(client, world);
+      await this.pruneSnapshots(client, world.worldId);
       if (acceptedCommand) {
         await client.query(
           `INSERT INTO world_commands
@@ -153,6 +157,40 @@ export class PostgresWorldRepository implements WorldRepository {
     } finally {
       client.release();
     }
+  }
+
+  private async insertEvents(client: PoolClient, world: WorldState): Promise<void> {
+    for (const event of world.events) {
+      await client.query(
+        `INSERT INTO world_events
+          (id, world_id, revision, event_type, happened_at, severity, entity_ids, data, player_summary)
+         VALUES ($1::uuid, $2, $3, $4, $5, $6, '[]'::jsonb, '{}'::jsonb, $7)
+         ON CONFLICT (id) DO NOTHING`,
+        [
+          event.id,
+          world.worldId,
+          world.revision,
+          event.type,
+          event.happenedAt,
+          event.severity,
+          event.summary,
+        ],
+      );
+    }
+  }
+
+  private async pruneSnapshots(client: PoolClient, worldId: string): Promise<void> {
+    await client.query(
+      `DELETE FROM world_snapshots
+       WHERE id IN (
+         SELECT id
+         FROM world_snapshots
+         WHERE world_id = $1
+         ORDER BY revision DESC
+         OFFSET $2
+       )`,
+      [worldId, SNAPSHOT_RETENTION],
+    );
   }
 
   private async insertSnapshot(client: PoolClient, world: WorldState): Promise<void> {
