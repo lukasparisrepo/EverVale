@@ -14,10 +14,10 @@ export interface RuntimeMetrics {
 interface Props {
   world: WorldState;
   mode: "SELECT" | "BUILD" | "ROAD";
-  selectedBuildId?: string;
+  selectedBuildId: string | undefined;
   roadStart: { x: number; z: number } | null;
   onGroundClick(position: { x: number; z: number }): void;
-  onMetrics?(metrics: RuntimeMetrics): void;
+  onMetrics: ((metrics: RuntimeMetrics) => void) | undefined;
 }
 
 const buildingColor: Record<string, number> = {
