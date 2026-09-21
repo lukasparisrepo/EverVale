@@ -4,6 +4,7 @@ import { advanceCombat } from "./combat.js";
 import { advanceConstruction } from "./construction.js";
 import { happinessTarget, smoothHappiness } from "./happiness.js";
 import { advancePopulation } from "./population.js";
+import { beautyFromProps } from "./props.js";
 import { advanceRepairs } from "./repair.js";
 import { allocateWorkforce, applyWorkforceToSociety } from "./workforce.js";
 import type { SimulationDefinitions, WorldState } from "./world.types.js";
@@ -114,12 +115,15 @@ export function advanceWorld(
   };
 
   const employment = workforce.totalWorkforce <= 0 ? 1 : workforce.assigned / workforce.totalWorkforce;
+  const beauty = beautyFromProps(world, definitions);
+
   let society = applyWorkforceToSociety({
     ...world.society,
     housingCapacity: Math.max(12, housing),
     educationCoverage: clamp01(education),
     recreationCoverage: clamp01(recreation),
     safety: clamp01(0.5 + safety),
+    beauty,
   }, workforce);
 
   society = smoothHappiness(
@@ -132,6 +136,7 @@ export function advanceWorld(
       educationCoverage: society.educationCoverage,
       recreationCoverage: society.recreationCoverage,
       safety: society.safety,
+      beautyBonus: society.beauty,
     }),
     cycleFraction,
   );
