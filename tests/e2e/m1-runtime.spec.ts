@@ -64,13 +64,20 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
   expect(citizens).toBeLessThanOrEqual(30);
   console.log("M1_RENDER_METRICS", { drawCalls, triangles, citizens });
 
+  const cottageButton = page.getByRole("button", { name: /Hearth Cottage/i });
+  await expect(cottageButton).toContainText("3×2 grid · 6×4m");
+
+  // Grid must appear as soon as build mode is selected.
+  await cottageButton.click();
+  await expect(page.locator(".world-view")).toHaveAttribute("data-grid-visible", "true");
+
   // Build ghost must immediately show invalid placement over the occupied civic core.
-  await page.getByRole("button", { name: /Hearth Cottage/i }).click();
   const canvasBox = await page.locator("canvas").boundingBox();
   expect(canvasBox).not.toBeNull();
   if (canvasBox) {
     await page.mouse.move(canvasBox.x + canvasBox.width / 2, canvasBox.y + canvasBox.height / 2);
     await expect(page.locator(".world-view")).toHaveAttribute("data-placement-valid", "false");
+    await expect(page.locator(".world-view")).toHaveAttribute("data-placement-size", "3×2 grid · 6×4m");
   }
   await page.getByRole("button", { name: "Select" }).click();
 
@@ -115,10 +122,13 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
 
   const placed = await apiCommand(request, ownerId!, "PLACE_BUILDING", {
     definitionId: "house_small",
-    x: 31,
-    z: 4,
+    x: 31.2,
+    z: 4.7,
   });
   expect(placed.ok()).toBeTruthy();
+  const placedBody = await placed.json();
+  const placedHouse = placedBody.world.buildings.at(-1);
+  expect(placedHouse.position).toEqual({ x: 32, y: 0, z: 4 });
 
   await expect(page.getByTestId("building-count")).toContainText("8");
 
