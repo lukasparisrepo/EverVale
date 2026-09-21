@@ -67,7 +67,9 @@ M1 budgets:
 
 Starter scene therefore has substantial headroom.
 
-This is not yet a 40-citizen or final-art benchmark.
+A dedicated 40-citizen benchmark now passes; see `docs/75_M1_4_STRESS_MEMORY_AUDIT.md`.
+
+Final-art and target-hardware benchmarks are still pending.
 
 ## CI gates
 
@@ -109,14 +111,18 @@ Resolution:
 
 Before M1 is called fully playtest-ready, still measure:
 
-1. 30–40 citizen benchmark scene
-2. 30-minute browser memory stability
-3. target desktop/laptop hardware
-4. build/road feel with real mouse play, not only automated checks
-5. blocker clearing feel and feedback timing
-6. proper road-follow/pathfinding instead of presentation waypoints
-7. final graybox readability under rain/night
-8. first human playtest notes
+1. 30-minute physical-browser memory stability
+2. target desktop/laptop hardware
+3. build/road feel with real mouse play, not only automated checks
+4. blocker clearing feel and feedback timing
+5. final graybox readability under rain/night
+6. first human playtest notes
+
+Completed since this audit:
+- 40-citizen CI benchmark
+- renderer geometry/texture leak gate
+- bounded post-GC heap gate
+- actual road-graph routing instead of center-waypoint presentation
 
 These are measurement/polish gates, not foundational architecture gaps.
 
