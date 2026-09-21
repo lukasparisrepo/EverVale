@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { WorldSpeed } from "@evervale/domain/world.types";
-import type { BuildCatalogEntryDto, WorldCommand, WorldViewDto } from "@evervale/protocol/world";
+import type {
+  BuildCatalogEntryDto,
+  PropCatalogEntryDto,
+  WorldCommand,
+  WorldViewDto,
+} from "@evervale/protocol/world";
 import { devLogin, getWorld, sendCommand } from "./api";
 import { WorldView, type RuntimeMetrics } from "./world/WorldView";
 
-type Mode = "SELECT" | "BUILD" | "ROAD";
+type Mode = "SELECT" | "BUILD" | "ROAD" | "DECOR" | "MOVE_PROP";
+type CatalogTab = "BUILD" | "DECOR";
 
 function Login({ onLogin }: { onLogin(ownerId: string): void }) {
   const [handle, setHandle] = useState("builder");
@@ -40,7 +46,13 @@ export default function App() {
   const [ownerId, setOwnerId] = useState(() => localStorage.getItem("evervale.owner") ?? "");
   const [view, setView] = useState<WorldViewDto | null>(null);
   const [mode, setMode] = useState<Mode>("SELECT");
+  const [catalogTab, setCatalogTab] = useState<CatalogTab>("BUILD");
   const [selectedBuild, setSelectedBuild] = useState<BuildCatalogEntryDto | null>(null);
+  const [selectedProp, setSelectedProp] = useState<PropCatalogEntryDto | null>(null);
+  const [selectedPropId, setSelectedPropId] = useState<string | null>(null);
+  const [movingPropId, setMovingPropId] = useState<string | null>(null);
+  const [propRotation, setPropRotation] = useState(0);
+  const [propGroup, setPropGroup] = useState("vegetation");
   const [roadStart, setRoadStart] = useState<{x:number;z:number} | null>(null);
   const [message, setMessage] = useState("Loading world...");
   const [metrics, setMetrics] = useState<RuntimeMetrics | null>(null);
@@ -80,8 +92,58 @@ export default function App() {
     }
   }, [ownerId, refresh, view]);
 
+  const propGroups = useMemo(
+    () => Array.from(new Set(view?.propCatalog.map((p) => p.group) ?? [])),
+    [view],
+  );
+
+  const filteredProps = useMemo(
+    () => view?.propCatalog.filter((p) => p.group === propGroup) ?? [],
+    [view, propGroup],
+  );
+
+  const unlockedCatalog = useMemo(
+    () => view?.buildCatalog.filter((b) => b.techTier <= view.world.resources.techTier) ?? [],
+    [view],
+  );
+
+  const movingPropMeta = useMemo(() => {
+    if (!view || !movingPropId) return null;
+    const instance = view.world.props.find((p) => p.id === movingPropId);
+    if (!instance) return null;
+    return view.propCatalog.find((p) => p.id === instance.definitionId) ?? null;
+  }, [movingPropId, view]);
+
+  const movingPropInstance = useMemo(
+    () => view?.world.props.find((p) => p.id === movingPropId) ?? null,
+    [movingPropId, view],
+  );
+
+  const selectedPropInstance = useMemo(
+    () => view?.world.props.find((p) => p.id === selectedPropId) ?? null,
+    [selectedPropId, view],
+  );
+
+  const selectedPropMeta = useMemo(() => {
+    if (!view || !selectedPropInstance) return null;
+    return view.propCatalog.find((p) => p.id === selectedPropInstance.definitionId) ?? null;
+  }, [selectedPropInstance, view]);
+
+  const activePreviewProp = mode === "MOVE_PROP" ? movingPropMeta : selectedProp;
+  const activePreviewRotation =
+    mode === "MOVE_PROP" ? (movingPropInstance?.rotationY ?? 0) : propRotation;
+
+  const enterSelect = useCallback(() => {
+    setMode("SELECT");
+    setSelectedBuild(null);
+    setSelectedProp(null);
+    setMovingPropId(null);
+    setRoadStart(null);
+  }, []);
+
   const groundClick = useCallback((p: {x:number;z:number}) => {
     if (!view) return;
+
     if (mode === "BUILD" && selectedBuild) {
       void command({
         type: "PLACE_BUILDING",
@@ -89,6 +151,31 @@ export default function App() {
       });
       return;
     }
+
+    if (mode === "DECOR" && selectedProp) {
+      void command({
+        type: "PLACE_PROP",
+        payload: {
+          definitionId: selectedProp.id,
+          x: p.x,
+          z: p.z,
+          rotationY: propRotation,
+        },
+      });
+      return;
+    }
+
+    if (mode === "MOVE_PROP" && movingPropId) {
+      void command({
+        type: "MOVE_PROP",
+        payload: { propId: movingPropId, x: p.x, z: p.z },
+      });
+      setSelectedPropId(movingPropId);
+      setMovingPropId(null);
+      setMode("SELECT");
+      return;
+    }
+
     if (mode === "ROAD") {
       if (!roadStart) {
         setRoadStart(p);
@@ -101,12 +188,44 @@ export default function App() {
         setRoadStart(null);
       }
     }
-  }, [command, mode, roadStart, selectedBuild, view]);
+  }, [
+    command,
+    mode,
+    movingPropId,
+    propRotation,
+    roadStart,
+    selectedBuild,
+    selectedProp,
+    view,
+  ]);
 
-  const unlockedCatalog = useMemo(
-    () => view?.buildCatalog.filter((b) => b.techTier <= view.world.resources.techTier) ?? [],
-    [view],
-  );
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        enterSelect();
+        return;
+      }
+      if (mode === "DECOR" && (event.key.toLowerCase() === "q" || event.key.toLowerCase() === "e")) {
+        const direction = event.key.toLowerCase() === "q" ? -1 : 1;
+        setPropRotation((value) => value + direction * Math.PI / 4);
+      }
+      if (mode === "SELECT" && selectedPropInstance && event.key.toLowerCase() === "r") {
+        void command({
+          type: "ROTATE_PROP",
+          payload: {
+            propId: selectedPropInstance.id,
+            rotationY: selectedPropInstance.rotationY + Math.PI / 4,
+          },
+        });
+      }
+      if (mode === "SELECT" && selectedPropInstance && event.key === "Delete") {
+        void command({ type: "DELETE_PROP", payload: { propId: selectedPropInstance.id } });
+        setSelectedPropId(null);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [command, enterSelect, mode, selectedPropInstance]);
 
   if (!ownerId) return <Login onLogin={setOwnerId} />;
   if (!view) return <div className="loading">{message || "Loading EverVale..."}</div>;
@@ -114,7 +233,7 @@ export default function App() {
   const w = view.world;
   const combatLabel = w.combat && w.combat.status !== "RESOLVED"
     ? w.combat.status === "WARNING"
-      ? `⚠ Strange movement — contact soon`
+      ? "⚠ Strange movement — contact soon"
       : "⚔ Threat contact"
     : w.combat?.outcome
       ? `${w.combat.outcome} — ${w.combat.summary ?? ""}`
@@ -132,12 +251,24 @@ export default function App() {
         mode={mode}
         selectedBuild={selectedBuild}
         buildCatalog={view.buildCatalog}
+        selectedProp={activePreviewProp}
+        propCatalog={view.propCatalog}
+        propRotation={activePreviewRotation}
+        selectedPropId={selectedPropId}
+        movingPropId={movingPropId}
         roadStart={roadStart}
         onGroundClick={groundClick}
+        onPropSelect={(propId) => {
+          setSelectedPropId(propId);
+          setMovingPropId(null);
+          setSelectedBuild(null);
+          setSelectedProp(null);
+          setMode("SELECT");
+        }}
         onMetrics={setMetrics}
       />
 
-      <header className="topbar">
+      <header className="topbar hud-panel">
         <div className="brand">EVERVALE <span>M1</span></div>
         <div className="resources">
           <b>¤ {Math.floor(w.resources.money)}</b>
@@ -146,6 +277,7 @@ export default function App() {
           <b>◇ {Math.floor(w.resources.varum)}</b>
           <b>👥 {w.society.population}/{w.society.housingCapacity}</b>
           <b>☺ {Math.round(w.society.happiness)}</b>
+          <b title="Town beauty from decor">✦ {w.society.beauty.toFixed(1)}</b>
           <b>T{w.resources.techTier} · {Math.floor(w.resources.techPoints)}</b>
           <b data-testid="world-clock">🕒 {worldClock}</b>
         </div>
@@ -164,31 +296,127 @@ export default function App() {
 
       {combatLabel && <div className="combat-banner" data-testid="combat-status">{combatLabel}</div>}
 
-      <aside className="build-panel">
-        <h3>Build</h3>
-        <button className={mode === "SELECT" ? "active" : ""} onClick={() => { setMode("SELECT"); setSelectedBuild(null); }}>Select</button>
-        <button className={mode === "ROAD" ? "active" : ""} onClick={() => { setMode("ROAD"); setSelectedBuild(null); setRoadStart(null); }}>Dirt Road</button>
-        <div className="divider" />
-        {unlockedCatalog.map((item) => (
+      <aside className="build-panel hud-panel">
+        <div className="tool-tabs">
           <button
-            key={item.id}
-            className={mode === "BUILD" && selectedBuild?.id === item.id ? "active" : ""}
-            onClick={() => { setMode("BUILD"); setSelectedBuild(item); setRoadStart(null); }}
+            className={catalogTab === "BUILD" ? "active" : ""}
+            onClick={() => {
+              setCatalogTab("BUILD");
+              setSelectedProp(null);
+              setMode("SELECT");
+            }}
           >
-            <span className="build-title">{item.name}</span>
-            <small>{item.sizeTitle}</small>
-            <small>¤{item.moneyCost} · {item.buildCycles} cycles</small>
+            Build
           </button>
-        ))}
+          <button
+            className={catalogTab === "DECOR" ? "active" : ""}
+            onClick={() => {
+              setCatalogTab("DECOR");
+              setSelectedBuild(null);
+              setMode("SELECT");
+            }}
+          >
+            Decor
+          </button>
+        </div>
+
+        <div className="primary-tools">
+          <button className={mode === "SELECT" ? "active" : ""} onClick={enterSelect}>Select</button>
+          <button
+            className={mode === "ROAD" ? "active" : ""}
+            onClick={() => {
+              setMode("ROAD");
+              setSelectedBuild(null);
+              setSelectedProp(null);
+              setRoadStart(null);
+            }}
+          >
+            Road
+          </button>
+        </div>
+
+        <div className="divider" />
+
+        {catalogTab === "BUILD" ? (
+          <div className="catalog-list" data-testid="build-catalog">
+            {unlockedCatalog.map((item) => (
+              <button
+                key={item.id}
+                className={mode === "BUILD" && selectedBuild?.id === item.id ? "active catalog-card" : "catalog-card"}
+                onClick={() => {
+                  setMode("BUILD");
+                  setSelectedBuild(item);
+                  setSelectedProp(null);
+                  setSelectedPropId(null);
+                  setRoadStart(null);
+                }}
+              >
+                <span className="build-title">{item.name}</span>
+                <small>{item.sizeTitle}</small>
+                <small>¤{item.moneyCost} · {item.buildCycles} cycles</small>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="group-chips" data-testid="prop-groups">
+              {propGroups.map((group) => (
+                <button
+                  key={group}
+                  className={propGroup === group ? "active" : ""}
+                  onClick={() => setPropGroup(group)}
+                >
+                  {group}
+                </button>
+              ))}
+            </div>
+            <div className="catalog-list prop-catalog" data-testid="prop-catalog">
+              {filteredProps.map((item) => (
+                <button
+                  key={item.id}
+                  className={mode === "DECOR" && selectedProp?.id === item.id ? "active catalog-card" : "catalog-card"}
+                  onClick={() => {
+                    setMode("DECOR");
+                    setSelectedProp(item);
+                    setSelectedBuild(null);
+                    setSelectedPropId(null);
+                    setMovingPropId(null);
+                    setPropRotation(0);
+                  }}
+                >
+                  <span className="prop-card-title">
+                    <span>{item.title}</span>
+                    <em>{item.decorClass === "beauty" ? "✦" : item.decorClass === "activity_anchor" ? "●" : "○"}</em>
+                  </span>
+                  <small>{item.sizeTitle} · snap {item.snapMeters}m</small>
+                  <small>
+                    ¤{item.moneyCost}
+                    {item.beauty > 0 ? ` · +${item.beauty.toFixed(2)} beauty` : ""}
+                  </small>
+                </button>
+              ))}
+            </div>
+            {mode === "DECOR" && selectedProp && (
+              <div className="decor-rotate">
+                <button onClick={() => setPropRotation((r) => r - Math.PI / 4)}>↶ 45°</button>
+                <span>{Math.round((((propRotation * 180 / Math.PI) % 360) + 360) % 360)}°</span>
+                <button onClick={() => setPropRotation((r) => r + Math.PI / 4)}>45° ↷</button>
+              </div>
+            )}
+          </>
+        )}
       </aside>
 
-      <aside className="status-panel">
+      <aside className="status-panel hud-panel">
         <div data-testid="building-count"><strong>Buildings</strong> {w.buildings.length}</div>
+        <div data-testid="prop-count"><strong>Props</strong> {w.props.length}</div>
         <div data-testid="simulation-seconds"><strong>Sim</strong> {Math.floor(w.simulationSeconds)}s</div>
         <div><strong>Workforce</strong> {w.society.assignedWorkers}/{w.society.workforce}</div>
         <div><strong>Education</strong> {Math.round(w.society.educationCoverage * 100)}%</div>
         <div><strong>Recreation</strong> {Math.round(w.society.recreationCoverage * 100)}%</div>
         <div><strong>Safety</strong> {Math.round(w.society.safety * 100)}%</div>
+        <div><strong>Beauty</strong> {w.society.beauty.toFixed(2)} / 5</div>
+
         <div
           className="perf-probe"
           data-testid="runtime-metrics"
@@ -205,6 +433,7 @@ export default function App() {
               : "measuring…"}
           </small>
         </div>
+
         {w.blockers.length > 0 && (
           <div className="blocker-list" data-testid="blocker-list">
             <strong>Expansion blockers</strong>
@@ -220,9 +449,7 @@ export default function App() {
                   {blocker.state === "CLEARING" ? (
                     <small>{Math.ceil(blocker.clearRemainingSeconds)}s</small>
                   ) : (
-                    <button
-                      onClick={() => void command({ type:"CLEAR_BLOCKER", payload:{blockerId:blocker.id} })}
-                    >
+                    <button onClick={() => void command({ type:"CLEAR_BLOCKER", payload:{blockerId:blocker.id} })}>
                       Clear
                     </button>
                   )}
@@ -231,6 +458,7 @@ export default function App() {
             })}
           </div>
         )}
+
         {damaged.length > 0 && (
           <div className="repair-list">
             <strong>Repairs</strong>
@@ -248,12 +476,14 @@ export default function App() {
             ))}
           </div>
         )}
+
         {w.events.length > 0 && (
           <div className="event-log">
             <strong>Last event</strong>
             <small data-testid="event-summary">{w.events[w.events.length - 1]?.summary}</small>
           </div>
         )}
+
         <button
           className="danger"
           disabled={!!w.combat && w.combat.status !== "RESOLVED"}
@@ -263,12 +493,67 @@ export default function App() {
         </button>
       </aside>
 
-      <footer className="bottom-hint">
+      {selectedPropInstance && selectedPropMeta && mode === "SELECT" && (
+        <div className="prop-inspector hud-panel" data-testid="prop-inspector">
+          <div>
+            <strong>{selectedPropMeta.title}</strong>
+            <small>{selectedPropMeta.sizeTitle} · {Math.round(selectedPropInstance.rotationY * 180 / Math.PI)}°</small>
+          </div>
+          <div className="prop-actions">
+            <button
+              onClick={() => void command({
+                type: "ROTATE_PROP",
+                payload: {
+                  propId: selectedPropInstance.id,
+                  rotationY: selectedPropInstance.rotationY - Math.PI / 4,
+                },
+              })}
+            >
+              ↶
+            </button>
+            <button
+              onClick={() => void command({
+                type: "ROTATE_PROP",
+                payload: {
+                  propId: selectedPropInstance.id,
+                  rotationY: selectedPropInstance.rotationY + Math.PI / 4,
+                },
+              })}
+            >
+              ↷
+            </button>
+            <button
+              onClick={() => {
+                setMovingPropId(selectedPropInstance.id);
+                setPropRotation(selectedPropInstance.rotationY);
+                setMode("MOVE_PROP");
+              }}
+            >
+              Move
+            </button>
+            <button
+              className="delete-prop"
+              onClick={() => {
+                void command({ type: "DELETE_PROP", payload: { propId: selectedPropInstance.id } });
+                setSelectedPropId(null);
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
+
+      <footer className="bottom-hint hud-panel">
         {mode === "BUILD" && selectedBuild
           ? `${selectedBuild.name} · ${selectedBuild.sizeTitle} · snap ${selectedBuild.gridCellMeters}m — click a green footprint near a road.`
-          :
-         mode === "ROAD" ? (roadStart ? "Click road end point." : "Click an existing road end, then its destination.") :
-         "Build, connect and watch the town live."}
+          : mode === "DECOR" && selectedProp
+            ? `${selectedProp.title} · ${selectedProp.sizeTitle} · snap ${selectedProp.snapMeters}m · Q/E rotate — click a green footprint.`
+            : mode === "MOVE_PROP" && activePreviewProp
+              ? `Move ${activePreviewProp.title} · click a green position · Esc cancels.`
+              : mode === "ROAD"
+                ? (roadStart ? "Click road end point." : "Click an existing road end, then its destination.")
+                : "Build, decorate, connect and watch the town live."}
         {message && <span className="error"> · {message}</span>}
       </footer>
 
