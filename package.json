@@ -1,0 +1,21 @@
+{
+  "name": "evervale",
+  "private": true,
+  "version": "0.0.1",
+  "packageManager": "pnpm@10.15.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @evervale/server --filter @evervale/client dev",
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "validate:content": "python tools/validation/validate_content.py",
+    "validate:worldgen": "python tools/validation/validate_worldgen.py --seeds 1000"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}
