@@ -1,6 +1,6 @@
 # 00 — Canonical Product Constitution
 
-Status: **CANONICAL BASELINE**
+Status: **CANONICAL BASELINE — SIMULATION MODEL LOCKED v0.1**
 
 ## Identity
 
@@ -8,120 +8,161 @@ EverVale is a cozy persistent 3D society builder presented as a living miniature
 
 > **You build the town. They live in it. The world keeps moving when you leave.**
 
-The player shapes roads, neighborhoods, infrastructure, services, industry, policy, and defense. Citizens then autonomously live inside the system.
+The player shapes roads, housing, utilities, education, production, technology and defense. Citizens then autonomously live inside that system.
+
+## Simulation philosophy
+
+EverVale is a **game simulation, not an engineering simulator**.
+
+Systems may be physically unrealistic as long as they are:
+- immediately understandable
+- internally consistent
+- visible in the world
+- useful for meaningful choices
+
+A Water Plant simply produces Water. A Power Plant produces Power. A Varum Mine produces Varum. The game does not need to model fuel chemistry, aquifers, transformers, plumbing pressure, mining geology or realistic taxation unless a later feature genuinely improves gameplay.
+
+This is intentional and follows the same abstraction principle that makes shelter-management games readable.
 
 ## Non-goals
 
 EverVale is not:
 - a stacked-room shelter clone
-- a hardcore city traffic simulator
-- an RTS requiring unit micro
+- a hardcore utility/traffic simulator
+- an RTS requiring constant unit micro
 - a survival game designed to punish absence
 - a client-only browser toy
+- a realistic municipal economics model
 
-## Canonical strategic resources
+## Canonical resources
 
-Only four strategic resources are canonical for the first complete game loop:
+There are exactly four core resources in v0.1:
 
 1. **Money**
-2. **Electricity**
+2. **Power**
 3. **Water**
 4. **Varum**
 
-Population, workforce, education, happiness, health, and safety are social state, not spendable currencies.
+### Progression state
 
-Physical commodities may exist, but they must remain understandable and tied to visible production.
+**Tech** is progression, not a fifth economy currency. Schools produce Tech Points; thresholds raise Tech Tier and unlock upgrades, vehicles, aircraft and advanced defense.
+
+### Social state
+
+Population, Workforce and Happiness are state variables, not currencies.
+
+## Canonical closed loop
+
+`Housing + Happiness → Population → Workforce → Money`
+
+`Power Plant → Power`
+
+`Water Plant → Water`
+
+`School → Tech → unlocks`
+
+`Varum Mine → Varum → advanced construction / vehicles / defense`
+
+`Money + Power + Water + Workforce → functioning settlement`
+
+`Money + Tech + Varum → military capability`
+
+`Threats → damage / repair / defense demand → new planning decisions`
 
 ## Varum
 
-Varum is a fictional strategic mineral.
+Varum is one fictional mineral resource.
 
-Canonical chain:
+Canonical chain for v0.1:
 
-`Deposit → Mine → Raw Varum → Refinery → Refined Varum → Storage → Advanced Industry`
+`Varum Mine → Varum storage → advanced buildings / upgrades / vehicles / aircraft / shields`
 
-Advanced industry unlocks sensors, shields, armored vehicles, tanks, aircraft, anti-air, and other high-tier systems.
+There is **no Raw Varum / Refined Varum split in the core game**.
 
-Varum is economically grounded, not mana.
+Processing chains may be added later only if they create meaningful gameplay.
 
-## Connected infrastructure
+## Utilities
 
-Buildings do not operate merely because they exist.
+Power and Water behave like readable shelter-sim resource bars:
+- produced by utility buildings
+- stored up to capacity
+- consumed by citizens and operating buildings
+- shortages reduce operation and Happiness
 
-Relevant buildings may depend on:
-- road access
-- electricity
-- water
-- workforce
-- logistics/storage
-- production inputs
-- public service coverage
+MVP does not require individually drawn electrical cables or water pipes.
 
-Failures propagate visibly.
+Road connectivity is the physical network that determines whether a building belongs to the functioning settlement.
 
-Example:
+## Population
 
-`power failure → pump stops → reservoir falls → district loses water → productivity drops → wellbeing drops`
+Housing provides capacity.
 
-## Autonomous society
+When:
+- spare housing exists
+- Happiness is high enough
 
-Citizens can:
-- live in households
-- work
-- attend school
-- commute
-- shop
-- use parks
-- socialize
-- rest
-- seek shelter
-- react to danger
+the settlement accumulates Growth and gains residents automatically.
 
-The player creates conditions rather than issuing constant individual orders.
+The player does not click a “create citizen” button.
+
+## Work and Money
+
+A portion of Population becomes Workforce.
+
+Citizens assigned to workplaces generate Money according to job type. Utility, education, Varum and defense jobs compete with high-income jobs for the same finite Workforce.
+
+This workforce tradeoff is one of the main economic decisions.
+
+## Education and Tech
+
+Schools convert staffed operating capacity into Tech Points.
+
+Tech Tier unlocks:
+- utility upgrades
+- improved buildings
+- radar
+- armored vehicles
+- tanks
+- aircraft
+- anti-air
+- Varum shield technology
 
 ## Threats
 
 Threat families:
-- monsters
-- wildlife
+- fun monsters / creatures
 - raiders
 - hostile neighboring powers
-- UFO/alien incursions
+- UFO / alien incursions
 - rare anomalies
 
 There is **no exact attack countdown**.
 
-Threats use hidden pressure and observable warning signals.
+Threat pressure is hidden. The player receives clues and warnings, not a timer.
 
 ## Defense
 
 Defense is preparation-first.
 
-The player designs:
-- safe infrastructure
-- shelters
-- guard coverage
-- walls/gates
-- sensors/radar
-- defensive vehicles
-- aircraft
+The player builds and maintains:
+- guard posts
+- watchtowers
+- radar
+- armored vehicles
+- tanks
 - anti-air
-- Varum technology
+- aircraft
+- Varum shields
 
-Units can respond autonomously according to doctrine. Direct tactical control may be added later but is not the primary loop.
+Defense consumes workforce, Money, Power and/or Varum, so excessive militarization has an economic cost.
 
 ## Persistent world
 
 World identity is separate from session identity.
 
-Logout disconnects a client; it does not destroy or freeze the world.
+Logout disconnects a client; it does not freeze or destroy the world.
 
-The world may move through:
-- ACTIVE
-- WARM
-- COLD
-
-simulation states, but economic and social progression remains logically continuous.
+Offline simulation continues at normal 1x world progression using coarse deterministic catch-up.
 
 ## Multiplayer evolution
 
@@ -141,6 +182,7 @@ No simulation code may assume exactly one connected client.
 - authoritative Node.js/TypeScript server
 - PostgreSQL persistence
 - server-side background simulation
+- Graphology-compatible weighted mobility graph
 - GLB/glTF runtime assets
 - Blender CLI + MCP for Blender authoring
 
