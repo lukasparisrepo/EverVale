@@ -1,0 +1,198 @@
+version: "0.2"
+
+purpose: "Early combat progression levels 1-10"
+
+rating_formula: "population*2 + tech_tier*80 + functional_buildings*8 + varum_sites*25 + cleared_sectors*15"
+
+levels:
+  1:
+    rating_min: 0
+    rating_max: 99
+    tech_tier_expected: 0
+    population_expected: [12, 14]
+    wave_budget: [8, 14]
+    max_enemy_count: 4
+    enemy_pool: [nibbler, wobble_slime]
+    expected_defense:
+      town_warden: 2
+    templates:
+      - { nibbler: 3 }
+      - { wobble_slime: 2, nibbler: 1 }
+      - { nibbler: 4 }
+    design_goal: "Funny nuisance. Hearth Hall fallback must be enough."
+
+  2:
+    rating_min: 100
+    rating_max: 149
+    tech_tier_expected: 0
+    population_expected: [14, 18]
+    wave_budget: [18, 26]
+    max_enemy_count: 7
+    enemy_pool: [nibbler, wobble_slime, burrower]
+    expected_defense:
+      town_warden: 2
+      guard: 2
+    templates:
+      - { nibbler: 4, wobble_slime: 3 }
+      - { burrower: 2, nibbler: 3 }
+      - { wobble_slime: 4, burrower: 1 }
+    design_goal: "Teach Guard Post value."
+
+  3:
+    rating_min: 150
+    rating_max: 219
+    tech_tier_expected: 1
+    population_expected: [18, 22]
+    wave_budget: [30, 44]
+    max_enemy_count: 5
+    enemy_pool: [shellback, scrap_gobbler, nibbler, wobble_slime]
+    expected_defense:
+      guard: 2
+      watchtower: 1
+    templates:
+      - { shellback: 1, scrap_gobbler: 2, wobble_slime: 2 }
+      - { scrap_gobbler: 3, shellback: 1 }
+      - { shellback: 2, nibbler: 3 }
+    design_goal: "First armor check; tower positioning starts to matter."
+
+  4:
+    rating_min: 220
+    rating_max: 299
+    tech_tier_expected: 1
+    population_expected: [20, 24]
+    wave_budget: [45, 60]
+    max_enemy_count: 5
+    enemy_pool: [shellback, scrap_gobbler, leaper, brute]
+    expected_defense:
+      guard: 2
+      watchtower: 1
+      patrol_buggy: 1
+    templates:
+      - { shellback: 2, scrap_gobbler: 2, leaper: 1 }
+      - { brute: 1, scrap_gobbler: 2 }
+      - { leaper: 2, shellback: 1, scrap_gobbler: 2 }
+    design_goal: "Fast response and first heavy target."
+
+  5:
+    rating_min: 300
+    rating_max: 399
+    tech_tier_expected: 2
+    population_expected: [24, 28]
+    wave_budget: [80, 105]
+    max_enemy_count: 6
+    enemy_pool: [brute, scrap_gobbler, leaper, scout_drone]
+    expected_defense:
+      heavy_guard: 1
+      guard: 2
+      watchtower: 1
+      armored_car: 1
+    templates:
+      - { brute: 2, scrap_gobbler: 2, scout_drone: 1 }
+      - { brute: 1, leaper: 3, scout_drone: 2 }
+      - { brute: 2, shellback: 2, scout_drone: 1 }
+    design_goal: "First light-air pressure; Watchtower remains a valid counter."
+
+  6:
+    rating_min: 400
+    rating_max: 499
+    tech_tier_expected: 2
+    population_expected: [28, 32]
+    wave_budget: [88, 105]
+    max_enemy_count: 6
+    enemy_pool: [brute, shellback, leaper, spitter, scout_drone, ufo_scout]
+    expected_defense:
+      heavy_guard: 2
+      watchtower: 1
+      armored_car: 1
+    templates:
+      - { brute: 1, spitter: 2, ufo_scout: 1 }
+      - { brute: 2, leaper: 1, scout_drone: 1 }
+      - { brute: 1, shellback: 2, spitter: 1, scout_drone: 1 }
+    design_goal: "Mixed-range battle. No heavy-air hard counter required yet."
+
+  7:
+    rating_min: 500
+    rating_max: 599
+    tech_tier_expected: 3
+    population_expected: [32, 36]
+    wave_budget: [100, 125]
+    max_enemy_count: 6
+    enemy_pool: [brute, leaper, spitter, scout_drone, ufo_scout]
+    expected_defense:
+      heavy_guard: 2
+      watchtower: 1
+      armored_car: 1
+      tank: 1
+    templates:
+      - { brute: 2, spitter: 1, ufo_scout: 1 }
+      - { brute: 1, spitter: 2, scout_drone: 2 }
+      - { brute: 2, leaper: 2, ufo_scout: 1 }
+    design_goal: "Tank power spike; player should feel new Tech matters."
+
+  8:
+    rating_min: 600
+    rating_max: 749
+    tech_tier_expected: 3
+    population_expected: [36, 42]
+    wave_budget: [155, 190]
+    max_enemy_count: 7
+    enemy_pool: [brute, leaper, spitter, scout_drone, ufo_scout]
+    expected_defense:
+      heavy_guard: 2
+      watchtower: 2
+      tank: 1
+      rocket_rover: 1
+    templates:
+      - { brute: 2, spitter: 3, ufo_scout: 2 }
+      - { brute: 3, spitter: 2, scout_drone: 2 }
+      - { brute: 2, leaper: 3, ufo_scout: 2 }
+    design_goal: "First real multi-role defense check."
+
+  9:
+    rating_min: 750
+    rating_max: 899
+    tech_tier_expected: 4
+    population_expected: [42, 50]
+    wave_budget: [200, 250]
+    max_enemy_count: 7
+    enemy_pool: [alien_walker, spitter, brute, scout_drone, ufo_raider, shield_drone]
+    expected_defense:
+      heavy_guard: 2
+      watchtower: 2
+      tank: 1
+      rocket_rover: 1
+      anti_air: 1
+    templates:
+      - { alien_walker: 1, spitter: 3, ufo_raider: 1, scout_drone: 2 }
+      - { alien_walker: 1, brute: 2, ufo_raider: 1 }
+      - { brute: 3, spitter: 2, ufo_raider: 1, shield_drone: 1 }
+    design_goal: "First heavy-air hard-counter gate."
+
+  10:
+    rating_min: 900
+    rating_max: 1099
+    tech_tier_expected: 4
+    population_expected: [50, 60]
+    wave_budget: [300, 360]
+    max_enemy_count: 9
+    enemy_pool: [alien_walker, brute, spitter, scout_drone, ufo_raider, shield_drone]
+    expected_defense:
+      heavy_guard: 2
+      watchtower: 2
+      tank: 1
+      rocket_rover: 1
+      anti_air: 1
+      interceptor: 1
+    templates:
+      - { alien_walker: 1, brute: 3, ufo_raider: 1, shield_drone: 2, scout_drone: 2 }
+      - { alien_walker: 2, spitter: 2, ufo_raider: 1, scout_drone: 2 }
+      - { alien_walker: 1, brute: 2, spitter: 2, ufo_raider: 2, shield_drone: 1 }
+    design_goal: "Combined-arms exam before late-game carrier tier."
+
+rules:
+  exact_wave_timer_visible: false
+  heavy_air_before_level_9: false
+  level_is_not_currency: true
+  military_power_does_not_raise_level: true
+  downgrade_if_hard_counter_missing: true
+  expected_defense_is_reference_not_requirement: true
