@@ -15,7 +15,7 @@ When documents overlap, use the authority below.
 | Threat/combat cadence | `docs/08_THREATS_DEFENSE.md` + `docs/34_THREAT_CADENCE.md` |
 | Offline/anti-idle | `docs/09_OFFLINE_SIMULATION.md` + `docs/42_ANTI_IDLE_PROGRESSION.md` |
 | Client/server | `docs/10_CLIENT_SERVER_ARCHITECTURE.md` |
-| Living-world automation | `docs/25_AMBIENT_LIFE_SIMULATION.md` + `docs/26_DAILY_SCHEDULES.md` + `docs/30_WORLD_ACTIVITY_DIRECTOR.md` |
+| Living-world automation | `docs/25_AMBIENT_LIFE_SIMULATION.md` + `docs/26_DAILY_SCHEDULES.md` + `docs/30_WORLD_ACTIVITY_DIRECTOR.md` + `docs/47_CITIZEN_ACTOR_CATALOG.md` |
 | Traffic | `docs/27_TRAFFIC_AND_TRANSPORT.md` |
 | Parks/social life | `docs/28_PARKS_AND_SOCIAL_LIFE.md` |
 | Animals/farms/pets | `docs/29_ANIMALS_FARMS_PETS.md` |
@@ -26,6 +26,7 @@ When documents overlap, use the authority below.
 | Starting world | `docs/40_STARTER_WORLD_AND_EARLY_GAME.md` |
 | Terraces/blockers/access | `docs/41_WORLD_CONNECTIVITY_AND_LEVELS.md` |
 | Decor/world dressing | `docs/43_DECOR_AND_WORLD_DRESSING.md` |
+| Seasons/weather | `docs/46_SEASONS_WEATHER_NATURAL_HAZARDS.md` |
 | Architecture | `docs/35_LAYERED_ARCHITECTURE.md` |
 | Persistence/data contracts | `docs/14_PERSISTENCE_MULTIPLAYER.md` + `docs/20_DATA_CONTRACTS.md` |
 | Three.js/dependencies | `docs/11_THREEJS_STACK.md` + `docs/18_LIBRARY_REFERENCE_MATRIX.md` |
