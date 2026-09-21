@@ -50,6 +50,9 @@ def main():
     production = load("data/combat/v0.2/production.yaml")["production"]
     special = load("data/combat/v0.2/special_behaviors.yaml")["behaviors"]
     early = load("data/combat/v0.2/early_levels_01_10.yaml")["levels"]
+    footprint_data = load("data/content/v0.2/build_footprints.yaml")
+    footprints = footprint_data["footprints"]
+    props = load("data/content/v0.2/props.yaml")["props"]
 
     content_ids = set(content)
     balance_ids = set(balance)
@@ -62,6 +65,35 @@ def main():
         fail(errors, f"content buildings without numeric balance: {missing_balance}")
     if missing_content:
         fail(errors, f"numeric buildings without content definition: {missing_content}")
+
+    footprint_ids = set(footprints)
+    missing_footprints = sorted(content_ids - footprint_ids)
+    orphan_footprints = sorted(footprint_ids - content_ids)
+    if missing_footprints:
+        fail(errors, f"buildings without footprint metadata: {missing_footprints}")
+    if orphan_footprints:
+        fail(errors, f"footprints without building definition: {orphan_footprints}")
+
+    grid_cell = footprint_data.get("grid_cell_meters")
+    if not isinstance(grid_cell, (int, float)) or grid_cell <= 0:
+        fail(errors, "grid_cell_meters must be positive")
+
+    for bid, footprint in footprints.items():
+        x = footprint.get("cells_x")
+        z = footprint.get("cells_z")
+        if not isinstance(x, int) or not isinstance(z, int) or x <= 0 or z <= 0:
+            fail(errors, f"invalid footprint for {bid}: cells_x/cells_z must be positive integers")
+
+    for pid, pdef in props.items():
+        title = pdef.get("title")
+        sx = pdef.get("size_x_m")
+        sz = pdef.get("size_z_m")
+        if not isinstance(title, str) or not title.strip():
+            fail(errors, f"prop {pid} missing title")
+        if not isinstance(sx, (int, float)) or sx <= 0:
+            fail(errors, f"prop {pid} invalid size_x_m")
+        if not isinstance(sz, (int, float)) or sz <= 0:
+            fail(errors, f"prop {pid} invalid size_z_m")
 
     for bid in starter["starting_buildings"]:
         if bid not in content_ids:
@@ -122,6 +154,7 @@ def main():
         "data/balance/v0.1/combat.yaml",
         "data/balance/v0.1/waves.yaml",
         "data/worldgen/v0.1/generation.yaml",
+        "data/content/v0.1/decor_catalog.yaml",
     ]
     for rel in deprecated:
         data = load(rel)
@@ -135,7 +168,7 @@ def main():
         return 1
 
     print("CONTENT VALIDATION PASS")
-    print(f" buildings={len(content_ids)} defenders={len(defender_ids)} enemies={len(enemy_ids)}")
+    print(f" buildings={len(content_ids)} footprints={len(footprint_ids)} props={len(props)} defenders={len(defender_ids)} enemies={len(enemy_ids)}")
     return 0
 
 if __name__ == "__main__":
