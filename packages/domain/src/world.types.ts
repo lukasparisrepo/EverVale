@@ -1,0 +1,136 @@
+export type WorldSpeed = 0 | 1 | 2 | 4;
+export type WorldLifecycle = "ACTIVE" | "WARM" | "COLD";
+export type ConstructionState = "COMPLETE" | "BUILDING";
+export type DamageState = "HEALTHY" | "DAMAGED" | "DISABLED" | "REPAIRING";
+export type CombatOutcome = "CLEAN" | "COSTLY" | "BREACH";
+
+export interface Vec3 {
+  x: number;
+  y: number;
+  z: number;
+}
+
+export interface ResourceState {
+  money: number;
+  moneyCap: number;
+  power: number;
+  powerCap: number;
+  water: number;
+  waterCap: number;
+  varum: number;
+  varumCap: number;
+  techPoints: number;
+  techTier: number;
+}
+
+export interface SocietyState {
+  population: number;
+  housingCapacity: number;
+  happiness: number;
+  growthProgress: number;
+  workforce: number;
+  assignedWorkers: number;
+  educationCoverage: number;
+  recreationCoverage: number;
+  safety: number;
+}
+
+export interface BuildingDefinition {
+  id: string;
+  techTier: number;
+  moneyCost: number;
+  varumCost: number;
+  buildCycles: number;
+  workers: number;
+  priority: number;
+  jobCategory?: string;
+  moneyPerWorker: number;
+  powerProduction: number;
+  powerCapAdd: number;
+  powerUse: number;
+  waterProduction: number;
+  waterCapAdd: number;
+  waterUse: number;
+  varumProduction: number;
+  varumCapAdd: number;
+  techProduction: number;
+  upkeep: number;
+  housingAdd: number;
+  educationCoverageAdd: number;
+  recreationCoverageAdd: number;
+  safetyAdd: number;
+  combatSpawn: Record<string, number>;
+}
+
+export interface CombatActorDefinition {
+  id: string;
+  side: "DEFENDER" | "ENEMY";
+  hp: number;
+  dps: number;
+  armor: number;
+  target: "ground" | "ground_and_light_air" | "air" | "air_and_ground";
+  class: string;
+}
+
+export interface SimulationDefinitions {
+  buildings: Record<string, BuildingDefinition>;
+  defenders: Record<string, CombatActorDefinition>;
+  enemies: Record<string, CombatActorDefinition>;
+  referenceCycleSeconds: number;
+}
+
+export interface BuildingInstance {
+  id: string;
+  definitionId: string;
+  position: Vec3;
+  rotationY: number;
+  constructionState: ConstructionState;
+  constructionRemainingSeconds: number;
+  workersAssigned: number;
+  priority: number;
+  condition: number;
+  damageState: DamageState;
+}
+
+export interface CombatActor {
+  id: string;
+  definitionId: string;
+  side: "DEFENDER" | "ENEMY";
+  hp: number;
+  maxHp: number;
+  position: Vec3;
+}
+
+export interface CombatState {
+  id: string;
+  status: "WARNING" | "ACTIVE" | "RESOLVED";
+  warningRemainingSeconds: number;
+  elapsedSeconds: number;
+  actors: CombatActor[];
+  outcome?: CombatOutcome;
+  summary?: string;
+}
+
+export interface WorldEvent {
+  id: string;
+  type: string;
+  happenedAt: string;
+  severity: number;
+  summary: string;
+}
+
+export interface WorldState {
+  worldId: string;
+  ownerId: string;
+  seed: number;
+  revision: number;
+  lifecycle: WorldLifecycle;
+  speed: WorldSpeed;
+  simulationSeconds: number;
+  lastSimulatedAt: string;
+  resources: ResourceState;
+  society: SocietyState;
+  buildings: BuildingInstance[];
+  combat: CombatState | null;
+  events: WorldEvent[];
+}
