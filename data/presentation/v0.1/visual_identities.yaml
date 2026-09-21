@@ -323,33 +323,43 @@ building_families:
 
 citizen_roles:
   school_child:
+    source_refs: [age_band.child, archetype.school_backpack, archetype.school_bicycle, archetype.playground_child]
     silhouette: [small_body, backpack, optional_cap]
     props: [book, toy, school_bag]
   casual_resident:
+    source_refs: [archetype.casual_resident]
     silhouette: [coat_or_shirt, varied_hair, optional_hat]
     props: [satchel, shopping_bag, none]
   workshop_worker:
+    source_refs: [role.workshop_worker, archetype.workshop_worker]
     silhouette: [apron_or_vest, rolled_sleeves, tool_pouch]
     props: [crate, wrench, gloves]
   utility_technician:
+    source_refs: [role.utility_technician, archetype.power_worker, archetype.water_worker]
     silhouette: [dark_overalls, utility_cap_or_helmet]
     props: [tool_bag, inspection_device]
   teacher:
+    source_refs: [role.teacher, archetype.teacher]
     silhouette: [tidy_coat_or_cardigan, book_shape]
     props: [book, tablet]
   guard:
+    source_refs: [role.guard, archetype.town_guard]
     silhouette: [padded_vest, compact_helmet_or_cap]
     props: [shield, patrol_gear]
   builder:
+    source_refs: [role.builder, archetype.builder]
     silhouette: [hard_hat_or_cap, work_vest, tool_belt]
     props: [hammer, board, toolbox]
   farmer:
+    source_refs: [role.farmer, archetype.farmer]
     silhouette: [wide_hat, boots]
     props: [basket, tool]
   cafe_worker:
+    source_refs: [role.cafe_worker, archetype.cafe_worker]
     silhouette: [apron, tray]
     props: [tray, towel]
   service_crew:
+    source_refs: [role.service_crew, archetype.service_worker]
     silhouette: [workwear, service_cap]
     props: [toolbox, broom]
 
