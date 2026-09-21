@@ -1,0 +1,40 @@
+version: "0.1"
+
+starting_state:
+  population: 12
+  happiness: 80
+  money: 1200
+  power_reserve: 60
+  water_reserve: 60
+  varum: 0
+  tech_points: 0
+  tech_tier: 0
+  construction_slots: 1
+
+starting_buildings:
+  town_center: 1
+  house_small: 3
+  power_plant: 1
+  water_plant: 1
+  workshop: 1
+
+starting_access:
+  road_type: road_dirt
+  connected_starter_network: true
+  starter_road_length_m_min: 45
+  powered_lift_required: false
+
+starter_world_guarantees:
+  housing_capacity_equals_starting_population: true
+  utility_positive_at_start: true
+  starter_income_positive: true
+  immediate_varum_required: false
+  expansion_routes_min: 2
+  cheap_blocker_visible_min: 1
+  future_varum_hint: true
+
+first_decision_intent:
+  - add_housing
+  - choose_school_park_or_income
+  - clear_first_blocker
+  - extend_access
