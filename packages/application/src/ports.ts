@@ -1,10 +1,31 @@
 import type { WorldState } from "@evervale/domain/world.types";
 
+export interface AcceptedCommandReceipt {
+  commandId: string;
+  worldId: string;
+  ownerId: string;
+  expectedRevision: number;
+  commandType: string;
+  world: WorldState;
+}
+
+export interface AcceptedCommandContext {
+  commandId: string;
+  ownerId: string;
+  expectedRevision: number;
+  commandType: string;
+}
+
 export interface WorldRepository {
   findByOwner(ownerId: string): Promise<WorldState | null>;
   findById(worldId: string): Promise<WorldState | null>;
+  findAcceptedCommand(commandId: string): Promise<AcceptedCommandReceipt | null>;
   create(world: WorldState): Promise<void>;
-  save(world: WorldState, previousRevision: number): Promise<void>;
+  save(
+    world: WorldState,
+    previousRevision: number,
+    acceptedCommand?: AcceptedCommandContext,
+  ): Promise<void>;
 }
 
 export interface IdGenerator {
