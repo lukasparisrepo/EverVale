@@ -1,4 +1,5 @@
 version: "0.2"
+model_revision: "0.3"
 
 art_direction:
   style: stylized_fantasy_tech
@@ -7,6 +8,17 @@ art_direction:
   silhouette_priority: high
 
 units:
+  town_warden:
+    tier: 0
+    class: infantry
+    target: ground
+    hp: 110
+    dps: 7
+    armor: 2
+    range_m: 8
+    move_speed_mps: 3.2
+    role: onboarding_core_defense
+
   guard:
     tier: 0
     class: infantry
@@ -14,6 +26,8 @@ units:
     hp: 150
     dps: 10
     armor: 5
+    range_m: 10
+    move_speed_mps: 3.4
     role: patrol_defense
 
   ranger:
@@ -23,7 +37,8 @@ units:
     hp: 130
     dps: 16
     armor: 4
-    move_speed_mult: 1.20
+    range_m: 14
+    move_speed_mps: 4.0
     role: fast_response
 
   heavy_guard:
@@ -33,7 +48,20 @@ units:
     hp: 260
     dps: 18
     armor: 20
+    range_m: 10
+    move_speed_mps: 3.0
     role: durable_frontline
+
+  watchtower:
+    tier: 1
+    class: static
+    target: ground_and_light_air
+    hp: 360
+    dps: 18
+    armor: 10
+    range_m: 24
+    move_speed_mps: 0
+    role: fixed_early_counter
 
   patrol_buggy:
     tier: 1
@@ -44,6 +72,8 @@ units:
     hp: 320
     dps: 22
     armor: 10
+    range_m: 14
+    move_speed_mps: 8.0
     role: fast_response
 
   armored_car:
@@ -55,6 +85,8 @@ units:
     hp: 675
     dps: 28
     armor: 20
+    range_m: 18
+    move_speed_mps: 6.0
     role: mobile_defense
 
   tank:
@@ -66,17 +98,22 @@ units:
     hp: 1350
     dps: 55
     armor: 45
+    range_m: 22
+    move_speed_mps: 4.2
     role: heavy_anchor
 
   rocket_rover:
     tier: 3
     class: artillery_vehicle
-    target: ground
+    target: ground_and_light_air
     money_cost: 1450
     varum_cost: 26
     hp: 680
     dps: 75
     armor: 18
+    range_m: 34
+    min_range_m: 9
+    move_speed_mps: 5.2
     splash: true
     role: long_range_area
 
@@ -89,6 +126,8 @@ units:
     hp: 760
     dps: 90
     armor: 22
+    range_m: 40
+    move_speed_mps: 5.0
     role: anti_large_air
 
   heavy_turret:
@@ -98,6 +137,8 @@ units:
     hp: 900
     dps: 48
     armor: 30
+    range_m: 30
+    move_speed_mps: 0
     role: fixed_ground_defense
 
   anti_air:
@@ -107,6 +148,8 @@ units:
     hp: 525
     dps: 65
     armor: 20
+    range_m: 36
+    move_speed_mps: 0
     role: air_defense
 
   scout_plane:
@@ -114,6 +157,8 @@ units:
     class: aircraft
     target: none
     hp: 280
+    range_m: 0
+    move_speed_mps: 30
     role: reconnaissance
 
   interceptor:
@@ -125,6 +170,8 @@ units:
     hp: 750
     dps: 70
     armor: 20
+    range_m: 40
+    move_speed_mps: 34
     role: fast_air_defense
 
   heavy_defender:
@@ -136,6 +183,8 @@ units:
     hp: 1500
     dps: 105
     armor: 35
+    range_m: 36
+    move_speed_mps: 24
     role: carrier_support
 
 support:
