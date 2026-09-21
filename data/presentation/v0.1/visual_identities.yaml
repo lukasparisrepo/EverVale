@@ -1,0 +1,365 @@
+version: "0.1"
+status: "CANONICAL_VISUAL_PRESENTATION"
+authority:
+  contract: "docs/79_VISUAL_IDENTITY_VARIATION_SYSTEM.md"
+  art_direction: "docs/02_WORLD_ART.md"
+  building_art: "docs/37_BUILDING_CATALOG_AND_ART.md"
+  citizen_roster: "docs/46_CITIZEN_VISUAL_ROSTER.md"
+  citizen_actor_catalog: "docs/47_CITIZEN_ACTOR_CATALOG.md"
+  decor: "docs/43_DECOR_AND_WORLD_DRESSING.md"
+
+seed_policy:
+  world_dialect: ["world.seed"]
+  building_primary: ["world.seed", "definition_id", "quantized_x", "quantized_z", "rotation_bucket"]
+  building_tie_breaker: ["persistent_entity_id"]
+  citizen_m1: ["world.seed", "presentation_slot", "role"]
+  ambient: ["world.seed", "region_key", "visual_day_key", "local_anchor"]
+  random_unseeded_forbidden: true
+
+world_dialects:
+  hearthstone:
+    wall: [cream_plaster, warm_stone]
+    roof: [weathered_brown, dark_slate]
+    trim: dark_timber
+    accent: copper
+    landscape: [warm_muted_green, warm_grey_rock]
+    dressing: [flower_boxes, warm_lamps, civic_planters]
+  willowbrook:
+    wall: [pale_sage_plaster, cream_plaster]
+    roof: [green_grey_slate, dark_slate]
+    trim: light_timber
+    accent: copper
+    landscape: [lush_muted_green, mossy_stone]
+    dressing: [gardens, mossy_stone, leafy_edges]
+  amberfield:
+    wall: [ochre_plaster, warm_brick]
+    roof: [rust_brown, warm_brown]
+    trim: dark_timber
+    accent: brass
+    landscape: [olive_grass, warm_stone]
+    dressing: [crates, baskets, dry_stone, rural_edges]
+  bluebell:
+    wall: [cool_cream, pale_masonry]
+    roof: [blue_grey_slate, green_slate]
+    trim: medium_timber
+    accent: copper
+    landscape: [blue_green_grass, cool_grey_rock]
+    dressing: [clean_civic_edges, blue_green_planting]
+
+building_families:
+  town_center:
+    family_dna: [civic_landmark, masonry_plaster, timber_trim, bell_clock_lantern, notice_activity]
+    minimum_variants: 3
+    variants:
+      clock_hall:
+        massing: central_clock_tower
+        roof: civic_gable
+        facade: symmetrical_civic_front
+        yard: notice_delivery_zone
+        signature_props: [clock, notice_board, civic_lamps]
+      bell_porch_hall:
+        massing: offset_bell_tower
+        roof: deep_porch_gable
+        facade: asymmetrical_arrival
+        yard: covered_civic_porch
+        signature_props: [bell, benches, banners]
+      twin_gable_hall:
+        massing: twin_upper_gables
+        roof: split_gable
+        facade: central_lantern_focus
+        yard: compact_plaza
+        signature_props: [lantern, planters, notice_board]
+
+  house_small:
+    family_dna: [plaster_timber, chimney, domestic_garden_edge, warm_windows]
+    minimum_variants: 6
+    variants:
+      flower_gable:
+        massing: simple_gable
+        roof: medium_pitch
+        facade: centered_door_twin_windows
+        yard: front_flower_edge
+        signature_props: [flower_boxes, mailbox]
+      side_porch:
+        massing: gable_with_porch
+        roof: shallow_porch_extension
+        facade: offset_door
+        yard: side_arrival
+        signature_props: [porch_posts, woodpile]
+      dormer_cottage:
+        massing: tall_gable_dormer
+        roof: steep_pitch_front_dormer
+        facade: centered_dormer
+        yard: narrow_front_garden
+        signature_props: [dormer_window, planter]
+      stone_end_cottage:
+        massing: plaster_body_stone_end
+        roof: medium_pitch
+        facade: asymmetric_masonry_end
+        yard: compact_side_edge
+        signature_props: [side_chimney, bicycle, mailbox]
+      craft_cottage:
+        massing: cottage_plus_lean_to
+        roof: main_gable_plus_lean_to
+        facade: offset_work_entry
+        yard: tiny_work_yard
+        signature_props: [crates, tools, workbench]
+      laundry_garden:
+        massing: simple_gable
+        roof: medium_pitch
+        facade: lighter_domestic_front
+        yard: side_rear_garden
+        signature_props: [laundry_line, bench, planter]
+
+  workshop:
+    family_dna: [brick_timber, loading_yard, exposed_mechanism, practical_clutter]
+    minimum_variants: 4
+    variants:
+      wheel_yard:
+        massing: compact_workshop
+        roof: low_industrial
+        facade: flywheel_front
+        yard: compact_loading
+        signature_props: [flywheel, awning, crates]
+      forge_stack:
+        massing: workshop_plus_forge
+        roof: low_industrial
+        facade: forge_stack_focus
+        yard: heat_work_zone
+        signature_props: [stack, forge, metal_stock]
+      loading_shed:
+        massing: main_hall_side_annex
+        roof: shed_extension
+        facade: loading_door_focus
+        yard: loading_lane
+        signature_props: [annex, pallets, crates]
+      saw_court:
+        massing: covered_work_court
+        roof: canopy_plus_hall
+        facade: open_work_front
+        yard: timber_stock
+        signature_props: [saw, timber_stack, canopy]
+
+  power_plant:
+    family_dna: [industrial_brick, copper_mechanism, stacks, amber_status]
+    minimum_variants: 3
+    variants:
+      twin_stack:
+        massing: rectangular_hall
+        roof: low_industrial
+        facade: paired_stack_symmetry
+        yard: compact_service
+        signature_props: [two_stacks, flywheel, amber_lamps]
+      turbine_hall:
+        massing: taller_mechanical_hall
+        roof: raised_mechanical_roof
+        facade: turbine_focus
+        yard: service_platform
+        signature_props: [large_stack, turbine, pipework]
+      generator_annex:
+        massing: hall_plus_generator_wing
+        roof: stepped_industrial
+        facade: asymmetric_annex
+        yard: equipment_bank
+        signature_props: [generator_modules, pipes, warning_lamps]
+
+  water_plant:
+    family_dna: [pale_masonry, water_surface, pumps, pipe_gauges]
+    minimum_variants: 3
+    variants:
+      twin_cistern:
+        massing: house_plus_exposed_tanks
+        roof: civic_industrial_gable
+        facade: clean_utility_front
+        yard: tank_court
+        signature_props: [two_cisterns, rims, pipe]
+      pump_court:
+        massing: utility_house
+        roof: simple_gable
+        facade: gauge_pipe_frontage
+        yard: exposed_pump
+        signature_props: [pump, gauges, pipe_bank]
+      filter_house:
+        massing: house_plus_filter_wing
+        roof: taller_gable
+        facade: processing_wing
+        yard: filter_basins
+        signature_props: [basins, water_surface, service_walk]
+
+  school:
+    family_dna: [warm_civic_facade, classroom_windows, bell_language, schoolyard]
+    minimum_variants: 3
+    variants:
+      bell_gable:
+        massing: central_school_hall
+        roof: civic_gable
+        facade: central_bell
+        yard: front_arrival
+        signature_props: [bell, bike_rack]
+      courtyard_school:
+        massing: main_hall_two_wings
+        roof: three_part_roofline
+        facade: courtyard_frame
+        yard: school_courtyard
+        signature_props: [benches, bikes, yard_markers]
+      classroom_annex:
+        massing: hall_plus_teaching_wing
+        roof: asymmetric_gable
+        facade: dense_classroom_windows
+        yard: side_activity_edge
+        signature_props: [annex, notice_board, bikes]
+
+  park:
+    family_dna: [mature_trees, soft_paths, social_anchors, negative_space]
+    minimum_variants: 4
+    variants:
+      fountain_grove:
+        massing: open_green
+        focal: fountain
+        path: radial_soft_paths
+        signature_props: [fountain, benches, lamps]
+      duck_pond:
+        massing: waterside_green
+        focal: pond
+        path: pond_loop
+        signature_props: [pond, reeds, duck_house]
+      play_lawn:
+        massing: open_lawn
+        focal: play_structure
+        path: edge_walk
+        signature_props: [swing, slide, benches]
+      reading_garden:
+        massing: sheltered_green
+        focal: gazebo_or_pergola
+        path: quiet_loop
+        signature_props: [gazebo, benches, flower_beds]
+
+  guard_post:
+    family_dna: [stone_timber_lodge, banner_bell, patrol_training_edge]
+    minimum_variants: 3
+    variants:
+      lodge_yard:
+        massing: compact_lodge
+        roof: guard_gable
+        yard: training_yard
+        signature_props: [banner, bell, training_props]
+      watch_court:
+        massing: lodge_plus_watch_platform
+        roof: guard_gable
+        yard: patrol_court
+        signature_props: [platform, lamp, equipment_rack]
+      gate_lodge:
+        massing: lodge_plus_gate_posts
+        roof: low_guard_roof
+        yard: barrier_lane
+        signature_props: [barrier, flag, guard_lamp]
+
+  farm:
+    family_dna: [barn_farmhouse, fence_edge, animal_work_anchors, rural_clutter]
+    minimum_variants: 4
+    variants:
+      barnyard:
+        massing: dominant_barn
+        yard: working_barnyard
+        signature_props: [cart, hay, crates]
+      silo_farm:
+        massing: barn_plus_silos
+        yard: compact_service
+        signature_props: [silos, trough, fence]
+      orchard_edge:
+        massing: farmhouse_barn
+        yard: orchard_rows
+        signature_props: [fruit_trees, baskets, fence]
+      animal_court:
+        massing: barn_plus_open_court
+        yard: fenced_animal_zone
+        signature_props: [trough, hay, animal_anchor]
+
+  restaurant:
+    family_dna: [warm_frontage, social_edge, sign_awning_lantern, tables]
+    minimum_variants: 4
+    variants:
+      awning_terrace:
+        massing: compact_restaurant
+        facade: broad_awning
+        yard: front_terrace
+        signature_props: [awning, tables, flower_box]
+      courtyard_kitchen:
+        massing: restaurant_plus_service_edge
+        facade: covered_entry
+        yard: side_courtyard
+        signature_props: [canopy, tables, chimney]
+      corner_cafe:
+        massing: compact_corner_front
+        facade: large_display_windows
+        yard: street_tables
+        signature_props: [display_window, sign, stools]
+      lantern_porch:
+        massing: restaurant_plus_deep_porch
+        facade: lantern_porch
+        yard: porch_dining
+        signature_props: [lanterns, porch_posts, tables]
+
+  builders_yard:
+    family_dna: [timber_shed, material_stacks, scaffold_hoist_saw, active_work]
+    minimum_variants: 4
+    variants:
+      hoist_yard:
+        massing: shed_open_yard
+        yard: hoist_lane
+        signature_props: [hoist, hook, material_stacks]
+      saw_shed:
+        massing: larger_shed
+        yard: timber_cutting
+        signature_props: [saw, timber_stack, workbench]
+      stone_yard:
+        massing: compact_shed
+        yard: stone_storage
+        signature_props: [stone_stacks, cart, crane_arm]
+      scaffold_court:
+        massing: shed_scaffold_frame
+        yard: scaffold_assembly
+        signature_props: [scaffold, planks, ladder]
+
+citizen_roles:
+  school_child:
+    silhouette: [small_body, backpack, optional_cap]
+    props: [book, toy, school_bag]
+  casual_resident:
+    silhouette: [coat_or_shirt, varied_hair, optional_hat]
+    props: [satchel, shopping_bag, none]
+  workshop_worker:
+    silhouette: [apron_or_vest, rolled_sleeves, tool_pouch]
+    props: [crate, wrench, gloves]
+  utility_technician:
+    silhouette: [dark_overalls, utility_cap_or_helmet]
+    props: [tool_bag, inspection_device]
+  teacher:
+    silhouette: [tidy_coat_or_cardigan, book_shape]
+    props: [book, tablet]
+  guard:
+    silhouette: [padded_vest, compact_helmet_or_cap]
+    props: [shield, patrol_gear]
+  builder:
+    silhouette: [hard_hat_or_cap, work_vest, tool_belt]
+    props: [hammer, board, toolbox]
+  farmer:
+    silhouette: [wide_hat, boots]
+    props: [basket, tool]
+  cafe_worker:
+    silhouette: [apron, tray]
+    props: [tray, towel]
+  service_crew:
+    silhouette: [workwear, service_cap]
+    props: [toolbox, broom]
+
+rules:
+  presentation_only: true
+  deterministic: true
+  adjacent_same_family_anti_clone_radius_m: 18
+  building_variant_minimum_changed_dimensions: 2
+  common_housing_min_variants: 6
+  common_workplace_min_variants: 3
+  color_only_variant_forbidden: true
+  gameplay_collision_from_auto_dressing_forbidden: true
+  economy_effect_from_visual_identity_forbidden: true
