@@ -124,9 +124,18 @@ export interface BuildCatalogEntry {
   buildCycles: number;
 }
 
+export interface BlockerCatalogEntry {
+  id: string;
+  moneyCost: number;
+  varumCost: number;
+  clearCycles: number;
+  techTier: number;
+}
+
 export interface LoadedGameData {
   definitions: SimulationDefinitions;
   buildCatalog: BuildCatalogEntry[];
+  blockerCatalog: BlockerCatalogEntry[];
 }
 
 export function loadGameData(): LoadedGameData {
@@ -184,5 +193,15 @@ export function loadGameData(): LoadedGameData {
     })
     .sort((a, b) => a.techTier - b.techTier || a.name.localeCompare(b.name));
 
-  return { definitions, buildCatalog };
+  const blockerCatalog = Object.values(definitions.blockers)
+    .map((item) => ({
+      id: item.id,
+      moneyCost: item.moneyCost,
+      varumCost: item.varumCost,
+      clearCycles: item.clearCycles,
+      techTier: item.techTier,
+    }))
+    .sort((a, b) => a.techTier - b.techTier || a.moneyCost - b.moneyCost);
+
+  return { definitions, buildCatalog, blockerCatalog };
 }
