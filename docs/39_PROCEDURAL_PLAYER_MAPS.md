@@ -1,182 +1,163 @@
 # 39 — Procedural Player Maps
 
-Status: **CANONICAL WORLD GENERATION BASELINE**
+Status: **CANONICAL WORLD GENERATION BASELINE v0.2**
 
 ## Goal
 
-Each player receives a map that is recognizably EverVale but slightly different.
+Each player receives a persistent map that follows the same rules but differs slightly in practical layout.
 
-Target feeling:
-- like Clash of Clans: every base has the same rules but a different practical layout
-- like Fallout Shelter: expansion is constrained by blockers and unlockable space
-- unlike a blank infinite sandbox: terrain matters
+Variation should change:
+- route choice
+- expansion cost
+- visual identity
+- defense geometry
 
-# Map identity
+It must not create unfair or impossible progression.
+
+## Map identity
 
 Each World has a permanent:
 
 `world_seed`
 
-The seed determines:
+It determines:
 - terrace layout
 - river/pond position
 - rock/rubble blockers
 - forest clusters
 - Varum deposits
-- decorative landmark positions
+- landmarks
 - optional elevation connectors
+- threat approach corridors
 - starting expansion directions
 
-The seed never changes after world creation.
+Existing worlds never silently regenerate when the generator changes.
 
-# World footprint
+Persist:
+- `world_seed`
+- `world_generator_version`
 
-Initial target world:
-- approximately 300m × 300m
-- divided logically into build cells/chunks, but visuals remain organic
+## World footprint
+
+Initial target:
+- roughly 300–320m × 300–320m
+- organic visuals
+- internal build cells/chunks allowed
 - 3–5 elevation terraces
-- one primary starting plateau
+- one protected starter plateau
 - water/ravine/rock boundaries
 
-The game should not look like a visible square grid unless build mode needs subtle snapping.
+## Starter guarantees
 
-# Starting plateau
-
-Every map guarantees:
-- enough flat area for starter town
+Every accepted seed must provide:
+- enough flat area for bootstrap town
 - direct road access between starter structures
 - at least two viable expansion directions
 - no required Varum at T0
-- one reachable future Varum deposit after early clearance
+- at least one T1-reachable Varum deposit
+- valid external threat approaches
+- no mandatory content isolated behind impossible access
 
-# Terrain tiers
+## Terrain tiers
 
-Instead of Fallout Shelter's stacked underground rooms, EverVale uses outdoor elevation bands:
-
+Typical:
 - Terrace 0 — starter valley
-- Terrace 1 — low hill / farm district
-- Terrace 2 — ridge / industrial opportunity
-- Terrace 3 — highland / defense or airfield
-- optional special basin / island / cliff area
+- Terrace 1 — farm/residential opportunity
+- Terrace 2 — ridge/industry
+- Terrace 3 — highland/defense/airfield
+- optional basin/island/cliff zone
 
-Terraces may connect through:
-- winding road
-- stairs/footpath
+Connections:
+- road
+- footpath/stairs
 - bridge
 - Hill Lift
 - Service Tunnel later
 
-# Blockers
+## Blockers
 
-Blockers create expansion pacing.
-
-Types:
-
-## Loose Rubble
-Cheap to clear.
-Visual: stones, broken masonry, roots.
-
-## Boulder Field
-Medium cost and time.
-Requires basic construction capacity.
-
-## Dense Forest
-Clearing costs Money/time.
-Some players may intentionally keep it for beauty/Happiness.
-
-## Collapsed Road
-Requires repair before traffic can pass.
-
-## Cliff Face
-Cannot be directly cleared.
-Requires road switchback, Hill Lift, or later tunnel.
-
-## Old Ruins
-Can be cleared or restored later.
-May become event/content hook.
-
-## Varum Scar
-Tech-gated terrain around deposits.
-
-# Clearing mechanic
-
-Blockers are not resources to grind manually.
+Examples:
+- Loose Rubble
+- Small Rocks
+- Boulder Field
+- Dense Forest
+- Collapsed Road
+- Old Ruins
+- Landslide
+- Cliff Face
+- Varum Scar
 
 Player selects blocker:
-- sees Money/time requirement
+- sees Money/time/Tech requirement
 - queues clearance
-- Builder capacity handles it automatically
+- Builder capacity resolves it automatically
+- visual object transitions/disappears
+- buildable/access graph updates
 
-Large blockers occupy construction/clearance slots.
+No manual rock-click grinding.
 
-# Connectivity
+## Hill Lift
 
-A terrace with buildings is economically disconnected until a valid access path exists.
+The Hill Lift is the outdoor analogue of a readable vertical connector.
 
-Pedestrians may use:
-- path
-- stairs
-- lift
+Normal mode:
+- uses Power
+- has finite traffic capacity
+- carries allowed actor classes
 
-Vehicles require:
-- road
-- bridge
-- vehicle-capable lift
-- tunnel
+### Emergency mode
 
-This creates spatial strategy.
+A Power outage must not permanently soft-lock an inhabited terrace.
 
-# Hill Lift
+When unpowered but structurally intact:
+- pedestrian emergency mode remains available
+- traversal is very slow/high-cost
+- civilian vehicles cannot use it
+- heavy vehicles/tanks cannot use it
+- service response is degraded
 
-Hill Lift is the outdoor analogue of Fallout Shelter's elevator.
+A damaged/destroyed Lift may still fully disconnect the route, but the game must expose repair/recovery clearly.
 
-It can connect two authored terrace nodes.
+Generator rule:
+- mandatory T0 bootstrap may never depend on a powered Lift as its only access.
 
-Variants later:
-- pedestrian lift
-- cargo lift
-- heavy vehicle lift
-
-A lift is:
-- visible
-- powered
-- capacity-limited
-- vulnerable to faults
-
-If disabled, connected upper district may temporarily lose efficient access.
-
-# Seed fairness
-
-Random maps may differ, but not in core progression difficulty beyond a bounded range.
+## Seed fairness
 
 Generator validates:
 - starting buildable area
-- expansion cost
-- route length
+- bootstrap affordability
+- expansion cost bounds
+- route length bounds
 - first Varum accessibility
 - defense perimeter viability
-- no isolated mandatory content
+- no progression deadlock
+- emergency access rules
 
 Reject/re-roll seeds outside bounds.
 
-# Player ownership
+Machine-readable generation baseline:
+- `data/world/v0.1/map_generation.yaml`
+- `data/world/v0.1/blockers.yaml`
+
+## Player ownership
 
 World layout is server-authoritative.
 
 Client receives:
 - terrain seed/data
-- cleared blockers
+- cleared blocker state
+- access graph
 - roads
-- built structures
-- cosmetic deterministic detail seed
+- buildings
+- deterministic decoration seed
 
-# Replayability
+## Replayability
 
-Future new worlds can offer broad archetypes:
+Future broad archetypes can include:
 - River Valley
 - Hill Country
 - Lakeside
 - Forest Basin
 - Coastal Ridge
 
-They share gameplay rules but differ in geometry and expansion decisions.
+All share the same economy and progression rules.
