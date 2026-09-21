@@ -231,3 +231,15 @@ Before substantial runtime implementation, read:
 M0/M1 vertical-slice scope takes priority over broad content ambitions.
 
 Do not implement the full 78-building catalogue before M1 exits successfully.
+
+
+## Pre-engineering lock
+
+Before implementing runtime code, read:
+- `docs/44_CONTENT_AUTHORITY_INDEX.md`
+- `docs/59_IMPLEMENTATION_START_GATE.md`
+- `docs/66_PRE_ENGINEERING_DESIGN_LOCK.md`
+
+Foundational game rules are locked. Do not invent a new economy, authority model, combat-control model, progression model, or persistence model to solve an implementation problem.
+
+If runtime evidence fails a budget/test, tune data or submit an ADR instead of silently changing canon.
