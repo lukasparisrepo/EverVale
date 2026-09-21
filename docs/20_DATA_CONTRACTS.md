@@ -8,15 +8,37 @@ Conceptual contracts; final TypeScript schemas must be versioned and validated.
 World {
   worldId
   ownerId
-  seed
-  revision
+
+  worldSeed
+  worldGeneratorVersion
+  schemaVersion
   simulationVersion
+  balanceVersion
+
+  revision
+  createdAt
   lastSimulatedAt
   simulationLease?
+
   speed: 0 | 1 | 2 | 4
   state: ACTIVE | WARM | COLD
 }
 ```
+
+## GeneratedWorldState
+
+```
+GeneratedWorldState {
+  terrainSignature
+  sectorIds[]
+  terraceIds[]
+  depositIds[]
+  threatEntryIds[]
+  decorSeed
+}
+```
+
+Generated base topology is versioned by `worldGeneratorVersion`.
 
 ## ResourceState
 
@@ -24,12 +46,16 @@ World {
 ResourceState {
   money
   moneyCap
+
   power
   powerCap
+
   water
   waterCap
+
   varum
   varumCap
+
   techPoints
   techTier
 }
@@ -56,11 +82,18 @@ SocietyState {
 BuildingInstance {
   id
   definitionId
+
   position
   rotation
-  connectedRoadNode?
+  terraceId
+
+  accessNodeId?
+
   constructionState
+  condition?
   damageState
+  incidentState?
+
   workersAssigned
   priority
   operationalFactor
@@ -68,34 +101,115 @@ BuildingInstance {
 }
 ```
 
-## RoadSegment
+## AccessNode
 
 ```
-RoadSegment {
+AccessNode {
   id
-  roadType
-  controlPoints[]
-  endpointNodes[]
+  kind
+  position
+  terraceId
+}
+```
+
+## AccessEdge
+
+```
+AccessEdge {
+  id
+  type: ROAD | PATH | STAIR | BRIDGE | LIFT | TUNNEL
+
+  fromNodeId
+  toNodeId
+
   traversalCost
+  allowedActorClasses[]
+  capacityHint?
+
+  operationalState
+  emergencyMode?
   revision
 }
 ```
 
+## RoadGeometry
+
+Rendering/edit geometry is stored separately from graph semantics where useful.
+
+```
+RoadGeometry {
+  edgeId
+  roadType
+  controlPoints[]
+}
+```
+
 Server stores canonical topology, not render triangles.
+
+## BlockerState
+
+```
+BlockerState {
+  blockerId
+  definitionId
+  sectorId
+  position
+
+  state: PRESENT | CLEARING | CLEARED
+  clearProgress?
+  queuedTaskId?
+}
+```
+
+## DepositState
+
+```
+DepositState {
+  depositId
+  kind: VARUM
+  position
+  discovered
+  depleted?: false
+}
+```
+
+Core Varum deposits are not required to deplete in v0.1.
 
 ## CitizenPresentationState
 
 ```
 CitizenPresentationState {
   citizenId
+  householdId?
   homeBuildingId
   jobBuildingId?
+  schoolBuildingId?
+
   logicalState
   destinationId?
+  presentationSeed
 }
 ```
 
-The economic model can remain aggregate even while individual visible citizens exist.
+Economic Population/Workforce can remain aggregate while visible citizens retain stable identity where useful.
+
+## WorkforceAssignmentState
+
+```
+WorkforceAssignmentState {
+  totalWorkforce
+  assigned
+  unassigned
+
+  buildingAssignments[]
+  categoryPriorities
+  allocatorRevision
+}
+```
+
+Invariant:
+
+`assigned <= totalWorkforce`
 
 ## ThreatState
 
@@ -104,6 +218,7 @@ ThreatState {
   hiddenPressure
   hiddenThreshold
   cooldownUntil?
+
   seed
   activeSignals[]
   activeIncident?
@@ -121,10 +236,19 @@ WorldCommand {
   worldId
   userId
   expectedRevision?
+
   type
   payload
 }
 ```
+
+Examples:
+- PLACE_BUILDING
+- DRAW_ROAD
+- CLEAR_BLOCKER
+- CHANGE_PRIORITY
+- QUEUE_REPAIR
+- QUEUE_VEHICLE
 
 ## WorldEvent
 
@@ -134,6 +258,7 @@ WorldEvent {
   eventType
   happenedAt
   severity
+
   entityIds[]
   data
   playerSummary
@@ -146,6 +271,8 @@ Persist:
 - schema version
 - simulation version
 - balance-data version
+- world-generator version
+- content-data version
 - asset-data version
 
-Never load a save with silent balance/schema reinterpretation.
+Never load a save with silent schema/balance/generator reinterpretation.
