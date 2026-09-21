@@ -28,6 +28,10 @@ export function advanceWorld(
   let buildingPowerUse = 0;
   let buildingWaterUse = 0;
   let upkeep = 0;
+  let moneyCap = 0;
+  let powerCap = 0;
+  let waterCap = 0;
+  let varumCap = 0;
   let housing = 0;
   let education = 0;
   let recreation = 0;
@@ -49,6 +53,10 @@ export function advanceWorld(
     buildingPowerUse += def.powerUse * staffing;
     buildingWaterUse += def.waterUse * staffing;
     upkeep += def.upkeep;
+    moneyCap += def.moneyCapAdd;
+    powerCap += def.powerCapAdd;
+    waterCap += def.waterCapAdd;
+    varumCap += def.varumCapAdd;
     housing += def.housingAdd;
     education += def.educationCoverageAdd * staffing;
     recreation += def.recreationCoverageAdd * staffing;
@@ -70,21 +78,34 @@ export function advanceWorld(
   const powerSatisfaction = powerNeed <= 0 ? 1 : clamp01(powerAvailable / powerNeed);
   const waterSatisfaction = waterNeed <= 0 ? 1 : clamp01(waterAvailable / waterNeed);
 
+  const nextMoneyCap = Math.max(500, moneyCap);
+  const nextPowerCap = Math.max(60, powerCap);
+  const nextWaterCap = Math.max(60, waterCap);
+  const nextVarumCap = Math.max(0, varumCap);
+  const nextTechPoints = world.resources.techPoints + techProduction * cycleFraction;
+  const nextTechTier =
+    world.resources.techTier === 0 && nextTechPoints >= 40 ? 1 : world.resources.techTier;
+
   const resources = {
     ...world.resources,
+    moneyCap: nextMoneyCap,
+    powerCap: nextPowerCap,
+    waterCap: nextWaterCap,
+    varumCap: nextVarumCap,
     money: clamp(
       world.resources.money + (moneyIncome - upkeep) * cycleFraction,
       0,
-      world.resources.moneyCap,
+      nextMoneyCap,
     ),
-    power: clamp(powerAvailable - powerNeed, 0, world.resources.powerCap),
-    water: clamp(waterAvailable - waterNeed, 0, world.resources.waterCap),
+    power: clamp(powerAvailable - powerNeed, 0, nextPowerCap),
+    water: clamp(waterAvailable - waterNeed, 0, nextWaterCap),
     varum: clamp(
       world.resources.varum + varumProduction * cycleFraction,
       0,
-      world.resources.varumCap,
+      nextVarumCap,
     ),
-    techPoints: world.resources.techPoints + techProduction * cycleFraction,
+    techPoints: nextTechPoints,
+    techTier: nextTechTier,
   };
 
   const employment = workforce.totalWorkforce <= 0 ? 1 : workforce.assigned / workforce.totalWorkforce;
