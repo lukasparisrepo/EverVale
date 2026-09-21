@@ -301,3 +301,214 @@ export function loadGameData(): LoadedGameData {
 
   return { definitions, buildCatalog, blockerCatalog, propCatalog };
 }
+
+
+export interface AuditBalanceData {
+  buildingBalance: {
+    version: string;
+    status: string;
+  };
+  starterWorld: {
+    version: string;
+    starting_state: {
+      population: number;
+      happiness: number;
+      money: number;
+      power_reserve: number;
+      water_reserve: number;
+      varum: number;
+      tech_points: number;
+      tech_tier: number;
+      construction_slots: number;
+    };
+    starting_buildings: Record<string, number>;
+  };
+  simulation: {
+    version: string;
+    reference_cycle_seconds: number;
+    starting_world: {
+      population: number;
+      happiness: number;
+      money: number;
+      money_cap: number;
+      power: number;
+      water: number;
+      varum: number;
+      tech_points: number;
+      tech_tier: number;
+      construction_slots: number;
+      buildings: Record<string, number>;
+    };
+    society: {
+      workforce_fraction: number;
+      citizen_power_per_cycle: number;
+      citizen_water_per_cycle: number;
+      happiness_growth_threshold: number;
+      happiness_smoothing_per_cycle: number;
+      growth_per_occupied_house_per_cycle: number;
+      growth_world_cap_per_cycle: number;
+    };
+  };
+  tech: {
+    version: string;
+    model_revision: string;
+    tiers: Record<number, {
+      threshold: number;
+      confirmation_required: boolean;
+      unlocks: string[];
+    }>;
+  };
+}
+
+export function loadAuditBalanceData(): AuditBalanceData {
+  return {
+    buildingBalance: readYaml<AuditBalanceData["buildingBalance"]>("data/balance/v0.2/buildings.yaml"),
+    starterWorld: readYaml<AuditBalanceData["starterWorld"]>("data/world/v0.1/starter_world.yaml"),
+    simulation: readYaml<AuditBalanceData["simulation"]>("data/balance/v0.1/simulation.yaml"),
+    tech: readYaml<AuditBalanceData["tech"]>("data/balance/v0.1/tech.yaml"),
+  };
+}
+
+
+export type WorkforcePriorityLevel =
+  | "critical"
+  | "high"
+  | "normal"
+  | "low"
+  | "paused";
+
+export interface WorkforcePolicyCandidate {
+  version: string;
+  status: string;
+  model_revision: string;
+  rules: {
+    early_high_slots: number;
+    later_high_slots: number;
+    critical_reserved_for_emergency: boolean;
+    building_local_priority_scale: number;
+    category_tie_order: string[];
+  };
+  semantic_levels: Record<WorkforcePriorityLevel, number>;
+  categories: Record<string, {
+    job_categories: string[];
+    default_level: WorkforcePriorityLevel;
+  }>;
+  profiles: Record<string, Record<string, WorkforcePriorityLevel>>;
+  emergency: {
+    utilities: {
+      reserve_ratio_trigger: number;
+      override_level: WorkforcePriorityLevel;
+    };
+    defense: {
+      active_combat_override_level: WorkforcePriorityLevel;
+    };
+  };
+  devsim: {
+    balanced_build_plan: string[];
+    test_hours: number;
+    rapid_switch_interval_seconds: number;
+  };
+  gates: {
+    balanced_school_zero_staff_max_hours: number;
+    balanced_critical_diagnostics_max: number;
+    emergency_recovery_max_hours: number;
+    rapid_switch_count: number;
+    opportunity_cost_min_money_difference: number;
+    opportunity_cost_min_tech_difference: number;
+  };
+}
+
+export function loadWorkforcePolicyCandidate(): WorkforcePolicyCandidate {
+  return readYaml<WorkforcePolicyCandidate>("data/devsim/v0.1/workforce_policy.yaml");
+}
+
+
+export interface WorkforceAllocatorLabData {
+  version: string;
+  status: string;
+  model_revision: string;
+  fixtures: Record<string, {
+    workforce: number;
+    buildings: Record<string, number>;
+  }>;
+  profiles: string[];
+  algorithms: string[];
+  acceptance: {
+    balanced_requires_nonzero_categories: string[];
+    paused_requires_zero_category: string;
+  };
+}
+
+export function loadWorkforceAllocatorLabData(): WorkforceAllocatorLabData {
+  return readYaml<WorkforceAllocatorLabData>(
+    "data/devsim/v0.1/workforce_allocator_fixtures.yaml",
+  );
+}
+
+
+export interface DefenseReadinessCandidate {
+  version: string;
+  status: string;
+  model_revision: string;
+  guard: {
+    source_building: string;
+    unit_definition: string;
+    slots_per_source: number;
+    requires_staffed_source: boolean;
+    capacity_rule: "floor_proportional";
+  };
+  town_warden: {
+    always_available: boolean;
+    baseline_count: number;
+  };
+  validation: {
+    zero_staff_expected_guard_capacity: number;
+    half_staff_expected_guard_capacity: number;
+    full_staff_expected_guard_capacity: number;
+  };
+  gates: {
+    full_staff_condition_loss_must_be_lower_than_zero: boolean;
+    defense_high_condition_loss_must_be_lower_than_balanced: boolean;
+    deterministic_replay_required: boolean;
+  };
+}
+
+export function loadDefenseReadinessCandidate(): DefenseReadinessCandidate {
+  return readYaml<DefenseReadinessCandidate>(
+    "data/devsim/v0.1/defense_readiness.yaml",
+  );
+}
+
+
+export interface PveRewardCandidate {
+  version: string;
+  status: string;
+  model_revision: string;
+  brackets: Record<number, {
+    money_base: number;
+    tech_base: number;
+    varum_base: number;
+  }>;
+  outcome_multipliers: Record<"CLEAN" | "COSTLY" | "BREACH", number>;
+  anti_farm: {
+    equivalent_encounter_multipliers: number[];
+    test_wave_reward_enabled: boolean;
+  };
+  validation: {
+    bracket_zero: {
+      costly_net_max: number;
+      breach_net_max: number;
+      clean_money_max_fraction_of_two_hour_industry_income: number;
+      pve_tech_max_fraction_of_two_hour_full_school_output: number;
+    };
+    repeated_equivalent_wins: {
+      max_four_encounter_money_fraction_of_eight_hour_industry_income: number;
+    };
+  };
+}
+
+export function loadPveRewardCandidate(): PveRewardCandidate {
+  return readYaml<PveRewardCandidate>(
+    "data/devsim/v0.1/pve_reward_candidate.yaml",
+  );
+}
