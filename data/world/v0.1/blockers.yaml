@@ -1,0 +1,69 @@
+version: "0.1"
+
+blockers:
+  bushes:
+    class: light
+    money_cost: 25
+    clear_cycles: 1
+    tech_tier: 0
+
+  fallen_tree:
+    class: light
+    money_cost: 40
+    clear_cycles: 1
+    tech_tier: 0
+
+  rubble:
+    class: light
+    money_cost: 50
+    clear_cycles: 1
+    tech_tier: 0
+
+  small_rocks:
+    class: light
+    money_cost: 60
+    clear_cycles: 1
+    tech_tier: 0
+
+  dense_grove:
+    class: medium
+    money_cost: 140
+    clear_cycles: 2
+    tech_tier: 0
+
+  ruined_wall:
+    class: medium
+    money_cost: 180
+    clear_cycles: 2
+    tech_tier: 0
+
+  rock_cluster:
+    class: medium
+    money_cost: 220
+    clear_cycles: 3
+    tech_tier: 1
+
+  landslide:
+    class: medium
+    money_cost: 300
+    clear_cycles: 4
+    tech_tier: 1
+
+  giant_boulder:
+    class: heavy
+    money_cost: 600
+    clear_cycles: 6
+    tech_tier: 2
+
+  collapsed_tunnel:
+    class: heavy
+    money_cost: 900
+    clear_cycles: 8
+    tech_tier: 2
+
+  varum_rock:
+    class: heavy
+    money_cost: 700
+    varum_cost: 5
+    clear_cycles: 7
+    tech_tier: 3
