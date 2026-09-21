@@ -62,7 +62,7 @@ const world: WorldState = {
   society:{population:12,housingCapacity:12,happiness:80,growthProgress:0,workforce:9,assignedWorkers:0,educationCoverage:0,recreationCoverage:0,safety:0.5,beauty:0},
   buildings:[{
     id:"tc",definitionId:"town_center",position:{x:0,y:0,z:0},rotationY:0,
-    constructionState:"COMPLETE",constructionRemainingSeconds:0,workersAssigned:0,priority:0,
+    constructionState:"COMPLETE",constructionRemainingSeconds:0,constructionTotalSeconds:0,workersAssigned:0,priority:0,
     condition:100,damageState:"HEALTHY",repairRemainingSeconds:0,
   }],
   roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}],
