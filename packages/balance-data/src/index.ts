@@ -23,7 +23,7 @@ type RawBalance = {
 };
 
 type RawContent = {
-  buildings: Record<string, { name: string; tech_tier: number }>;
+  buildings: Record<string, { name: string; category: string; tech_tier: number }>;
 };
 
 type RawCombat = {
@@ -162,6 +162,7 @@ function mapActor(
 export interface BuildCatalogEntry {
   id: string;
   name: string;
+  category: string;
   techTier: number;
   moneyCost: number;
   varumCost: number;
@@ -170,6 +171,19 @@ export interface BuildCatalogEntry {
   footprintCellsZ: number;
   gridCellMeters: number;
   sizeTitle: string;
+  workers: number;
+  jobCategory: string | null;
+  moneyPerWorker: number;
+  powerProduction: number;
+  powerUse: number;
+  waterProduction: number;
+  waterUse: number;
+  techProduction: number;
+  upkeep: number;
+  housingAdd: number;
+  educationCoverageAdd: number;
+  recreationCoverageAdd: number;
+  safetyAdd: number;
 }
 
 export interface BlockerCatalogEntry {
@@ -261,6 +275,7 @@ export function loadGameData(): LoadedGameData {
       return {
         id,
         name: item.name,
+        category: item.category,
         techTier: item.tech_tier,
         moneyCost: def.moneyCost,
         varumCost: def.varumCost,
@@ -269,6 +284,19 @@ export function loadGameData(): LoadedGameData {
         footprintCellsZ: def.footprintCellsZ,
         gridCellMeters: footprintData.grid_cell_meters,
         sizeTitle: `${def.footprintCellsX}×${def.footprintCellsZ} grid · ${def.footprintCellsX * footprintData.grid_cell_meters}×${def.footprintCellsZ * footprintData.grid_cell_meters}m`,
+        workers: def.workers,
+        jobCategory: def.jobCategory ?? null,
+        moneyPerWorker: def.moneyPerWorker,
+        powerProduction: def.powerProduction,
+        powerUse: def.powerUse,
+        waterProduction: def.waterProduction,
+        waterUse: def.waterUse,
+        techProduction: def.techProduction,
+        upkeep: def.upkeep,
+        housingAdd: def.housingAdd,
+        educationCoverageAdd: def.educationCoverageAdd,
+        recreationCoverageAdd: def.recreationCoverageAdd,
+        safetyAdd: def.safetyAdd,
       };
     })
     .sort((a, b) => a.techTier - b.techTier || a.name.localeCompare(b.name));

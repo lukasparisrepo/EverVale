@@ -56,9 +56,11 @@ export default function App() {
   const [view, setView] = useState<WorldViewDto | null>(null);
   const [mode, setMode] = useState<Mode>("SELECT");
   const [catalogTab, setCatalogTab] = useState<CatalogTab>("BUILD");
+  const [buildCategory, setBuildCategory] = useState("all");
   const [selectedBuild, setSelectedBuild] = useState<BuildCatalogEntryDto | null>(null);
   const [selectedProp, setSelectedProp] = useState<PropCatalogEntryDto | null>(null);
   const [selectedPropId, setSelectedPropId] = useState<string | null>(null);
+  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [movingPropId, setMovingPropId] = useState<string | null>(null);
   const [propRotation, setPropRotation] = useState(0);
   const [propGroup, setPropGroup] = useState("vegetation");
@@ -66,6 +68,8 @@ export default function App() {
   const [message, setMessage] = useState("Loading world...");
   const [metrics, setMetrics] = useState<RuntimeMetrics | null>(null);
   const [routingHealth, setRoutingHealth] = useState({ routed: 0, disconnected: 0 });
+  const [dismissedCombatId, setDismissedCombatId] = useState<string | null>(null);
+  const [alertsOpen, setAlertsOpen] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!ownerId) return;
@@ -117,6 +121,18 @@ export default function App() {
     [view],
   );
 
+  const buildCategories = useMemo(
+    () => Array.from(new Set(unlockedCatalog.map((item) => item.category))).sort(),
+    [unlockedCatalog],
+  );
+
+  const visibleBuildCatalog = useMemo(
+    () => buildCategory === "all"
+      ? unlockedCatalog
+      : unlockedCatalog.filter((item) => item.category === buildCategory),
+    [buildCategory, unlockedCatalog],
+  );
+
   const movingPropMeta = useMemo(() => {
     if (!view || !movingPropId) return null;
     const instance = view.world.props.find((p) => p.id === movingPropId);
@@ -139,6 +155,39 @@ export default function App() {
     return view.propCatalog.find((p) => p.id === selectedPropInstance.definitionId) ?? null;
   }, [selectedPropInstance, view]);
 
+  const selectedBuildingInstance = useMemo(
+    () => view?.world.buildings.find((building) => building.id === selectedBuildingId) ?? null,
+    [selectedBuildingId, view],
+  );
+
+  const selectedBuildingMeta = useMemo(() => {
+    if (!view || !selectedBuildingInstance) return null;
+    return view.buildCatalog.find((item) => item.id === selectedBuildingInstance.definitionId) ?? null;
+  }, [selectedBuildingInstance, view]);
+
+  const recentEvents = useMemo(
+    () => [...(view?.world.events ?? [])].slice(-4).reverse(),
+    [view],
+  );
+
+  const workforceByCategory = useMemo(() => {
+    if (!view) return [];
+    const totals = new Map<string, { assigned: number; demand: number }>();
+    for (const building of view.world.buildings) {
+      if (building.constructionState !== "COMPLETE") continue;
+      const meta = view.buildCatalog.find((item) => item.id === building.definitionId);
+      const category = meta?.jobCategory;
+      if (!category || !meta || meta.workers <= 0) continue;
+      const current = totals.get(category) ?? { assigned: 0, demand: 0 };
+      current.assigned += building.workersAssigned;
+      current.demand += meta.workers;
+      totals.set(category, current);
+    }
+    return [...totals.entries()]
+      .map(([category, value]) => ({ category, ...value }))
+      .sort((a, b) => b.assigned - a.assigned || a.category.localeCompare(b.category));
+  }, [view]);
+
   const activePreviewProp = mode === "MOVE_PROP" ? movingPropMeta : selectedProp;
   const activePreviewRotation =
     mode === "MOVE_PROP" ? (movingPropInstance?.rotationY ?? 0) : propRotation;
@@ -147,6 +196,7 @@ export default function App() {
     setMode("SELECT");
     setSelectedBuild(null);
     setSelectedProp(null);
+    setSelectedBuildingId(null);
     setMovingPropId(null);
     setRoadStart(null);
   }, []);
@@ -251,6 +301,20 @@ export default function App() {
 
   const damaged = w.buildings.filter((b) => b.damageState !== "HEALTHY");
   const constructing = w.buildings.filter((b) => b.constructionState === "BUILDING");
+  const activeCombat = w.combat && w.combat.status !== "RESOLVED" ? w.combat : null;
+  const combatResult =
+    w.combat && w.combat.status === "RESOLVED" && w.combat.outcome && dismissedCombatId !== w.combat.id
+      ? w.combat
+      : null;
+  const enemyActors = activeCombat?.actors.filter((actor) => actor.side === "ENEMY") ?? [];
+  const defenderActors = activeCombat?.actors.filter((actor) => actor.side === "DEFENDER") ?? [];
+  const hpRatio = (actors: typeof enemyActors) => {
+    const max = actors.reduce((sum, actor) => sum + Math.max(1, actor.maxHp), 0);
+    if (max <= 0) return 0;
+    return Math.max(0, Math.min(1, actors.reduce((sum, actor) => sum + Math.max(0, actor.hp), 0) / max));
+  };
+  const hostileIntegrity = hpRatio(enemyActors);
+  const defenseIntegrity = hpRatio(defenderActors);
   const worldMinute = Math.floor(w.simulationSeconds % 1440);
   const worldHour = Math.floor(worldMinute / 60);
   const worldClock = `${String(worldHour).padStart(2, "0")}:${String(worldMinute % 60).padStart(2, "0")}`;
@@ -266,6 +330,7 @@ export default function App() {
         propCatalog={view.propCatalog}
         propRotation={activePreviewRotation}
         selectedPropId={selectedPropId}
+        selectedBuildingId={selectedBuildingId}
         movingPropId={movingPropId}
         roadStart={roadStart}
         visualPopulationOverride={stressCitizens}
@@ -273,6 +338,15 @@ export default function App() {
         onRouting={(routed, disconnected) => setRoutingHealth({ routed, disconnected })}
         onPropSelect={(propId) => {
           setSelectedPropId(propId);
+          if (propId) setSelectedBuildingId(null);
+          setMovingPropId(null);
+          setSelectedBuild(null);
+          setSelectedProp(null);
+          setMode("SELECT");
+        }}
+        onBuildingSelect={(buildingId) => {
+          setSelectedBuildingId(buildingId);
+          if (buildingId) setSelectedPropId(null);
           setMovingPropId(null);
           setSelectedBuild(null);
           setSelectedProp(null);
@@ -284,12 +358,12 @@ export default function App() {
       <header className="topbar hud-panel">
         <div className="brand">EVERVALE <span>M1</span></div>
         <div className="resources">
-          <b>¤ {Math.floor(w.resources.money)}</b>
-          <b>⚡ {Math.floor(w.resources.power)}/{Math.floor(w.resources.powerCap)}</b>
-          <b>💧 {Math.floor(w.resources.water)}/{Math.floor(w.resources.waterCap)}</b>
-          <b>◇ {Math.floor(w.resources.varum)}</b>
-          <b>👥 {w.society.population}/{w.society.housingCapacity}</b>
-          <b>☺ {Math.round(w.society.happiness)}</b>
+          <b className={w.resources.money < 200 ? "resource-chip warning" : "resource-chip"}>¤ {Math.floor(w.resources.money)}/{Math.floor(w.resources.moneyCap)}</b>
+          <b className={w.resources.powerCap > 0 && w.resources.power / w.resources.powerCap < 0.2 ? "resource-chip critical" : "resource-chip"}>⚡ {Math.floor(w.resources.power)}/{Math.floor(w.resources.powerCap)}</b>
+          <b className={w.resources.waterCap > 0 && w.resources.water / w.resources.waterCap < 0.2 ? "resource-chip critical" : "resource-chip"}>💧 {Math.floor(w.resources.water)}/{Math.floor(w.resources.waterCap)}</b>
+          <b className="resource-chip">◇ {Math.floor(w.resources.varum)}/{Math.floor(w.resources.varumCap)}</b>
+          <b className={w.society.population >= w.society.housingCapacity ? "resource-chip warning" : "resource-chip"}>👥 {w.society.population}/{w.society.housingCapacity}</b>
+          <b className={w.society.happiness < 55 ? "resource-chip warning" : "resource-chip"}>☺ {Math.round(w.society.happiness)}</b>
           <b title="Town beauty from decor">✦ {w.society.beauty.toFixed(1)}</b>
           <b>T{w.resources.techTier} · {Math.floor(w.resources.techPoints)}</b>
           <b data-testid="world-clock">🕒 {worldClock}</b>
@@ -304,10 +378,101 @@ export default function App() {
               {speed === 0 ? "Ⅱ" : `${speed}×`}
             </button>
           ))}
+          <button
+            className={alertsOpen ? "active alerts-toggle" : "alerts-toggle"}
+            aria-expanded={alertsOpen}
+            onClick={() => setAlertsOpen((value) => !value)}
+          >
+            Alerts {w.events.length > 0 ? `(${Math.min(99, w.events.length)})` : ""}
+          </button>
         </div>
       </header>
 
       {combatLabel && <div className="combat-banner" data-testid="combat-status">{combatLabel}</div>}
+
+      {activeCombat?.status === "ACTIVE" && (
+        <section className="combat-hud hud-panel" aria-label="Active combat status">
+          <div className="combat-hud-title">
+            <span className="eyebrow">ACTIVE CONTACT</span>
+            <strong>Town Defense</strong>
+          </div>
+          <div className="combat-meter-row">
+            <span>Hostile strength</span>
+            <div className="combat-meter hostile"><i style={{ width: `${Math.round(hostileIntegrity * 100)}%` }} /></div>
+          </div>
+          <div className="combat-meter-row">
+            <span>Defense integrity</span>
+            <div className="combat-meter defender"><i style={{ width: `${Math.round(defenseIntegrity * 100)}%` }} /></div>
+          </div>
+          <div className="combat-hud-foot">
+            <span>{enemyActors.filter((actor) => actor.hp > 0).length} hostiles active</span>
+            <span>{defenderActors.filter((actor) => actor.hp > 0).length} defenders active</span>
+          </div>
+        </section>
+      )}
+
+      {combatResult && (
+        <section className="battle-result hud-panel" data-testid="battle-result">
+          <span className="eyebrow">AFTER ACTION</span>
+          <h2>{combatResult.outcome === "CLEAN" ? "Repelled — Clean" : combatResult.outcome === "COSTLY" ? "Repelled — Costly" : "Breached"}</h2>
+          <p>{combatResult.summary ?? "The town has returned to recovery operations."}</p>
+          <div className="battle-result-grid">
+            <div><small>Structures affected</small><b>{damaged.length}</b></div>
+            <div><small>Defenders standing</small><b>{combatResult.actors.filter((actor) => actor.side === "DEFENDER" && actor.hp > 0).length}</b></div>
+            <div><small>Hostiles remaining</small><b>{combatResult.actors.filter((actor) => actor.side === "ENEMY" && actor.hp > 0).length}</b></div>
+          </div>
+          <div className="battle-result-note">
+            Rewards are server-authoritative and are not shown until the runtime reward ledger is implemented.
+          </div>
+          <button className="inspector-primary" onClick={() => setDismissedCombatId(combatResult.id)}>
+            Return to Town
+          </button>
+        </section>
+      )}
+
+      {alertsOpen && (
+        <aside className="alerts-center hud-panel" data-testid="alerts-center">
+          <div className="alerts-center-heading">
+            <div>
+              <span className="eyebrow">ALERTS</span>
+              <strong>Town Log</strong>
+            </div>
+            <button onClick={() => setAlertsOpen(false)} aria-label="Close alerts">×</button>
+          </div>
+          {w.events.length === 0 ? (
+            <p>No alerts yet.</p>
+          ) : (
+            <div className="alerts-history">
+              {[...w.events].slice(-12).reverse().map((event) => (
+                <div key={event.id} className="alerts-history-row">
+                  <span className={`event-dot severity-${Math.max(0, Math.min(3, Math.floor(event.severity)))}`} />
+                  <div>
+                    <strong>{event.type.replaceAll("_", " ")}</strong>
+                    <small>{event.summary}</small>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </aside>
+      )}
+
+      {recentEvents.length > 0 && (
+        <aside className="event-stack" aria-label="Town events">
+          {recentEvents.map((event, index) => (
+            <div
+              key={event.id}
+              className={`event-card severity-${Math.max(0, Math.min(3, Math.floor(event.severity)))}`}
+            >
+              <span className="event-dot" />
+              <div>
+                <strong>{event.type.replaceAll("_", " ")}</strong>
+                <small data-testid={index === 0 ? "event-summary" : undefined}>{event.summary}</small>
+              </div>
+            </div>
+          ))}
+        </aside>
+      )}
 
       <aside className="build-panel hud-panel">
         <div className="tool-tabs">
@@ -351,8 +516,26 @@ export default function App() {
         <div className="divider" />
 
         {catalogTab === "BUILD" ? (
-          <div className="catalog-list" data-testid="build-catalog">
-            {unlockedCatalog.map((item) => (
+          <>
+            <div className="group-chips build-category-chips" data-testid="build-categories">
+              <button
+                className={buildCategory === "all" ? "active" : ""}
+                onClick={() => setBuildCategory("all")}
+              >
+                all
+              </button>
+              {buildCategories.map((category) => (
+                <button
+                  key={category}
+                  className={buildCategory === category ? "active" : ""}
+                  onClick={() => setBuildCategory(category)}
+                >
+                  {category.replaceAll("_", " ")}
+                </button>
+              ))}
+            </div>
+            <div className="catalog-list" data-testid="build-catalog">
+              {visibleBuildCatalog.map((item) => (
               <button
                 key={item.id}
                 className={mode === "BUILD" && selectedBuild?.id === item.id ? "active catalog-card" : "catalog-card"}
@@ -361,6 +544,7 @@ export default function App() {
                   setSelectedBuild(item);
                   setSelectedProp(null);
                   setSelectedPropId(null);
+                  setSelectedBuildingId(null);
                   setRoadStart(null);
                 }}
               >
@@ -368,8 +552,9 @@ export default function App() {
                 <small>{item.sizeTitle}</small>
                 <small>¤{item.moneyCost} · {item.buildCycles} cycles</small>
               </button>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         ) : (
           <>
             <div className="group-chips" data-testid="prop-groups">
@@ -393,6 +578,7 @@ export default function App() {
                     setSelectedProp(item);
                     setSelectedBuild(null);
                     setSelectedPropId(null);
+                    setSelectedBuildingId(null);
                     setMovingPropId(null);
                     setPropRotation(0);
                   }}
@@ -421,23 +607,70 @@ export default function App() {
       </aside>
 
       <aside className="status-panel hud-panel">
-        <div data-testid="building-count"><strong>Buildings</strong> {w.buildings.length}</div>
-        <div data-testid="prop-count"><strong>Props</strong> {w.props.length}</div>
-        <div data-testid="simulation-seconds"><strong>Sim</strong> {Math.floor(w.simulationSeconds)}s</div>
-        <div><strong>Workforce</strong> {w.society.assignedWorkers}/{w.society.workforce}</div>
-        <div><strong>Education</strong> {Math.round(w.society.educationCoverage * 100)}%</div>
-        <div><strong>Recreation</strong> {Math.round(w.society.recreationCoverage * 100)}%</div>
-        <div><strong>Safety</strong> {Math.round(w.society.safety * 100)}%</div>
-        <div><strong>Beauty</strong> {w.society.beauty.toFixed(2)} / 5</div>
-        <div data-testid="routing-status">
-          <strong>Road routing</strong>{" "}
-          {routingHealth.routed > 0
-            ? `${routingHealth.routed - routingHealth.disconnected}/${routingHealth.routed}`
-            : "measuring…"}
+        <div className="town-overview-heading">
+          <span className="eyebrow">TOWN OVERVIEW</span>
+          <strong>Settlement Health</strong>
+        </div>
+
+        <div className="overview-workforce">
+          <span>Workforce</span>
+          <b>{w.society.assignedWorkers}/{w.society.workforce}</b>
+          <small>{Math.max(0, w.society.workforce - w.society.assignedWorkers)} available</small>
+        </div>
+
+        <div className="overview-meter-row">
+          <span>Education</span>
+          <div className="overview-meter"><i style={{ width: `${Math.round(w.society.educationCoverage * 100)}%` }} /></div>
+          <b>{Math.round(w.society.educationCoverage * 100)}%</b>
+        </div>
+        <div className="overview-meter-row">
+          <span>Recreation</span>
+          <div className="overview-meter"><i style={{ width: `${Math.round(w.society.recreationCoverage * 100)}%` }} /></div>
+          <b>{Math.round(w.society.recreationCoverage * 100)}%</b>
+        </div>
+        <div className="overview-meter-row">
+          <span>Safety</span>
+          <div className="overview-meter"><i style={{ width: `${Math.round(w.society.safety * 100)}%` }} /></div>
+          <b>{Math.round(w.society.safety * 100)}%</b>
+        </div>
+
+        <div className="overview-stats">
+          <div data-testid="building-count"><small>Buildings</small><b>{w.buildings.length}</b></div>
+          <div data-testid="prop-count"><small>Props</small><b>{w.props.length}</b></div>
+          <div><small>Beauty</small><b>{w.society.beauty.toFixed(2)}</b></div>
+        </div>
+
+        {workforceByCategory.length > 0 && (
+          <div className="workforce-allocation" data-testid="workforce-allocation">
+            <strong>Workforce allocation</strong>
+            {workforceByCategory.map((row) => {
+              const ratio = row.demand > 0 ? Math.min(1, row.assigned / row.demand) : 0;
+              return (
+                <div key={row.category} className="workforce-row">
+                  <span>{row.category.replaceAll("_", " ")}</span>
+                  <div className="workforce-meter"><i style={{ width: `${Math.round(ratio * 100)}%` }} /></div>
+                  <b>{row.assigned}/{row.demand}</b>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="routing-card" data-testid="routing-status">
+          <span>Road routing</span>
+          <b>
+            {routingHealth.routed > 0
+              ? `${routingHealth.routed - routingHealth.disconnected}/${routingHealth.routed}`
+              : "measuring…"}
+          </b>
+        </div>
+
+        <div className="debug-stat" data-testid="simulation-seconds">
+          <strong>Sim</strong> {Math.floor(w.simulationSeconds)}s
         </div>
 
         <div
-          className="perf-probe"
+          className="perf-probe debug-stat"
           data-testid="runtime-metrics"
           data-fps={metrics?.fps ?? 0}
           data-frame-p95={metrics?.frameMsP95 ?? 0}
@@ -515,13 +748,6 @@ export default function App() {
           </div>
         )}
 
-        {w.events.length > 0 && (
-          <div className="event-log">
-            <strong>Last event</strong>
-            <small data-testid="event-summary">{w.events[w.events.length - 1]?.summary}</small>
-          </div>
-        )}
-
         <button
           className="danger"
           disabled={!!w.combat && w.combat.status !== "RESOLVED"}
@@ -530,6 +756,54 @@ export default function App() {
           Test surprise wave
         </button>
       </aside>
+
+      {selectedBuildingInstance && mode === "SELECT" && (
+        <aside className="building-inspector hud-panel" data-testid="building-inspector">
+          <div className="inspector-heading">
+            <div>
+              <span className="eyebrow">BUILDING</span>
+              <strong>{selectedBuildingMeta?.name ?? selectedBuildingInstance.definitionId.replaceAll("_", " ")}</strong>
+            </div>
+            <button onClick={() => setSelectedBuildingId(null)} aria-label="Close building inspector">×</button>
+          </div>
+          <div className="inspector-state">
+            <span className={`state-pill ${selectedBuildingInstance.damageState.toLowerCase()}`}>
+              {selectedBuildingInstance.damageState}
+            </span>
+            <span>{Math.round(selectedBuildingInstance.condition)}% condition</span>
+          </div>
+          <div className="inspector-grid">
+            <div><small>Workers</small><b>{selectedBuildingInstance.workersAssigned}/{selectedBuildingMeta?.workers ?? "—"}</b></div>
+            <div><small>Priority</small><b>{selectedBuildingInstance.priority}</b></div>
+            <div><small>Upkeep</small><b>¤{selectedBuildingMeta?.upkeep ?? 0}/cycle</b></div>
+            <div><small>Role</small><b>{selectedBuildingMeta?.jobCategory?.replaceAll("_", " ") ?? "support"}</b></div>
+          </div>
+          {selectedBuildingInstance.constructionState === "BUILDING" ? (
+            <div className="inspector-callout">
+              Construction · {Math.max(0, Math.ceil(selectedBuildingInstance.constructionRemainingSeconds))}s remaining
+            </div>
+          ) : (
+            <div className="inspector-output">
+              {(selectedBuildingMeta?.moneyPerWorker ?? 0) > 0 && <span>¤ +{selectedBuildingMeta!.moneyPerWorker}/worker</span>}
+              {(selectedBuildingMeta?.powerProduction ?? 0) > 0 && <span>⚡ +{selectedBuildingMeta!.powerProduction}</span>}
+              {(selectedBuildingMeta?.powerUse ?? 0) > 0 && <span>⚡ −{selectedBuildingMeta!.powerUse}</span>}
+              {(selectedBuildingMeta?.waterProduction ?? 0) > 0 && <span>💧 +{selectedBuildingMeta!.waterProduction}</span>}
+              {(selectedBuildingMeta?.waterUse ?? 0) > 0 && <span>💧 −{selectedBuildingMeta!.waterUse}</span>}
+              {(selectedBuildingMeta?.techProduction ?? 0) > 0 && <span>Tech +{selectedBuildingMeta!.techProduction}</span>}
+              {(selectedBuildingMeta?.housingAdd ?? 0) > 0 && <span>Housing +{selectedBuildingMeta!.housingAdd}</span>}
+              {(selectedBuildingMeta?.safetyAdd ?? 0) > 0 && <span>Safety +{Math.round(selectedBuildingMeta!.safetyAdd * 100)}%</span>}
+            </div>
+          )}
+          {selectedBuildingInstance.damageState !== "HEALTHY" && selectedBuildingInstance.damageState !== "REPAIRING" && (
+            <button
+              className="inspector-primary"
+              onClick={() => void command({ type:"REPAIR_BUILDING", payload:{buildingId:selectedBuildingInstance.id} })}
+            >
+              Repair building
+            </button>
+          )}
+        </aside>
+      )}
 
       {selectedPropInstance && selectedPropMeta && mode === "SELECT" && (
         <div className="prop-inspector hud-panel" data-testid="prop-inspector">
