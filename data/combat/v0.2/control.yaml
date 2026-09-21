@@ -1,0 +1,80 @@
+version: "0.2"
+
+combat_control:
+  default_mode: AUTO_DEFENSE
+  per_unit_direct_orders_enabled: false
+  player_commands:
+    - HOLD_CORE
+    - INTERCEPT_AIR
+    - PROTECT_VARUM
+    - FALL_BACK
+    - ACTIVATE_WARD
+
+simulation_speed:
+  max_speed_during_major_combat: 1
+  optional_auto_pause_on_first_contact: true
+
+readiness:
+  ready_min: 80
+  available_min: 50
+  limited_min: 20
+  disabled: 0
+  dps_factor:
+    100: 1.00
+    75: 0.94
+    50: 0.82
+    25: 0.65
+
+doctrines:
+  BALANCED:
+    reserve_fraction: 0.20
+    ttk_target_seconds: 10
+  HOLD_CORE:
+    reserve_fraction: 0.10
+    ttk_target_core_seconds: 8
+    ttk_target_outer_seconds: 14
+  PROTECT_VARUM:
+    reserve_fraction: 0.20
+    ttk_target_varum_seconds: 8
+  INTERCEPT_AIR:
+    reserve_fraction: 0.20
+    ttk_target_air_seconds: 7
+  OUTER_DEFENSE:
+    reserve_fraction: 0.15
+    ttk_target_perimeter_seconds: 9
+
+assignment:
+  score_weights:
+    target_match: 40
+    readiness: 20
+    doctrine_fit: 15
+    distance_fit: 15
+    health_fit: 10
+  reevaluate_on:
+    - new_contact
+    - target_removed
+    - defender_disabled
+    - access_break
+    - doctrine_change
+    - wave_phase_change
+  avoid_overkill: true
+  keep_reserve_for_unrevealed_phase: true
+
+outcomes:
+  clean_repel:
+    max_structural_damage_fraction: 0.10
+    critical_service_disabled_allowed: false
+  costly_repel:
+    wave_objective_completed: false
+  breach:
+    triggers:
+      - wave_objective_completed
+      - hearth_hall_disabled
+      - critical_objective_meter_100
+      - story_defense_objective_failed
+
+damage:
+  armor_formula: "raw_damage * 100 / (100 + armor)"
+  permanent_citizen_death: false
+  vehicle_zero_hp_state: DISABLED
+  building_zero_hp_state: DISABLED
