@@ -1,91 +1,105 @@
-# 24 — Prototype Simulation Results v0.1
+# 24 — Prototype Simulation Results v0.2
 
-These are design simulations using the values in `data/balance/v0.1/`.
+Status: **AUDIT-CORRECTED**
 
-They are not claims about final release balance.
+These are design simulations against the v0.1 balance data plus Workforce allocator revision 0.2.
 
-## Economy scenario A — starter settlement
+They are not final release tuning.
 
-Configuration:
-- Population 12
-- Workforce 9
+## Important correction
+
+The previous Scenario E incorrectly described an advanced town as if all requested jobs could be staffed even when requested job slots exceeded available Workforce.
+
+That violated the canonical rule:
+
+`assigned workers <= Workforce`
+
+This report replaces that result.
+
+# Economy scenarios
+
+## A — Starter settlement
+
+Population: 12  
+Workforce: 9
+
+Buildings:
 - 3 Houses
-- 1 Power Plant
-- 1 Water Plant
-- 1 Workshop
+- Power Plant
+- Water Plant
+- Workshop
 
-Reference output per cycle:
-- Power production: 40
-- Power demand: ~14
-- Water production: 35
-- Water demand: ~10
-- net Money: ~+26
-- Tech: 0
-- Varum: 0
+Per reference cycle:
+- Power production 40 / demand ~14
+- Water production 35 / demand ~10
+- Money ~+26
+- Housing full
 
-Result:
-- stable
-- enough reserve headroom
-- one worker may remain available
-- Housing is full, so Population does not grow until player builds another House
+Interpretation:
+- stable bootstrap
+- one worker can remain available
+- the obvious first growth action is another House
 
-This creates a clear first expansion decision.
+## B — Civic town
 
-## Economy scenario B — civic town
+Population: 16  
+Workforce: 12
 
-Configuration:
-- Population 16
+Buildings:
 - 4 Houses
-- Power + Water
+- Power
+- Water
 - Workshop
 - School
 - Park
 - Guard Post
 
-Reference:
-- Workforce 12
-- Power demand ~21 / production 40
-- Water demand ~17 / production 35
-- net Money ~+19
-- Tech +4/cycle
-- high Happiness
+Per cycle:
+- Power ~40 / 21
+- Water ~35 / 17
+- Money ~+19
+- Tech +4
 
-Result:
-- safe and progressing
-- less profitable than pure Workshop expansion
-- Tech is purchased indirectly through Workforce opportunity cost
+Interpretation:
+- School/Guard visibly cost economic opportunity
+- town remains healthy
+- Happiness/Tech become meaningful alternatives to pure income expansion
 
-## Economy scenario C — Varum town
+## C — Varum town
 
-Configuration:
-- Population 24
+Population: 24  
+Workforce: 18
+
+Buildings:
 - 6 Houses
-- 1 Power Plant
-- 1 Water Plant
+- Power
+- Water
 - 2 Workshops
 - School
 - Park
 - Guard
-- 1 Varum Mine
+- Varum Mine
 
-Reference:
-- Workforce 18, fully used
-- Power ~40 production / 35 demand
+Per cycle:
+- Power ~40 / 35
 - Water ~35 / 26
-- net Money ~+45
+- Money ~+45
 - Tech +4
 - Varum +3
 
-Result:
-- one Power Plant still works but is becoming tight
-- expansion naturally pressures utility capacity
-- Mine does not replace Money economy
+Interpretation:
+- first utility ceiling is approaching naturally
+- Varum competes for Workforce but does not replace Money
 
-## Economy scenario D — 32 residents
+## D — 32 residents
 
-Configuration:
+Population: 32  
+Workforce: 24
+
+Buildings:
+- 8 Houses
 - 2 Power Plants
-- 1 Water Plant
+- Water Plant
 - 2 Workshops
 - School
 - 2 Parks
@@ -93,173 +107,167 @@ Configuration:
 - Mine
 - Watchtower
 
-Reference:
-- Power 80 / ~41
-- Water 35 / ~33
-- net Money ~+38
+Per cycle:
+- Power ~80 / 41
+- Water ~35 / 33
+- Money ~+38
 - Tech +4
 - Varum +3
-- some Workforce remains free
 
-Result:
-- Water is now near its limit
-- one extra growth/building decision can force a second Water Plant
+Interpretation:
+- Water is nearly saturated
+- the next few expansion choices naturally force another Water investment
 
-The resource curve creates visible scaling pressure.
+## E — Advanced town with more job slots than workers
 
-## Economy scenario E — overbuilt advanced town
+Population: 40  
+Workforce: 30
 
-Population 40 with:
+Buildings:
+- 10 Houses
 - 2 Power
 - 2 Water
 - 3 Workshops
 - 2 Schools
 - 2 Mines
-- 2 Guards
-- 2 Towers
+- 2 Guard Posts
+- 2 Watchtowers
 - Radar
-- Vehicle Factory
+- idle Vehicle Factory
 
-Reference:
-- Workforce: 30, fully allocated
-- Power: 80 production / ~82 demand
-- Water: 70 / ~49
-- Money: approximately **-9/cycle**
-- Tech: ~+7.8
-- Varum: ~+5.9
+Requested staffed slots exceed Workforce.
 
-Result:
-- high Tech/Varum ambition creates a Money and Power problem
-- the town is not “lost”; player can add Population/Housing, another Power Plant, more Workshop capacity, or lower job priorities
+With the phased default allocator:
+- utilities receive 8 workers
+- income receives enough workers for solvency
+- ready defense receives 5
+- Schools receive 4
+- Mines receive 4
+- remaining worker goes to additional income
+- total assigned = exactly 30
 
-This is a successful systemic failure mode.
+One Workshop ends around **1/4 staffed** rather than receiving phantom workers.
 
-## Economy scenario F — corrected advanced town
+Approximate result:
+- Money **+19/cycle**
+- Power **80 / 69**
+- Water **70 / 43**
+- Tech **+8**
+- Varum **+6**
 
-Population 44 with additional housing, Power and income capacity:
+Interpretation:
 
-Reference:
-- Power ~120 / 86
-- Water ~70 / 52
-- Money ~+16
-- Tech +8
-- Varum +6
+The failure mode is **understaffing**, not impossible arithmetic.
 
-Result:
-- the advanced town returns to positive operation through planning rather than arbitrary level gating
+The player sees a real strategic choice:
+- grow Population
+- lower School/Mine/Defense priority
+- accept reduced income
+- stop maintaining unnecessary buildings
 
-## Growth timing
+## F — Gross overbuild can still become insolvent
 
-At ~88–90 Happiness with one newly available House:
-- expected early Growth ≈ one resident per ~60 minutes
-- accelerates modestly as more Houses become occupied
-- global cap prevents exponential population explosion
+Population: 24  
+Workforce: 18
 
-## Tech timing
+Example:
+- 6 Houses
+- 2 Power
+- 2 Water
+- only 1 Workshop
+- 2 Schools
+- 2 Mines
+- 2 Guard Posts
+- 3 Watchtowers
+- Radar
+- idle Vehicle Factory
+- 2 Parks
 
-One School:
+Even after the allocator protects utilities and tries to reach the solvency floor, there is not enough income capacity.
+
+Approximate result:
+- Money about **-28/cycle**
+- School/Varum staffing is heavily starved
+- utilities remain functional
+
+Interpretation:
+
+Automation prevents nonsensical assignments; it does **not** make bad city planning harmless.
+
+This is the intended distinction.
+
+# Progression timing
+
+## Population
+
+At roughly 88–90 Happiness with spare Housing:
+- early target remains around one resident per ~60 minutes
+- Growth is capped to avoid exponential runaway
+
+## Tech
+
+One baseline School:
 - +24 Tech/hour
-- T1 ~1h40
-- T2 ~5h
+- T1 around 1h40
+- T2 around 5h total
 
-Two Schools:
-- roughly double speed
-- but require more Workforce/Power/Water/upkeep
+More Schools accelerate Tech at the cost of Workforce, utilities and upkeep.
 
-## Varum timing
+## Varum
 
 One Mine:
-- 18 Varum/hour
+- 18 Varum/hour at full operation
 
-Approximate resource time after unlock:
-- Armored Car 10 Varum: ~34 min
+Reference material-only accumulation:
+- Armored Car 10: ~34 min
 - Tank 30: ~100 min
 - Fighter 40: ~134 min
 
-Money and Tech remain additional gates.
+Tech and Money remain additional gates.
 
-# Combat simulations
+# Threat cadence audit
 
-Reference armor:
+Threat model revision 0.2 separates frequency from intensity.
+
+Approximate major-wave cadence:
+- starter T0 first onboarding wave: ~1h45–2h30
+- Population 24 / T1 / one Mine: ~4–6.5h
+- Population 40 / T2 / two Mines: ~2.6–4.1h
+
+Growth mainly raises **wave budget**, avoiding the incentive to stop progressing.
+
+# Combat smoke tests
+
+Canonical armor:
 
 `effectiveDPS = rawDPS × 100 / (100 + Armor)`
 
-Seeded target selection was used for these prototype checks.
+### Early ground
+2 Guards + Watchtower vs 3 Raiders + Critter:
+- defenders should win
+- some damage expected
 
-## Ground — early
+### Mid ground
+2 Guards + Watchtower + Armored Car vs 6 Raiders + Brute:
+- close but defendable
+- meaningful repair expected
 
-Defense:
-- 2 Guards
-- 1 Watchtower
+### Tank tier
+Guards + 2 Towers + Armored Car + Tank vs 8 Raiders + 2 Brutes:
+- Tank materially improves outcome
 
-Attack:
-- 3 Raiders
-- 1 Critter
+### Air
+AA + Fighter vs 2 Drones + UFO Raider:
+- prepared defense can win
+- ground-only units cannot magically target air
 
-Result:
-- defenders win in ~12 seconds
-- multiple defenders damaged
+## Next numerical work
 
-Good: early defense matters without being a guaranteed wipe.
+Before runtime implementation:
+1. implement pure TypeScript Workforce allocator
+2. implement economy scenario runner
+3. implement seeded threat generator
+4. run Monte Carlo combat with spatial response time
+5. run 1000-seed map fairness validator
 
-## Ground — mid
-
-Defense:
-- 2 Guards
-- Watchtower
-- Armored Car
-
-Attack:
-- 6 Raiders
-- 1 Brute
-
-Result:
-- defenders win in ~22 seconds
-- defense is heavily damaged
-
-Good: close enough to justify repair and stronger preparation.
-
-## Ground — Tank tier
-
-Defense:
-- 2 Guards
-- 2 Watchtowers
-- Armored Car
-- Tank
-
-Attack:
-- 8 Raiders
-- 2 Brutes
-
-Result:
-- defenders win in ~14 seconds
-- Tank materially changes the outcome
-
-This validates the military progression fantasy.
-
-## Air — prepared
-
-Defense:
-- AA Battery
-- Fighter
-
-Attack:
-- 2 Drones
-- 1 UFO Raider
-
-Result:
-- defenders win in ~14 seconds
-- both defenders take meaningful damage
-
-Without AA/Fighter, ordinary ground defense cannot efficiently target air attackers.
-
-## Audit interpretation
-
-The current numbers already produce:
-- workforce tension
-- infrastructure thresholds
-- profitable vs non-profitable specialization
-- a meaningful Varum/Tech military gate
-- defense repair costs
-
-Next step is automated Monte Carlo simulation, not adding more resources.
+Do not add another resource to solve balance problems that can be solved through capacity, Workforce, upkeep or map access.
