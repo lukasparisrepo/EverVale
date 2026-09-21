@@ -18,6 +18,7 @@ export function createStarterWorld(
       rotationY: 0,
       constructionState: "COMPLETE",
       constructionRemainingSeconds: 0,
+      constructionTotalSeconds: 0,
       workersAssigned: 0,
       priority: definition.priority,
       condition: 100,
