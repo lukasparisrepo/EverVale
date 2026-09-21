@@ -1,8 +1,17 @@
 version: "0.1"
+model_revision: "0.2"
+
+rules:
+  tier_1_auto_unlock: true
+  tier_2_plus_requires_player_confirmation: true
+  pending_gate_school_output_multiplier: 0.25
+  overflow_cap_above_next_threshold: 0.35
+  no_multi_tier_offline_jump: true
 
 tiers:
   0:
     threshold: 0
+    confirmation_required: false
     unlocks:
       - house
       - workshop
@@ -14,12 +23,14 @@ tiers:
 
   1:
     threshold: 40
+    confirmation_required: false
     unlocks:
       - varum_mine
       - watchtower
 
   2:
     threshold: 120
+    confirmation_required: true
     unlocks:
       - radar
       - vehicle_factory
@@ -27,19 +38,25 @@ tiers:
 
   3:
     threshold: 300
+    confirmation_required: true
     unlocks:
       - tank
+      - rocket_truck
       - heavy_turret
 
   4:
     threshold: 600
+    confirmation_required: true
     unlocks:
       - airfield
       - fighter
       - anti_air
+      - interceptor
 
   5:
     threshold: 1000
+    confirmation_required: true
     unlocks:
       - varum_shield
       - ufo_interceptor
+      - beam_tank
