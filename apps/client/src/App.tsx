@@ -56,6 +56,7 @@ export default function App() {
   const [roadStart, setRoadStart] = useState<{x:number;z:number} | null>(null);
   const [message, setMessage] = useState("Loading world...");
   const [metrics, setMetrics] = useState<RuntimeMetrics | null>(null);
+  const [routingHealth, setRoutingHealth] = useState({ routed: 0, disconnected: 0 });
 
   const refresh = useCallback(async () => {
     if (!ownerId) return;
@@ -258,6 +259,7 @@ export default function App() {
         movingPropId={movingPropId}
         roadStart={roadStart}
         onGroundClick={groundClick}
+        onRouting={(routed, disconnected) => setRoutingHealth({ routed, disconnected })}
         onPropSelect={(propId) => {
           setSelectedPropId(propId);
           setMovingPropId(null);
@@ -418,8 +420,8 @@ export default function App() {
         <div><strong>Beauty</strong> {w.society.beauty.toFixed(2)} / 5</div>
         <div data-testid="routing-status">
           <strong>Road routing</strong>{" "}
-          {metrics
-            ? `${metrics.routedCitizens - metrics.disconnectedRoutes}/${metrics.routedCitizens}`
+          {routingHealth.routed > 0
+            ? `${routingHealth.routed - routingHealth.disconnected}/${routingHealth.routed}`
             : "measuring…"}
         </div>
 
