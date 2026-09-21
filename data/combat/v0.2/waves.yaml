@@ -1,7 +1,7 @@
 version: "0.2"
 
 settlement_rating:
-  formula: "population*2 + tech_tier*80 + functional_buildings*8 + varum_sites*25 + military_power*0.35 + cleared_sectors*15"
+  formula: "population*2 + tech_tier*80 + functional_buildings*8 + varum_sites*25 + cleared_sectors*15"
 
 brackets:
   0:
