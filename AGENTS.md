@@ -72,3 +72,76 @@ A gameplay feature must pass:
 - performance budget
 - acceptance tests
 - no fake buttons or placeholder production paths
+
+
+## Layered architecture rule
+
+Read `docs/35_LAYERED_ARCHITECTURE.md`.
+
+Mandatory dependency direction:
+
+```
+Presentation -> Application -> Domain <- Infrastructure adapters
+```
+
+Domain must remain framework-free.
+
+Never put authoritative gameplay formulas inside:
+- Three.js scene code
+- React components
+- Colyseus room handlers
+- database repositories
+- background-job handlers
+
+Those layers may call Domain/Application logic only.
+
+## Module-size / ownership rule
+
+Do not grow generic god files.
+
+When a file repeatedly approaches roughly 300–400 lines and has more than one reason to change, split it by responsibility.
+
+Do not create dumping grounds such as:
+- utils.ts
+- helpers.ts
+- common.ts
+- misc.ts
+
+Name modules by intent.
+
+## Registry rule
+
+Extensible content should register through explicit registries/data rather than giant switch statements.
+
+Expected registries include:
+- BuildingDefinitionRegistry
+- CitizenActivityRegistry
+- AnimalBehaviorRegistry
+- VehicleDefinitionRegistry
+- ThreatDefinitionRegistry
+- WorldEventRegistry
+
+Adding content should not require editing unrelated core systems.
+
+## QA rule
+
+Every major subsystem gets its own test/audit entry point.
+
+At minimum:
+- economy
+- workforce
+- offline simulation
+- threat/combat
+- roads/navigation
+- citizen life
+- assets
+- persistence
+- rendering/performance
+
+Do not loosen a budget or test threshold merely to make a failing change pass.
+
+## Reference-project rule
+
+Read `docs/36_WHISTLEVALE_REFERENCE_AUDIT.md` when working on procedural life, content modularity, or QA.
+
+Learn patterns from Whistlevale, but do not copy its custom renderer, browser-global script-order architecture, or client-only state model into EverVale.
