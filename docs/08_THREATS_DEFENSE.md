@@ -1,89 +1,140 @@
-# 08 — Threats, Defense & Military Progression
+# 08 — Threats, Defense & Combat
 
-## Threat Director
+Status: **COMBAT BASELINE v0.1**
 
-Threat timing is server-side and partially hidden.
+Detailed values: `data/balance/v0.1/combat.yaml` and `threats.yaml`.
 
-No exact countdown.
+## Threat philosophy
 
-Inputs may include:
-- settlement size
-- wealth
-- Varum stockpile/activity
-- territorial expansion
-- recent threat history
-- world seed
-- defensive posture
+Threats create tension inside a cozy game.
 
-## Warning ladder
+They should force preparation and recovery without turning EverVale into an RTS.
 
-Threats may reveal themselves through:
-1. subtle world clues
-2. reports/scouts
-3. sensor anomaly
-4. visible approach
-5. attack
+There is **no exact attack countdown**.
 
-Not every event uses every stage.
+## Hidden Threat Pressure
 
-## Threat families
+Reference pressure gain per 10-minute balance cycle:
 
-### Monsters
-Readable, fun fantasy creatures. Good for early game.
+`0.50 + 0.02×Population + 0.25×TechTier + 0.30×ActiveVarumMines`
 
-### Raiders
-Target storage, money, logistics, or weak edges.
+A seeded hidden threshold is normally selected in the range **15–25**.
 
-### Neighboring power
-Can trade, negotiate, pressure, raid, or attack.
+After a resolved major attack:
+- pressure resets
+- minimum major-attack cooldown: 6 cycles
 
-### UFO
-Late/mid-game disruption tied naturally to Varum and radar.
+The player never sees the threshold.
 
-## Defensive progression
+## Warning
 
-Suggested order:
-1. guard post
-2. watchtower
-3. shelter
-4. wall/gate
-5. radar
-6. armored vehicle
-7. tank
-8. airfield
-9. aircraft
-10. anti-air
-11. Varum shield
+Without Radar:
+- environmental clues
+- scout / citizen reports
+- short warning
 
-## Response doctrine
+With Radar:
+- warnings occur earlier
+- attacker class information improves
 
-Default behavior is autonomous:
-- civilians shelter
-- guards move to incidents
-- towers engage targets
-- vehicles deploy by rules
-- aircraft scramble if conditions allow
+Radar does not magically prevent attacks.
 
-The player prepares systems and priorities rather than microing every soldier.
+## Wave budget
 
-## Offline fairness
+Reference threat budget:
 
-When owner is absent:
-- attacks may occur
-- defenses operate
-- damage can happen
-- total loss is bounded
+`20 + 1.2×Population + 15×TechTier + 8×ActiveVarumMines + seeded variance`
 
-Use an offline damage budget and recovery rules so absence creates stories, not account deletion.
+Enemy types consume budget points.
 
-## After-action report
+This naturally increases danger as the settlement becomes richer and technologically interesting.
 
-Record:
-- warning time
-- attackers
-- defense response
-- losses
-- damage
-- resource cost
-- repairs initiated
-- notable citizen events
+## Families
+
+T0:
+- Critters
+- Raiders
+
+T1:
+- Brutes
+
+T2:
+- stronger raiders
+- early drones
+
+T3:
+- heavy ground groups
+- UFO scouts
+
+T4:
+- UFO assault groups
+
+T5:
+- carriers / advanced anomalies
+
+## Combat model
+
+Combat is server-authoritative and automatic.
+
+Core unit stats:
+- HP
+- DPS
+- Armor
+- target class
+- movement speed
+- attack range
+
+Reference armor formula:
+
+`effectiveDPS = rawDPS × 100 / (100 + Armor)`
+
+This has diminishing returns and is easy to audit.
+
+## Defense progression
+
+- Guard Post
+- Watchtower
+- Radar
+- Armored Car
+- Tank
+- Airfield
+- Fighter
+- Anti-Air
+- Varum Shield
+
+## No micro requirement
+
+The player controls:
+- placement
+- staffing
+- readiness priority
+- unit production
+- doctrine later
+
+Units select valid targets automatically.
+
+## Defeat without misery
+
+MVP rules:
+- citizens/guards at 0 HP become injured rather than permanently deleted
+- vehicles become disabled and repairable
+- structures become damaged/disabled
+- offline simulation never permanently erases critical buildings
+
+Threats should create repair costs and stories, not rage-quit punishment.
+
+## Offline attack
+
+Use the same unit stats and armor formula with coarse deterministic time steps.
+
+Offline safety rules may cap structure damage per absence window.
+
+## Economic purpose
+
+Defense is a resource sink:
+- defenders consume Workforce
+- military buildings have upkeep
+- advanced units consume Money + Varum
+- advanced bases consume Power/Water
+
+Over-defending slows economic/Tech growth.
