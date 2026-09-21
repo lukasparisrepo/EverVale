@@ -1,0 +1,16 @@
+{
+  "name": "@evervale/balance-data",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@evervale/domain": "workspace:*",
+    "yaml": "^2.8.1"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}
