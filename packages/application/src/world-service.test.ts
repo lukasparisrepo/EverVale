@@ -64,6 +64,7 @@ const defs: SimulationDefinitions = {
   },
   defenders: {},
   enemies: {},
+  blockers: {},
 };
 
 const building = (id: string, definitionId: string): WorldState["buildings"][number] => ({
@@ -103,8 +104,7 @@ test("command applies after elapsed time without self-inflicted revision conflic
       building("shop","workshop"),
     ],
     roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}],
-    combat:null,
-    events:[],
+    blockers:[], combat:null, events:[],
   };
   const repo = new Repo(world);
   const clock = new FakeClock(new Date(base.getTime() + 1500));
@@ -146,8 +146,7 @@ test("read projection advances visible simulation without mutating persisted rev
       building("shop","workshop"),
     ],
     roads:[{id:"r",type:"DIRT",from:{x:-20,y:0,z:0},to:{x:20,y:0,z:0}}],
-    combat:null,
-    events:[],
+    blockers:[], combat:null, events:[],
   };
   const repo = new Repo(world);
   const clock = new FakeClock(new Date(base.getTime() + 2000));
