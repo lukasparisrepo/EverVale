@@ -8,6 +8,7 @@ import type {
 } from "@evervale/protocol/world";
 import { devLogin, getWorld, sendCommand } from "./api";
 import { WorldView, type RuntimeMetrics } from "./world/WorldView";
+import { constructionVisualState } from "./world/construction-visual";
 
 type Mode = "SELECT" | "BUILD" | "ROAD" | "DECOR" | "MOVE_PROP";
 type CatalogTab = "BUILD" | "DECOR";
@@ -241,6 +242,7 @@ export default function App() {
       : "";
 
   const damaged = w.buildings.filter((b) => b.damageState !== "HEALTHY");
+  const constructing = w.buildings.filter((b) => b.constructionState === "BUILDING");
   const worldMinute = Math.floor(w.simulationSeconds % 1440);
   const worldHour = Math.floor(worldMinute / 60);
   const worldClock = `${String(worldHour).padStart(2, "0")}:${String(worldMinute % 60).padStart(2, "0")}`;
@@ -441,6 +443,25 @@ export default function App() {
               : "measuring…"}
           </small>
         </div>
+
+        {constructing.length > 0 && (
+          <div className="construction-list" data-testid="construction-list">
+            <strong>Construction</strong>
+            {constructing.map((building) => {
+              const meta = view.buildCatalog.find((item) => item.id === building.definitionId);
+              const state = constructionVisualState(building);
+              return (
+                <div key={building.id} className="construction-row">
+                  <span>
+                    {meta?.name ?? building.definitionId.replaceAll("_", " ")}
+                    <small>{state.stage.toLowerCase()} · {Math.round(state.progress * 100)}%</small>
+                  </span>
+                  <small>{Math.ceil(building.constructionRemainingSeconds)}s</small>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {w.blockers.length > 0 && (
           <div className="blocker-list" data-testid="blocker-list">
