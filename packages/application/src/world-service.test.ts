@@ -51,10 +51,13 @@ const zero = {
   safetyAdd: 0,
   combatSpawn: {},
   constructionSlotsAdd: 0,
+  footprintCellsX: 3,
+  footprintCellsZ: 2,
 };
 
 const defs: SimulationDefinitions = {
   referenceCycleSeconds: 600,
+  gridCellMeters: 2,
   buildings: {
     town_center: { id:"town_center", techTier:0, ...zero, moneyCapAdd:5000, constructionSlotsAdd:1 },
     house_small: { id:"house_small", techTier:0, ...zero, housingAdd:4 },
