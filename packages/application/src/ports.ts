@@ -6,6 +6,7 @@ export interface AcceptedCommandReceipt {
   ownerId: string;
   expectedRevision: number;
   commandType: string;
+  fingerprint: string;
   world: WorldState;
 }
 
@@ -14,6 +15,7 @@ export interface AcceptedCommandContext {
   ownerId: string;
   expectedRevision: number;
   commandType: string;
+  fingerprint: string;
 }
 
 export interface WorldRepository {
