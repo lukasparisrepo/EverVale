@@ -1,0 +1,134 @@
+version: "0.2"
+
+objective_rules:
+  default_objective_progress_max: 100
+  interrupted_decay_per_second: 4
+  structure_disabled_counts_as_objective_complete: true
+
+behaviors:
+  burrower:
+    ability: outer_bypass
+    uses_per_wave: 1
+    valid_targets: [wall, gate, outer_sector]
+    emerge_delay_seconds: 2.5
+    cannot_bypass: [civic_core, sealed_tunnel]
+
+  scrap_gobbler:
+    ability: resource_harass
+    preferred_objectives: [workshop, market, storehouse]
+    steal_money_per_second: 3
+    max_steal_per_unit: 45
+    retreat_hp_fraction: 0.25
+
+  spitter:
+    ability: ranged_pressure
+    preferred_targets: [guard, watchtower]
+    min_range_m: 5
+    projectile_travel_seconds: 0.8
+
+  scout_drone:
+    ability: scan
+    scan_duration_seconds: 12
+    objective_progress_per_second: 8.4
+    interrupted_decay_per_second: 7
+    preferred_targets: [radar, varum_mine, power_plant]
+    retreat_after_scan: true
+
+  ufo_scout:
+    ability: scan_and_attack
+    scan_duration_seconds: 15
+    objective_progress_per_second: 6.7
+    beam_damage_dps: 18
+    interrupted_decay_per_second: 5
+    retreat_after_success: true
+
+  ufo_raider:
+    ability: disable_beam
+    channel_seconds_to_disable: 14
+    objective_progress_per_second: 7.2
+    interrupted_decay_per_second: 3
+    preferred_targets: [power_plant, water_plant, radar, varum_mine]
+    beam_break_on_damage_fraction: 0.12
+
+  drop_pod:
+    ability: deploy_ground_units
+    deploy_delay_seconds: 6
+    payload_min: 2
+    payload_max: 4
+    payload_pool: [scrap_gobbler, leaper, spitter]
+    destroy_before_deploy_cancels_payload: true
+
+  alien_walker:
+    ability: shock_pulse
+    cooldown_seconds: 18
+    radius_m: 8
+    raw_damage: 45
+    building_damage_multiplier: 1.25
+    defender_stagger_seconds: 1.5
+
+  shield_drone:
+    ability: projection_shield
+    shield_hp: 260
+    radius_m: 10
+    protected_unit_cap: 4
+    incoming_damage_absorb_fraction: 0.55
+    shield_regen_per_second_out_of_combat: 10
+    preferred_allies: [ufo_raider, alien_walker, command_saucer]
+
+  command_saucer:
+    ability: command_field
+    radius_m: 18
+    ally_dps_multiplier: 1.12
+    ally_move_speed_multiplier: 1.08
+    drone_call_cooldown_seconds: 28
+    drone_call_count: 2
+    drone_type: scout_drone
+
+  siege_beast:
+    ability: structure_charge
+    charge_cooldown_seconds: 16
+    raw_structure_damage: 110
+    gate_wall_damage_multiplier: 1.5
+    windup_seconds: 2.2
+
+  carrier:
+    ability: deploy_wave
+    deploy_cooldown_seconds: 24
+    deploy_count_min: 2
+    deploy_count_max: 4
+    deploy_pool: [scout_drone, shield_drone, drop_pod]
+    max_active_children_per_carrier: 6
+    weak_phase_after_deploy_seconds: 5
+    weak_phase_damage_taken_multiplier: 1.25
+
+  anomaly_giant:
+    ability: gravity_pulse
+    cooldown_seconds: 22
+    radius_m: 12
+    raw_damage: 70
+    mobile_defender_slow_multiplier: 0.65
+    slow_duration_seconds: 4
+    objective: civic_core
+
+  mothership_fragment:
+    ability: story_boss_phases
+    phases:
+      - hp_min_fraction: 0.70
+        behavior: drone_screen
+        spawn_every_seconds: 28
+        spawn_count: 2
+        spawn_type: scout_drone
+      - hp_min_fraction: 0.35
+        behavior: gravity_drop
+        pulse_every_seconds: 20
+        raw_damage: 80
+        radius_m: 14
+      - hp_min_fraction: 0.00
+        behavior: exposed_core
+        damage_taken_multiplier: 1.30
+
+rules:
+  no_special_may_delete_world: true
+  no_uninterruptible_objective_under_8_seconds: true
+  hard_counter_must_exist_before_behavior_unlock: true
+  offline_resolves_same_contract_coarsely: true
