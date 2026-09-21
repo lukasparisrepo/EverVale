@@ -1,0 +1,109 @@
+version: "0.1"
+
+# This catalogue defines intended content roles.
+# Exact balance remains in balance files and is not implied by this catalogue.
+
+categories:
+  residential:
+    - house_small
+    - house_family
+    - cottage
+    - townhouse
+    - apartment_house
+    - residence_block
+    - senior_house
+    - villa
+
+  income:
+    - workshop
+    - market
+    - farm
+    - cafe
+    - bakery_shop
+    - general_store
+    - carpenter
+    - tailor
+    - art_studio
+    - office
+    - bank
+    - trading_hall
+
+  power:
+    - small_generator
+    - power_plant
+    - advanced_power_plant
+    - varum_reactor
+
+  water:
+    - well_station
+    - water_plant
+    - advanced_water_plant
+    - varum_condenser
+
+  education:
+    - small_school
+    - school
+    - academy
+    - research_institute
+    - advanced_research_lab
+    - observatory
+
+  civic:
+    - park_small
+    - park_large
+    - playground
+    - plaza
+    - garden
+    - pond_park
+    - community_hall
+    - clinic
+    - library
+    - sports_ground
+    - pet_park
+    - memorial_garden
+
+  varum:
+    - varum_mine
+    - deep_varum_mine
+    - varum_storage
+    - varum_research_annex
+
+  city_service:
+    - builder_yard
+    - repair_depot
+    - fire_station
+    - maintenance_office
+    - city_hall_upgrade
+
+  defense:
+    - guard_post
+    - watchtower
+    - gatehouse
+    - wall_segment
+    - radar
+    - shelter
+    - vehicle_factory
+    - armored_car_bay
+    - tank_bay
+    - heavy_turret
+    - anti_air
+    - airfield
+    - fighter_hangar
+    - varum_shield
+    - ufo_interceptor_pad
+
+  access:
+    - road_dirt
+    - road_paved
+    - road_main
+    - bridge
+    - stair
+    - ramp
+    - lift
+    - tunnel_entrance
+
+content_counts:
+  functional_definition_target_min: 45
+  functional_definition_target_max: 60
+  decor_definition_target_min: 80
+  decor_definition_target_max: 150
