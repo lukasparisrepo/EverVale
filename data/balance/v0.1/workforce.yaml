@@ -1,16 +1,47 @@
 version: "0.1"
+model_revision: "0.2"
 
 workforce_fraction: 0.75
 
-default_category_priority:
-  utility_power: 100
-  utility_water: 95
-  income: 80
-  defense_active: 75
-  defense_ready: 65
-  education: 60
-  varum: 50
-  advanced_industry: 40
+allocation_strategy: phased
+
+phases:
+  - id: critical_utilities
+    order: 1
+    categories: [utility_power, utility_water]
+    fill_mode: required_first
+
+  - id: solvency_floor
+    order: 2
+    categories: [income]
+    fill_mode: until_projected_target
+    projected_net_money_per_cycle_target: 5
+
+  - id: active_threat_defense
+    order: 3
+    categories: [defense_active]
+    fill_mode: required_first
+    only_when: active_threat
+
+  - id: strategic_priorities
+    order: 4
+    fill_mode: weighted
+    category_priority:
+      defense_ready: 65
+      education: 60
+      varum: 50
+      advanced_industry: 40
+      income: 35
+
+  - id: fill_remaining
+    order: 5
+    fill_mode: weighted
+    category_priority:
+      income: 80
+      education: 60
+      varum: 50
+      defense_ready: 45
+      advanced_industry: 40
 
 critical_categories:
   - utility_power
@@ -24,6 +55,16 @@ allocation:
   disconnected_buildings_request_workers: false
   disabled_buildings_request_workers: false
   production_order_buildings_request_workers_only_when_active: true
+  reassignment_every_tick: false
+
+reassignment_triggers:
+  - population_changed
+  - building_opened_or_closed
+  - road_connectivity_changed
+  - priority_changed
+  - threat_started_or_ended
+  - worker_availability_changed
+  - periodic_sanity_check
 
 tie_breakers:
   - explicit_building_priority
