@@ -11,6 +11,25 @@ import type { WorldCommand } from "@evervale/protocol/world";
 import { createStarterWorld } from "./create-starter-world.js";
 import type { Clock, IdGenerator, WorldRepository } from "./ports.js";
 
+function stableJson(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map((item) => stableJson(item)).join(",")}]`;
+  const record = value as Record<string, unknown>;
+  return `{${Object.keys(record)
+    .sort()
+    .map((key) => `${JSON.stringify(key)}:${stableJson(record[key])}`)
+    .join(",")}}`;
+}
+
+function commandFingerprint(ownerId: string, command: WorldCommand): string {
+  return stableJson({
+    ownerId,
+    expectedRevision: command.expectedRevision,
+    type: command.type,
+    payload: command.payload,
+  });
+}
+
 export interface WorldServiceOptions {
   repository: WorldRepository;
   definitions: SimulationDefinitions;
@@ -41,6 +60,20 @@ export class WorldService {
   }
 
   async command(ownerId: string, command: WorldCommand): Promise<WorldState> {
+    const fingerprint = commandFingerprint(ownerId, command);
+    const existingReceipt = await this.options.repository.findAcceptedCommand(command.commandId);
+    if (existingReceipt) {
+      if (
+        existingReceipt.ownerId !== ownerId ||
+        existingReceipt.commandType !== command.type ||
+        existingReceipt.expectedRevision !== command.expectedRevision ||
+        existingReceipt.fingerprint !== fingerprint
+      ) {
+        throw new Error("COMMAND_ID_CONFLICT");
+      }
+      return this.normalizeWorld(existingReceipt.world);
+    }
+
     const loaded = await this.options.repository.findByOwner(ownerId);
     let stored = loaded ? this.normalizeWorld(loaded) : null;
     if (!stored) {
@@ -121,8 +154,30 @@ export class WorldService {
       lastSimulatedAt: now.toISOString(),
     };
 
-    await this.options.repository.save(world, previousRevision);
-    return world;
+    try {
+      await this.options.repository.save(world, previousRevision, {
+        commandId: command.commandId,
+        ownerId,
+        expectedRevision: command.expectedRevision,
+        commandType: command.type,
+        fingerprint,
+      });
+      return world;
+    } catch (error) {
+      if (error instanceof Error && error.message === "REVISION_CONFLICT") {
+        const racedReceipt = await this.options.repository.findAcceptedCommand(command.commandId);
+        if (
+          racedReceipt &&
+          racedReceipt.ownerId === ownerId &&
+          racedReceipt.commandType === command.type &&
+          racedReceipt.expectedRevision === command.expectedRevision &&
+          racedReceipt.fingerprint === fingerprint
+        ) {
+          return this.normalizeWorld(racedReceipt.world);
+        }
+      }
+      throw error;
+    }
   }
 
   private normalizeWorld(world: WorldState): WorldState {
