@@ -62,6 +62,8 @@ export interface BuildingDefinition {
   safetyAdd: number;
   combatSpawn: Record<string, number>;
   constructionSlotsAdd: number;
+  footprintCellsX: number;
+  footprintCellsZ: number;
 }
 
 export interface BlockerDefinition {
@@ -88,6 +90,7 @@ export interface SimulationDefinitions {
   defenders: Record<string, CombatActorDefinition>;
   enemies: Record<string, CombatActorDefinition>;
   blockers: Record<string, BlockerDefinition>;
+  gridCellMeters: number;
   referenceCycleSeconds: number;
 }
 
