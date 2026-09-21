@@ -1,0 +1,147 @@
+version: "0.2"
+
+art_direction:
+  style: stylized_fantasy_tech
+  realism: low
+  varum_accent: restrained_teal
+  silhouette_priority: high
+
+units:
+  guard:
+    tier: 0
+    class: infantry
+    target: ground
+    hp: 150
+    dps: 10
+    armor: 5
+    role: patrol_defense
+
+  ranger:
+    tier: 1
+    class: infantry
+    target: ground
+    hp: 130
+    dps: 16
+    armor: 4
+    move_speed_mult: 1.20
+    role: fast_response
+
+  heavy_guard:
+    tier: 2
+    class: infantry
+    target: ground
+    hp: 260
+    dps: 18
+    armor: 20
+    role: durable_frontline
+
+  patrol_buggy:
+    tier: 1
+    class: light_vehicle
+    target: ground
+    money_cost: 350
+    varum_cost: 4
+    hp: 320
+    dps: 22
+    armor: 10
+    role: fast_response
+
+  armored_car:
+    tier: 2
+    class: vehicle
+    target: ground
+    money_cost: 600
+    varum_cost: 10
+    hp: 675
+    dps: 28
+    armor: 20
+    role: mobile_defense
+
+  tank:
+    tier: 3
+    class: heavy_vehicle
+    target: ground
+    money_cost: 1600
+    varum_cost: 30
+    hp: 1350
+    dps: 55
+    armor: 45
+    role: heavy_anchor
+
+  rocket_rover:
+    tier: 3
+    class: artillery_vehicle
+    target: ground
+    money_cost: 1450
+    varum_cost: 26
+    hp: 680
+    dps: 75
+    armor: 18
+    splash: true
+    role: long_range_area
+
+  missile_wagon:
+    tier: 4
+    class: air_defense_vehicle
+    target: air
+    money_cost: 1900
+    varum_cost: 38
+    hp: 760
+    dps: 90
+    armor: 22
+    role: anti_large_air
+
+  heavy_turret:
+    tier: 3
+    class: static
+    target: ground
+    hp: 900
+    dps: 48
+    armor: 30
+    role: fixed_ground_defense
+
+  anti_air:
+    tier: 4
+    class: static
+    target: air
+    hp: 525
+    dps: 65
+    armor: 20
+    role: air_defense
+
+  scout_plane:
+    tier: 2
+    class: aircraft
+    target: none
+    hp: 280
+    role: reconnaissance
+
+  interceptor:
+    tier: 4
+    class: aircraft
+    target: air
+    money_cost: 1800
+    varum_cost: 40
+    hp: 750
+    dps: 70
+    armor: 20
+    role: fast_air_defense
+
+  heavy_defender:
+    tier: 5
+    class: aircraft
+    target: air_and_ground
+    money_cost: 3200
+    varum_cost: 75
+    hp: 1500
+    dps: 105
+    armor: 35
+    role: carrier_support
+
+support:
+  fire_engine:
+    combat: false
+  repair_truck:
+    combat: false
+  construction_hauler:
+    combat: false
