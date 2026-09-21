@@ -11,10 +11,6 @@ export interface BuildCatalogEntryDto {
   footprintCellsZ: number;
   gridCellMeters: number;
   sizeTitle: string;
-  moneyCost: number;
-  decorClass: "visual" | "beauty" | "activity_anchor";
-  beauty: number;
-  activityAnchor: string | null;
 }
 
 export interface PropCatalogEntryDto {
@@ -25,6 +21,10 @@ export interface PropCatalogEntryDto {
   sizeZMeters: number;
   snapMeters: number;
   sizeTitle: string;
+  moneyCost: number;
+  decorClass: "visual" | "beauty" | "activity_anchor";
+  beauty: number;
+  activityAnchor: string | null;
 }
 
 export interface BlockerCatalogEntryDto {
