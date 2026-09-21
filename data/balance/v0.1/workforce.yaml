@@ -19,7 +19,7 @@ phases:
 
   - id: active_threat_defense
     order: 3
-    categories: [defense_active]
+    categories: [defense_ready]
     fill_mode: required_first
     only_when: active_threat
 
@@ -27,9 +27,9 @@ phases:
     order: 4
     fill_mode: weighted
     category_priority:
-      defense_ready: 65
-      education: 60
-      varum: 50
+      education: 70
+      varum: 55
+      defense_ready: 45
       advanced_industry: 40
       income: 35
 
@@ -70,3 +70,14 @@ tie_breakers:
   - explicit_building_priority
   - shortest_commute_cost
   - stable_building_id
+
+dynamic_overrides:
+  active_threat:
+    defense_ready_priority: 110
+    allow_reassignment_from:
+      - income
+      - education
+      - varum
+      - advanced_industry
+  threat_ended:
+    restore_peacetime_priorities: true
