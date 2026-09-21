@@ -40,12 +40,40 @@ test("M1 loop: login, authoritative build, persistence, offline catch-up, combat
 
   await expect(page.locator("canvas")).toBeVisible();
   await expect(page.getByTestId("building-count")).toContainText("7");
+  await expect(page.getByTestId("blocker-list")).toBeVisible();
+
+  const runtime = page.getByTestId("runtime-metrics");
+  await expect.poll(async () => Number(await runtime.getAttribute("data-draw-calls"))).toBeGreaterThan(0);
+  const drawCalls = Number(await runtime.getAttribute("data-draw-calls"));
+  const triangles = Number(await runtime.getAttribute("data-triangles"));
+  const citizens = Number(await runtime.getAttribute("data-citizens"));
+  const p95 = Number(await runtime.getAttribute("data-frame-p95"));
+  expect(drawCalls).toBeLessThanOrEqual(450);
+  expect(triangles).toBeLessThanOrEqual(1_500_000);
+  expect(citizens).toBeGreaterThan(0);
+  expect(citizens).toBeLessThanOrEqual(30);
+  expect(p95).toBeGreaterThan(0);
 
   const ownerId = await page.evaluate(() => localStorage.getItem("evervale.owner"));
   expect(ownerId).toBe("dev:e2e-builder");
 
   const initial = await apiWorld(request, ownerId!);
   expect(initial.world.buildings).toHaveLength(7);
+  expect(initial.world.blockers).toHaveLength(2);
+
+  // Terrain blocker must participate in authoritative placement.
+  const blockerPlacement = await apiCommand(request, ownerId!, "PLACE_BUILDING", {
+    definitionId: "house_small",
+    x: 29,
+    z: 11,
+  });
+  expect(blockerPlacement.status()).toBe(400);
+  expect((await blockerPlacement.json()).error).toBe("PLACEMENT_BLOCKED");
+
+  // Clear action is visible in UI and persists as simulation work.
+  const clearButton = page.getByTestId("blocker-list").getByRole("button", { name: "Clear" }).first();
+  await clearButton.click();
+  await expect(page.getByTestId("blocker-list")).toContainText(/s/);
 
   // Server must reject an isolated building.
   const rejected = await apiCommand(request, ownerId!, "PLACE_BUILDING", {
