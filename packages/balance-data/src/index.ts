@@ -170,10 +170,6 @@ export interface BuildCatalogEntry {
   footprintCellsZ: number;
   gridCellMeters: number;
   sizeTitle: string;
-  moneyCost: number;
-  decorClass: "visual" | "beauty" | "activity_anchor";
-  beauty: number;
-  activityAnchor: string | null;
 }
 
 export interface BlockerCatalogEntry {
@@ -192,6 +188,10 @@ export interface PropCatalogEntry {
   sizeZMeters: number;
   snapMeters: number;
   sizeTitle: string;
+  moneyCost: number;
+  decorClass: "visual" | "beauty" | "activity_anchor";
+  beauty: number;
+  activityAnchor: string | null;
 }
 
 export interface LoadedGameData {
