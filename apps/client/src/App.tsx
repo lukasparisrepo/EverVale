@@ -418,7 +418,9 @@ export default function App() {
         <div><strong>Beauty</strong> {w.society.beauty.toFixed(2)} / 5</div>
         <div data-testid="routing-status">
           <strong>Road routing</strong>{" "}
-          <span id="routing-status-value">live</span>
+          {metrics
+            ? `${metrics.routedCitizens - metrics.disconnectedRoutes}/${metrics.routedCitizens}`
+            : "measuring…"}
         </div>
 
         <div
