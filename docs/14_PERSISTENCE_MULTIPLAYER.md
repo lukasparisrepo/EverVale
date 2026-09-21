@@ -22,69 +22,118 @@ Schema must already allow:
 
 ## Login
 
-Authentication grants account identity. Authorization determines which worlds may be opened and what commands can be submitted.
+Authentication grants account identity.
+
+Authorization determines:
+- which worlds can be opened
+- which commands can mutate them
 
 Login does not create simulation truth in the browser.
 
+## World identity
+
+A World has a stable:
+- `worldId`
+- `worldSeed`
+- `worldGeneratorVersion`
+
+The seed does **not** mean the client is free to regenerate authoritative terrain differently.
+
+Generated topology becomes part of persistent world state/versioning.
+
 ## Persistence
 
-Persist:
+Persist at minimum:
 - world metadata
-- world version
+- world seed
+- world generator version
+- schema/simulation/balance versions
 - last simulated timestamp
 - resource state
+- society state
 - buildings
-- road/infrastructure graphs
-- citizens/households
-- jobs
+- roads/access graph mutations
+- cleared blocker state
+- discovered Varum deposits
+- construction/clearance/repair queues
+- citizens/households where persistent identity is required
+- job assignments/priority state
 - threat state
+- incident state
 - event history
-- construction/repair
 - military assets
+
+Deterministic cosmetic scatter can remain seed-derived if it has no gameplay state.
 
 ## Save strategy
 
-Use periodic snapshots plus enough event/command history for diagnosis.
+Use:
+- periodic canonical snapshots
+- transactional critical commands
+- enough event/command history for diagnosis and After-Action reporting
 
-Critical commands should be transactional.
+Do not event-source every animation frame.
 
 ## Reconnect
 
-Client:
-1. authenticates
-2. selects world
-3. server catches world up
-4. server sends current snapshot
-5. client builds render state
-6. realtime patches begin
+1. authenticate
+2. authorize world membership
+3. acquire/transfer simulation lease
+4. load snapshot
+5. catch world up to authoritative time
+6. persist resulting revision
+7. send snapshot + return timeline
+8. begin realtime patches
+
+## Generator upgrades
+
+Existing worlds never silently regenerate because procedural generation code changed.
+
+New generator versions affect newly created worlds unless an explicit migration exists.
+
+A migration must preserve:
+- placed buildings
+- roads/access
+- blockers already cleared
+- discovered deposits
+- valid progression
 
 ## Future co-op
 
-Multiple clients may observe one world.
+Multiple clients may observe one World.
 
-All commands include:
+Commands include:
 - user/session identity
-- world_id
-- expected revision where needed
-- command id for idempotency
+- worldId
+- commandId
+- expected revision where necessary
 
-Conflicting build edits must be rejected or serialized explicitly.
+Concurrent edits must be serialized/rejected explicitly.
 
 ## Future neighboring worlds
 
-Do not make separate player worlds share mutable in-memory objects.
+Separate worlds never share mutable in-memory state.
 
-Inter-world trade/conflict should use explicit server events/contracts.
+Inter-world:
+- trade
+- diplomacy
+- raids
+- visits
+
+must use explicit server contracts/events.
 
 ## Security
 
 Browser is untrusted.
 
-Never trust:
-- money balance
-- build completion
+Never accept client claims for:
+- Money
+- Power/Water/Varum
+- Tech
 - world time
-- inventory/Varum
-- damage result
+- generator seed mutation
+- cleared blocker state
+- build completion
+- damage/combat result
 - ownership
-sent by the client without server validation.
+without authoritative validation.
