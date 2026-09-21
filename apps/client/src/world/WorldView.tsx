@@ -12,6 +12,8 @@ export interface RuntimeMetrics {
   drawCalls: number;
   triangles: number;
   animatedCitizens: number;
+  routedCitizens: number;
+  disconnectedRoutes: number;
 }
 
 interface Props {
@@ -895,6 +897,8 @@ export function WorldView({
           drawCalls: renderer.info.render.calls,
           triangles: renderer.info.render.triangles,
           animatedCitizens: citizensRef.current.length,
+          routedCitizens: Number(host.dataset.routedCitizens ?? citizensRef.current.length),
+          disconnectedRoutes: Number(host.dataset.disconnectedRoutes ?? 0),
         });
         lastMetricEmit = now;
       }
