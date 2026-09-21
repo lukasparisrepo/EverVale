@@ -34,10 +34,19 @@ type RawBlockers = {
   blockers: Record<string, Record<string, unknown>>;
 };
 
+type RawFootprints = {
+  grid_cell_meters: number;
+  footprints: Record<string, { cells_x: number; cells_z: number }>;
+};
+
 const numberValue = (value: unknown, fallback = 0): number =>
   typeof value === "number" ? value : fallback;
 
-function mapBuilding(id: string, raw: Record<string, unknown>): BuildingDefinition {
+function mapBuilding(
+  id: string,
+  raw: Record<string, unknown>,
+  footprint: { cells_x: number; cells_z: number },
+): BuildingDefinition {
   const combatSpawnRaw = raw.combat_spawn;
   const combatSpawn =
     combatSpawnRaw && typeof combatSpawnRaw === "object"
@@ -76,6 +85,8 @@ function mapBuilding(id: string, raw: Record<string, unknown>): BuildingDefiniti
     safetyAdd: numberValue(raw.safety_add),
     combatSpawn,
     constructionSlotsAdd: numberValue(raw.construction_slots_add),
+    footprintCellsX: footprint.cells_x,
+    footprintCellsZ: footprint.cells_z,
   };
 }
 
@@ -122,6 +133,10 @@ export interface BuildCatalogEntry {
   moneyCost: number;
   varumCost: number;
   buildCycles: number;
+  footprintCellsX: number;
+  footprintCellsZ: number;
+  gridCellMeters: number;
+  sizeTitle: string;
 }
 
 export interface BlockerCatalogEntry {
@@ -144,9 +159,14 @@ export function loadGameData(): LoadedGameData {
   const defenders = readYaml<RawCombat>("data/combat/v0.2/defense_units.yaml").units ?? {};
   const enemies = readYaml<RawCombat>("data/combat/v0.2/enemies.yaml").enemies ?? {};
   const blockers = readYaml<RawBlockers>("data/world/v0.1/blockers.yaml").blockers;
+  const footprintData = readYaml<RawFootprints>("data/content/v0.2/build_footprints.yaml");
 
   const buildings = Object.fromEntries(
-    Object.entries(balance.buildings).map(([id, raw]) => [id, mapBuilding(id, raw)]),
+    Object.entries(balance.buildings).map(([id, raw]) => {
+      const footprint = footprintData.footprints[id];
+      if (!footprint) throw new Error(`Missing footprint for ${id}`);
+      return [id, mapBuilding(id, raw, footprint)];
+    }),
   );
 
   const definitions: SimulationDefinitions = {
@@ -161,6 +181,7 @@ export function loadGameData(): LoadedGameData {
     blockers: Object.fromEntries(
       Object.entries(blockers).map(([id, raw]) => [id, mapBlocker(id, raw)]),
     ),
+    gridCellMeters: footprintData.grid_cell_meters,
   };
 
   const m1Ids = new Set([
@@ -189,6 +210,10 @@ export function loadGameData(): LoadedGameData {
         moneyCost: def.moneyCost,
         varumCost: def.varumCost,
         buildCycles: def.buildCycles,
+        footprintCellsX: def.footprintCellsX,
+        footprintCellsZ: def.footprintCellsZ,
+        gridCellMeters: footprintData.grid_cell_meters,
+        sizeTitle: `${def.footprintCellsX}×${def.footprintCellsZ} grid · ${def.footprintCellsX * footprintData.grid_cell_meters}×${def.footprintCellsZ * footprintData.grid_cell_meters}m`,
       };
     })
     .sort((a, b) => a.techTier - b.techTier || a.name.localeCompare(b.name));
