@@ -1,4 +1,5 @@
 import { advanceWorld } from "@evervale/domain/advance-world";
+import { queueBlockerClear } from "@evervale/domain/blockers";
 import { applyCombatAftermath } from "@evervale/domain/combat-aftermath";
 import { triggerM1Wave } from "@evervale/domain/combat";
 import { placeBuilding } from "@evervale/domain/construction";
@@ -20,7 +21,8 @@ export class WorldService {
   constructor(private readonly options: WorldServiceOptions) {}
 
   async getOrCreate(ownerId: string): Promise<WorldState> {
-    const existing = await this.options.repository.findByOwner(ownerId);
+    const loaded = await this.options.repository.findByOwner(ownerId);
+    const existing = loaded ? this.normalizeWorld(loaded) : null;
     if (!existing) {
       const now = this.options.clock.now();
       const seed = Math.abs([...ownerId].reduce((a, c) => ((a * 31 + c.charCodeAt(0)) | 0), 17));
@@ -38,7 +40,8 @@ export class WorldService {
   }
 
   async command(ownerId: string, command: WorldCommand): Promise<WorldState> {
-    let stored = await this.options.repository.findByOwner(ownerId);
+    const loaded = await this.options.repository.findByOwner(ownerId);
+    let stored = loaded ? this.normalizeWorld(loaded) : null;
     if (!stored) {
       stored = await this.getOrCreate(ownerId);
     }
@@ -68,6 +71,9 @@ export class WorldService {
       case "SET_SPEED":
         world = { ...world, revision: world.revision + 1, speed: command.payload.speed };
         break;
+      case "CLEAR_BLOCKER":
+        world = queueBlockerClear(world, this.options.definitions, command.payload.blockerId);
+        break;
       case "REPAIR_BUILDING":
         world = queueRepair(world, command.payload.buildingId);
         break;
@@ -87,6 +93,15 @@ export class WorldService {
 
     await this.options.repository.save(world, previousRevision);
     return world;
+  }
+
+  private normalizeWorld(world: WorldState): WorldState {
+    return {
+      ...world,
+      roads: world.roads ?? [],
+      blockers: world.blockers ?? [],
+      events: world.events ?? [],
+    };
   }
 
   private advanceState(world: WorldState, now: Date): WorldState {
