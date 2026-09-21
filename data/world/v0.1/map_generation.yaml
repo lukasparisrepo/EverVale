@@ -1,0 +1,49 @@
+version: "0.1"
+
+map:
+  nominal_size_m: [320, 320]
+  starter_safe_radius_m: 55
+  target_sector_count_min: 10
+  target_sector_count_max: 16
+  elevation_band_count_min: 2
+  elevation_band_count_max: 5
+
+starter_guarantees:
+  buildable_area_m2_min: 2600
+  connected_road_length_m_min: 45
+  expansion_routes_min: 2
+  varum_deposit_reachable_at_tech_tier: 1
+  hostile_entry_distance_from_starter_m_min: 90
+
+sector_weights:
+  meadow: 0.30
+  wooded: 0.18
+  rocky: 0.16
+  riverbank: 0.10
+  hillside: 0.12
+  plateau: 0.08
+  ruin: 0.04
+  varum_rich: 0.02
+
+blockers:
+  light_per_world: [8, 16]
+  medium_per_world: [5, 10]
+  heavy_per_world: [2, 5]
+
+deposits:
+  varum_min: 2
+  varum_max: 4
+  guarantee_one_reachable_after_first_expansion: true
+
+vertical_access:
+  stair_candidate_chance: 0.55
+  ramp_candidate_chance: 0.45
+  lift_candidate_chance: 0.25
+  bridge_candidate_chance: 0.35
+
+validation:
+  seeds_per_ci_batch: 1000
+  require_starter_bootstrap: true
+  require_t1_varum_path: true
+  require_two_expansion_routes: true
+  require_external_threat_paths: true
