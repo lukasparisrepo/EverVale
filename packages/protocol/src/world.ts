@@ -35,6 +35,12 @@ export type WorldCommand =
       payload: { speed: WorldSpeed };
     }
   | {
+      type: "CLEAR_BLOCKER";
+      commandId: string;
+      expectedRevision: number;
+      payload: { blockerId: string };
+    }
+  | {
       type: "REPAIR_BUILDING";
       commandId: string;
       expectedRevision: number;
