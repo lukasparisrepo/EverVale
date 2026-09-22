@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { BuildingInstance } from "@evervale/domain/world.types";
 import type { BuildCatalogEntryDto } from "@evervale/protocol/world";
+import type { BuildingVisualIdentity } from "./visual-identity";
+import { renderAuthoredBuildingFamily } from "./buildings/building-visual-registry";
 
 const palette = {
   plaster: 0xe4d7bb,
@@ -193,45 +195,6 @@ function addEaveBrackets(group: THREE.Group, width: number, depth: number, y: nu
 function addChimney(group:THREE.Group,x:number,z:number,y:number): void {
   box(group,0.48,1.35,0.48,material("brick"),x,y+0.3,z);
   box(group,0.62,0.14,0.62,material("stoneDark"),x,y+0.98,z,false);
-}
-
-function addHouse(group:THREE.Group,width:number,depth:number): void {
-  const h=2.8;
-  addFoundation(group,width,depth);
-  box(group,width*0.88,h,depth*0.86,material("plaster"),0,h/2+0.34,0);
-  addTimberFront(group,width*0.88,depth*0.86,h);
-  addGabledRoof(group,width*0.96,depth*0.92,h+0.34,material("roofWarm"),1.15);
-  addDoor(group,0,depth*0.43+0.08);
-  addStoneStep(group,0,depth*0.48+0.32);
-  addWindow(group,-width*0.24,1.62,depth*0.43+0.09);
-  addWindow(group,width*0.24,1.62,depth*0.43+0.09);
-  addFlowerBox(group,-width*0.24,1.13,depth*0.45+0.14);
-  addFlowerBox(group,width*0.24,1.13,depth*0.45+0.14);
-  addEaveBrackets(group,width*0.88,depth*0.86,h+0.15);
-  addChimney(group,-width*0.27,-depth*0.18,h+0.15);
-  box(group,width*0.28,0.08,0.48,material("soil"),width*0.26,0.08,depth*0.54,false);
-}
-
-function addTownCenter(group:THREE.Group,width:number,depth:number): void {
-  const h=4.0;
-  addFoundation(group,width,depth);
-  box(group,width*0.9,h,depth*0.84,material("plasterWarm"),0,h/2+0.34,0);
-  addTimberFront(group,width*0.9,depth*0.84,h);
-  addGabledRoof(group,width*0.98,depth*0.9,h+0.34,material("roof"),1.35);
-  addDoor(group,0,depth*0.42+0.08,1.2,1.9);
-  addStoneStep(group,0,depth*0.47+0.34,1.7);
-  addEaveBrackets(group,width*0.9,depth*0.84,h+0.14);
-  for (const x of [-width*0.28,width*0.28]) {
-    addWindow(group,x,1.75,depth*0.42+0.09);
-    addWindow(group,x,3.05,depth*0.42+0.09);
-  }
-  const towerY=h+1.2;
-  box(group,1.75,2.15,1.75,material("stone"),0,towerY,0);
-  addGabledRoof(group,2.1,2.1,h+2.28,material("copper",0.52,0.18),0.85);
-  const clock=mesh(new THREE.CylinderGeometry(0.48,0.48,0.08,18),material("cream"),0,h+1.45,0.91,false);
-  clock.rotation.x=Math.PI/2;
-  group.add(clock);
-  box(group,width*0.32,0.12,0.52,material("timberDark"),-width*0.25,0.55,depth*0.5+0.35,false);
 }
 
 function addWorkshop(group:THREE.Group,width:number,depth:number): void {
@@ -470,28 +433,29 @@ function compactBuilding(group: THREE.Group): void {
 export function createBuildingVisual(
   building: BuildingInstance,
   meta?: BuildCatalogEntryDto,
+  identity?: BuildingVisualIdentity,
 ): THREE.Group {
   const group=new THREE.Group();
   const width=meta ? meta.footprintCellsX*meta.gridCellMeters : building.definitionId==="town_center" ? 8 : 5;
   const depth=meta ? meta.footprintCellsZ*meta.gridCellMeters : building.definitionId==="town_center" ? 8 : 4;
 
-  switch(building.definitionId) {
-    case "town_center": addTownCenter(group,width,depth); break;
-    case "house_small": addHouse(group,width,depth); break;
-    case "workshop": addWorkshop(group,width,depth); break;
-    case "power_plant": addPowerPlant(group,width,depth); break;
-    case "water_plant": addWaterPlant(group,width,depth); break;
-    case "school": addSchool(group,width,depth); break;
-    case "park": addPark(group,width,depth); break;
-    case "guard_post": addGuardPost(group,width,depth); break;
-    case "farm": addFarm(group,width,depth); break;
-    case "restaurant": addRestaurant(group,width,depth); break;
-    case "builders_yard": addBuildersYard(group,width,depth); break;
-    default:
-      addFoundation(group,width,depth);
-      box(group,width*0.88,2.8,depth*0.84,material("plasterWarm"),0,1.74,0);
-      addGabledRoof(group,width*0.94,depth*0.9,3.14,material("roof"),0.9);
-      break;
+  if (!renderAuthoredBuildingFamily(building.definitionId, group, width, depth, identity)) {
+    switch(building.definitionId) {
+      case "workshop": addWorkshop(group,width,depth); break;
+      case "power_plant": addPowerPlant(group,width,depth); break;
+      case "water_plant": addWaterPlant(group,width,depth); break;
+      case "school": addSchool(group,width,depth); break;
+      case "park": addPark(group,width,depth); break;
+      case "guard_post": addGuardPost(group,width,depth); break;
+      case "farm": addFarm(group,width,depth); break;
+      case "restaurant": addRestaurant(group,width,depth); break;
+      case "builders_yard": addBuildersYard(group,width,depth); break;
+      default:
+        addFoundation(group,width,depth);
+        box(group,width*0.88,2.8,depth*0.84,material("plasterWarm"),0,1.74,0);
+        addGabledRoof(group,width*0.94,depth*0.9,3.14,material("roof"),0.9);
+        break;
+    }
   }
 
   const markerHeight=building.definitionId==="town_center" ? 6.5 : building.definitionId==="park" ? 2.5 : 4.6;
@@ -501,5 +465,7 @@ export function createBuildingVisual(
   group.rotation.y=building.rotationY;
   group.userData.buildingId=building.id;
   group.userData.buildingDefinitionId=building.definitionId;
+  group.userData.visualVariant=identity?.variant ?? "legacy";
+  group.userData.visualDialect=identity?.dialect ?? "legacy";
   return group;
 }
